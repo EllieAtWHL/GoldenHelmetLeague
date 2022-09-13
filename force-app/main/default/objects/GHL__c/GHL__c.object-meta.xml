@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>Hierarchy</customSettingsType>
+    <description>This stores all the information needed for your API callouts to My Fantasy League. Documentation for this API can be found at https://api.myfantasyleague.com/2022/api_info</description>
+    <enableFeeds>false</enableFeeds>
+    <label>GHL</label>
+    <visibility>Public</visibility>
+</CustomObject>

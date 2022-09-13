@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Rookies</fullName>
+    <columns>NAME</columns>
+    <columns>MFL_Name__c</columns>
+    <columns>Position__c</columns>
+    <columns>Photo__c</columns>
+    <columns>Photo_URL__c</columns>
+    <filterScope>Everything</filterScope>
+    <filters>
+        <field>MFL_Status__c</field>
+        <operation>equals</operation>
+        <value>R</value>
+    </filters>
+    <label>Rookies</label>
+</ListView>

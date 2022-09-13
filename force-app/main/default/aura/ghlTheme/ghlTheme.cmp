@@ -1,0 +1,5 @@
+<aura:component implements="forceCommunity:themeLayout">
+    
+    <div class="content">{!v.body}</div>
+
+</aura:component>

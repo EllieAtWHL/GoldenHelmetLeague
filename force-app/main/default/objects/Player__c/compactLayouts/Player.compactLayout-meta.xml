@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CompactLayout xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Player</fullName>
+    <fields>MFL_Name__c</fields>
+    <fields>Position__c</fields>
+    <fields>Team__c</fields>
+    <fields>ADP_Rank__c</fields>
+    <label>Player</label>
+</CompactLayout>
