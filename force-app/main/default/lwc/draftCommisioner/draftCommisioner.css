@@ -1,0 +1,26 @@
+img.logo{
+    height: 12.5vh;
+}
+
+.QB{
+    color: #FAC898;
+}
+.RB{
+    color: #FDFD96;
+}
+.WR{
+    color: #A7C7E7;
+}
+.TE{
+    color: #C1E1C1;
+}
+.PK{
+    color: #F8C8DC;
+}
+.Def{
+    color: #D3D3D3;
+}
+
+.logs{
+    height: 60vh;
+}

@@ -1,0 +1,95 @@
+<template>
+
+    <lightning-layout class="slds-p-around_small slds-box" vertical-align="center">
+        <lightning-layout-item size="6">
+            <template if:true={currentPick}>
+                <lightning-layout multiple-rows>
+                    <lightning-layout-item class="slds-p-around_x-small" size="12">
+                        Round {currentRoundNumber} Pick {currentPickNumber}
+                    </lightning-layout-item>
+                    <lightning-layout-item class="slds-p-around_x-small" size="12">
+                        <img class="logo" src={currentPick.imageURL}>
+                    </lightning-layout-item>
+                    <lightning-layout-item class="slds-p-around_x-small" size="12">
+                        {currentPick.owner}
+                    </lightning-layout-item>
+                </lightning-layout>        
+            </template>
+        </lightning-layout-item>
+            
+        <lightning-layout-item size="4">
+
+            <h1>Draft Controls</h1>
+
+            <lightning-layout class="slds-box" horizontal-align="space" vertical-align="stretch" multiple-rows>
+
+                <lightning-layout-item class="slds-p-around_small">
+
+                    <template if:false={draftStarted}>
+                        <lightning-button
+                            class="slds-p-around_x-small"
+                            label="Start" 
+                            variant="inverse"
+                            icon-name="utility:check"
+                            onclick={startDraft}
+                            disabled={draftStarted}>
+                        </lightning-button>
+                    </template>
+
+                    <template if:true={draftStarted}>
+                        <lightning-button
+                            class="slds-p-around_x-small"
+                            label="Pick" 
+                            variant="inverse"
+                            icon-name="utility:check"
+                            onclick={startPick}
+                            disabled={draftComplete}>
+                        </lightning-button>
+
+                        <lightning-button
+                            class="slds-p-around_x-small"
+                            label="Undo" 
+                            variant="inverse"
+                            icon-name="utility:undo"
+                            onclick={handleUndo}
+                            disabled={firstPick}>
+                        </lightning-button>
+
+                        <lightning-button
+                            class="slds-p-around_x-small"
+                            label="Upload"
+                            variant="inverse"
+                            icon-name="utility:upload"
+                            onclick={handleUpload}
+                            disabled={draftRunning}>
+                        </lightning-button>
+                    </template>
+                </lightning-layout-item>
+            </lightning-layout>
+        </lightning-layout-item>
+            
+    </lightning-layout>
+
+    <h2 class="slds-p-top_medium">Logs</h2>
+
+    <lightning-layout class="slds-p-around_small slds-box slds-scrollable logs" vertical-align="start" multiple-rows>
+    
+        <template if:true={previousPicks} for:each={previousPicks} for:item="pick">
+            <lightning-layout-item key={pick.Id} class={pick.cssClass} size="12">
+                {pick.round}.{pick.roundPickNumber} {pick.team} picked {pick.playerPickedName}
+            </lightning-layout-item>
+        </template>
+
+    </lightning-layout>
+    
+
+    
+    <c-draft-select-pick
+        if:true={showSelectionScreen}
+        onclosemodal={handleClose}
+        current-round={currentRound}
+        current-pick={currentPick}
+        onpickmade={handlePickMade}>
+    </c-draft-select-pick>
+    
+</template>

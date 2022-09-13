@@ -1,0 +1,14 @@
+<template>
+
+    <c-comet-d channel="Draft_Message__e" onmessage={messageReceived}></c-comet-d>
+
+    <lightning-layout class={textClass} multiple-rows="true">
+        <lightning-layout-item size="12">
+            {message}
+        </lightning-layout-item>
+        <lightning-layout-item if:true={clock} class="clock" size="12">
+            {clock}
+        </lightning-layout-item>
+    </lightning-layout>
+
+</template>

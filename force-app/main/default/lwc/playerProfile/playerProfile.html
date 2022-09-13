@@ -1,0 +1,15 @@
+<template>
+    <lightning-layout class={positionClass} name={player.Id}  horizontal-align="center" multiple-rows>
+        <lightning-layout-item class="slds-align_absolute-center" size="12">
+            <img class="slds-p-around_xx-small photo" src={player.Photo_URL_Formula__c}>
+        </lightning-layout-item>
+        <lightning-layout-item class="slds-align_absolute-center" size="12">
+            {player.MFL_Name__c}
+        </lightning-layout-item>
+        <lightning-layout-item class="slds-align_absolute-center" size="12">
+            {player.Team__c}   
+        </lightning-layout-item>
+    </lightning-layout>
+        
+    
+</template>

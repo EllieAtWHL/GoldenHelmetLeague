@@ -1,0 +1,109 @@
+<template>
+
+    <lightning-card title="Manage Records">
+
+        <lightning-spinner if:true={isProcessing}></lightning-spinner>
+
+        <lightning-layout>
+
+            <lightning-layout-item size="6">
+
+                <lightning-layout class="slds-box slds-m-around_small" horizontal-align="spread">
+
+                    <lightning-layout-item class="slds-align_absolute-center" size="6">
+                        <lightning-button
+                            label="Open Draft Board"
+                            icon-name="utility:open"
+                            variant="brand"
+                            onclick={openBoard}>
+                        </lightning-button>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item class="slds-align_absolute-center" size="6">
+                        <lightning-button
+                            label="Open Draft Controls"
+                            icon-name="utility:open"
+                            variant="brand"
+                            onclick={openControls}
+                            disabled>  <!-- TODO: fix this! -->
+                        </lightning-button>
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+            </lightning-layout-item>
+
+            <lightning-layout-item size="6">
+
+                <lightning-layout class="slds-box slds-m-around_small" horizontal-align="spread">
+
+                    <lightning-layout-item class="slds-align_absolute-center" size="4">
+                        <lightning-button
+                            label="Sync Teams"                            
+                            icon-name="utility:sync"
+                            variant="brand"
+                            onclick={syncTeams}>
+                        </lightning-button>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item class="slds-align_absolute-center" size="4">
+                        <lightning-button
+                            label="Sync Players"                            
+                            icon-name="utility:sync"
+                            variant="brand"
+                            onclick={syncPlayers}>
+                        </lightning-button>
+                    </lightning-layout-item>
+
+                    <lightning-layout-item class="slds-align_absolute-center" size="4">
+                        <lightning-button
+                            label="Sync Franchises"                            
+                            icon-name="utility:sync"
+                            variant="brand"
+                            onclick={syncFranchises}>
+                        </lightning-button>
+                    </lightning-layout-item>
+
+                </lightning-layout>
+
+            </lightning-layout-item>
+
+        </lightning-layout>
+
+        <!-- <lightning-layout class="slds-box slds-m-around_small">
+
+            <h1 class="slds-text-heading_small">Manage My Fantasy League Settings</h1>
+
+            <div>
+
+                <lightning-input label="Year"></lightning-input>
+                <lightning-input label="League Id"></lightning-input>
+                <lightning-input label="Generic URL"></lightning-input>
+                <lightning-input label="Instance URL"></lightning-input>
+                <lightning-input label="API Key" type="password"></lightning-input>
+                <lightning-input label="User Id" type="password"></lightning-input>
+
+            </div>
+            
+
+        </lightning-layout>
+
+        <lightning-layout class="slds-box slds-m-around_small">
+
+            <h1 class="slds-text-heading_small">Manage Salesforce Settings</h1>
+            
+            <div>
+                <lightning-input label="Username"></lightning-input>
+                <lightning-input label="Password" type="password"></lightning-input>
+                <lightning-input label="Client Id"></lightning-input>
+                <lightning-input label="Client Secret" type="password"></lightning-input>
+                <lightning-input label="Grant Type"></lightning-input>
+                <lightning-input label="URL"></lightning-input> 
+            </div>
+
+            
+
+        </lightning-layout> -->
+        
+    </lightning-card>
+</template>

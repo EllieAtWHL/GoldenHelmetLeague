@@ -1,0 +1,50 @@
+<template>
+
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open theme">
+        <div class="slds-modal__container">
+            <lightning-spinner if:false={isLoaded}></lightning-spinner>
+            <header class="slds-modal__header">
+                Round {currentRound.roundNumber}
+                Pick {currentPick.roundPickNumber}
+            </header>
+            <div class="content slds-modal__content slds-var-p-around_small">   
+                <div 
+                class="search">
+                    <lightning-input
+                        name="enter-search"
+                        type="search"
+                        onchange={handleSearchChange}>
+                    </lightning-input>
+                </div>
+                <lightning-layout multiple-rows>
+                    <template for:each={availablePlayers} for:item="player">
+                        <lightning-layout-item size="3" key={player.Id} name={player.Id} data-id={player.Id} onclick={handleClick}>
+                            <c-player-profile
+                                name={player.Id}
+                                class="profile" 
+                                player={player}>
+                            </c-player-profile>
+                        </lightning-layout-item>
+                    </template>
+                </lightning-layout>
+            </div>
+            <footer class="slds-modal__footer">
+                <lightning-layout horizontal-align="spread">
+                    <lightning-button
+                        label="Cancel"
+                        variant="inverse"
+                        onclick={closeModal}>
+                    </lightning-button>
+                    <lightning-button
+                        label="Confirm Pick"
+                        variant="inverse"
+                        onclick={handleConfirm}
+                        disabled={noPlayerSelected}>
+                    </lightning-button>
+                </lightning-layout>
+            </footer>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open"></div>
+    
+</template>

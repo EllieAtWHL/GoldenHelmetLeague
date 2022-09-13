@@ -1,0 +1,35 @@
+.profile {
+    border: #FFFFFF 1px none;
+    border-radius: 5px;
+    color: #222222;
+    margin: 2px;
+    opacity: 60%;
+}
+
+img.photo{
+    height: 110px;
+    width: auto;
+}
+
+.QB{
+    background-color: #FAC898;
+}
+.RB{
+    background-color: #FDFD96;
+}
+.WR{
+    background-color: #A7C7E7;
+}
+.TE{
+    background-color: #C1E1C1;
+}
+.PK{
+    background-color: #F8C8DC;
+}
+.Def{
+    background-color: #D3D3D3;
+}
+
+.active{
+    opacity: 100%;
+}
