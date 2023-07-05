@@ -10,3 +10,18 @@ There are two community pages that are used to host the draft.
 The home page of the community is a publically available site that anybody can view - meaning that as well as sharing the draft board in the room, anyone who joins remotely can easily view the draft as it happens on any device.
 
 The commissioner page is only available if you are logged into the community as a user and allows the commissioner to run the draft by selecting the players - or undoing picks if required - and uoploading the draft when finished.
+
+## Initial Set up
+### Populate Custom Settings
+#### MFL
+ - Api Key
+ - Generic URL (can be preset)
+ - Instance URL
+ - League Id
+ - MFL User Id
+ - Year
+
+#### Self
+### Create Experience Site and build pages
+
+## Draft Setup
