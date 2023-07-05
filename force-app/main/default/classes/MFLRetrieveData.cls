@@ -28,7 +28,7 @@ public with sharing class MFLRetrieveData {
 
     public static HttpResponse mflPostCallout(String url, String draftResults){
 
-        GHL__c ghl = GHL__c.getInstance();
+        MFL__c ghl = MFL__c.getInstance();
 
         Http http = new Http();
         HttpRequest req = new HttpRequest();

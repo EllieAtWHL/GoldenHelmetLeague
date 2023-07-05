@@ -150,7 +150,7 @@ public with sharing class MFLManagePlayers {
 
     private static List<Player> getPlayers(){
 
-        GHL__c ghl = GHL__c.getInstance();
+        MFL__c ghl = MFL__c.getInstance();
 
         String url = ghl.Instance_URL__c;
         url += '/' + ghl.Year__c;
@@ -198,7 +198,7 @@ public with sharing class MFLManagePlayers {
 
     private static List<ADP_Player> getADP(){
 
-        GHL__c ghl = GHL__c.getInstance();
+        MFL__c ghl = MFL__c.getInstance();
 
         String url = ghl.Generic_URL__c;
         url += '/' + ghl.Year__c;
@@ -213,7 +213,7 @@ public with sharing class MFLManagePlayers {
 
     private static List<Rank_Player> getRank(){
 
-        GHL__c ghl = GHL__c.getInstance();
+        MFL__c ghl = MFL__c.getInstance();
 
         String url = ghl.Generic_URL__c;
         url += '/' + ghl.Year__c;

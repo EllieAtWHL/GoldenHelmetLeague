@@ -3,6 +3,6 @@
     <customSettingsType>Hierarchy</customSettingsType>
     <description>This stores all the information needed for your API callouts to My Fantasy League. Documentation for this API can be found at https://api.myfantasyleague.com/2022/api_info</description>
     <enableFeeds>false</enableFeeds>
-    <label>GHL</label>
+    <label>MFL</label>
     <visibility>Public</visibility>
 </CustomObject>

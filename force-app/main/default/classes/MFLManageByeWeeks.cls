@@ -48,7 +48,7 @@ public with sharing class MFLManageByeWeeks {
 
     private static List<Team> getByeWeeks(){
 
-        GHL__c ghl = GHL__c.getInstance();
+        MFL__c ghl = MFL__c.getInstance();
 
         String url = ghl.Generic_URL__c;
         url += '/' + ghl.Year__c;

@@ -135,7 +135,7 @@ public class ManageDraft {
     @AuraEnabled
     public static void submitDraft(List<RoundPick> draftJSON){
 
-        GHL__c ghl = GHL__c.getInstance();
+        MFL__c ghl = MFL__c.getInstance();
 
         String url = ghl.Instance_URL__c;
         url += '/' + ghl.Year__c;
