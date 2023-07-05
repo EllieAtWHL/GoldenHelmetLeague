@@ -1,7 +1,4 @@
 public with sharing class MFLManagePlayers {
-    public MFLManagePlayers(){
-    }
-
     private Class PlayersResponse{
         Players players;
     }
