@@ -1,5 +1,7 @@
 import { LightningElement, wire } from 'lwc';
-import getLeagueSetup from '@salesforce/apex/RetrieveLeagueSetup.getSettings';
+import { showToast } from 'c/toastUtility'; 
+import getLeagueSetup from '@salesforce/apex/LeagueSetup.getSettings';
+import saveLeagueSetup from '@salesforce/apex/LeagueSetup.saveSettings';
 
 export default class LeagueDetails extends LightningElement {
 
@@ -33,6 +35,21 @@ export default class LeagueDetails extends LightningElement {
     }
 
     handleSave(){
-        console.log(JSON.stringify(this.leagueSettings));
+        let mflSettings = {};
+        mflSettings.Id = this.leagueSettings.Id;
+        mflSettings.Year__c = this.refs.year.value;
+        mflSettings.League_Id__c = this.refs.leagueId.value;
+        mflSettings.Generic_URL__c = this.refs.genericURL.value;
+        mflSettings.Instance_URL__c = this.refs.instanceURL.value;
+        mflSettings.API_Key__c = this.refs.apiKey.value;
+        mflSettings.MFL_User_Id__c = this.refs.mflUserId.value;
+        console.log(JSON.stringify(mflSettings));
+        saveLeagueSetup({settings: mflSettings})
+            .then( () =>{           
+                showToast('Success!', 'Settings Updated', 'success');
+            })
+            .catch((error)=>{ 
+                showToast('Unable to update settings', error.body.message, 'error');
+            })
     }
 }

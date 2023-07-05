@@ -3,25 +3,29 @@
     <lightning-card class="slds-p-vertical_small" title="League Details" lwc:if={leagueSettings}>
         <lightning-layout>
             <lightning-layout-item flexibility="auto" padding="around-small">
-                <lightning-input label="Year" value={leagueSettings.Year__c}></lightning-input>
+                <lightning-input  
+                lwc:ref="year" label="Year" value={leagueSettings.Year__c}></lightning-input>
             </lightning-layout-item>
             <lightning-layout-item flexibility="auto" padding="around-small">
-                <lightning-input label="League Id" value={leagueSettings.League_Id__c}></lightning-input>
+                <lightning-input lwc:ref="leagueId" label="League Id" value={leagueSettings.League_Id__c}></lightning-input>
             </lightning-layout-item>
         </lightning-layout>
         <lightning-layout>
             <lightning-layout-item flexibility="auto" padding="around-small">
-                <lightning-input type="url" label="Generic URL" value={leagueSettings.Generic_URL__c}></lightning-input>
+                <lightning-input  
+                lwc:ref="genericURL" type="url" label="Generic URL" value={leagueSettings.Generic_URL__c}></lightning-input>
             </lightning-layout-item>
             <lightning-layout-item flexibility="auto" padding="around-small">
-                <lightning-input type="url" label="Instance URL" value={leagueSettings.Instance_URL__c}></lightning-input>
+                <lightning-input  
+                lwc:ref="instanceURL" type="url" label="Instance URL" value={leagueSettings.Instance_URL__c}></lightning-input>
             </lightning-layout-item>
         </lightning-layout>
         <lightning-layout>
             <lightning-layout-item flexibility="auto" padding="around-small">
                 <lightning-layout vertical-align="end">
                     <lightning-layout-item size="11">
-                        <lightning-input type={APIKeyVisibility} label="API Key" value={leagueSettings.API_Key__c}></lightning-input>
+                        <lightning-input  
+                        lwc:ref="apiKey" type={APIKeyVisibility} label="API Key" value={leagueSettings.API_Key__c}></lightning-input>
                     </lightning-layout-item>
                     <lightning-layout-item size="1">
                         <lightning-button-icon-stateful icon-name="utility:preview" selected={showAPIKey} alternative-text="Show API Key" onclick={handleAPIKeyVisibility}></lightning-button-icon-stateful>
@@ -31,7 +35,8 @@
             <lightning-layout-item flexibility="auto" padding="around-small">
                 <lightning-layout vertical-align="end">
                     <lightning-layout-item size="11">
-                        <lightning-input type={MFLUserIdVisibility} label="MFL User Id" value={leagueSettings.MFL_User_Id__c}></lightning-input>
+                        <lightning-input  
+                        lwc:ref="mflUserId" type={MFLUserIdVisibility} label="MFL User Id" value={leagueSettings.MFL_User_Id__c}></lightning-input>
                     </lightning-layout-item>
                     <lightning-layout-item size="1">
                         <lightning-button-icon-stateful icon-name="utility:preview" selected={showMFLUserId} alternative-text="Show MFL User Id" onclick={handleMFLUserIdVisibility}></lightning-button-icon-stateful>
