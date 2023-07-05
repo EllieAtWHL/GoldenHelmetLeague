@@ -154,12 +154,12 @@ public with sharing class MFLManagePlayers {
 
     private static List<Player> getPlayers(){
 
-        MFL__c ghl = MFL__c.getInstance();
+        MFL__c mfl = MFL__c.getInstance();
 
-        String url = ghl.Instance_URL__c;
-        url += '/' + ghl.Year__c;
-        url += '/export?TYPE=players&L=' + ghl.League_Id__c;
-        url += '&APIKEY=' + ghl.API_Key__c;
+        String url = mfl.Instance_URL__c;
+        url += '/' + mfl.Year__c;
+        url += '/export?TYPE=players&L=' + mfl.League_Id__c;
+        url += '&APIKEY=' + mfl.API_Key__c;
         url += '&DETAILS=&SINCE=&PLAYERS=&JSON=1';
 
         HttpResponse calloutResponse = new HttpResponse();
@@ -202,10 +202,10 @@ public with sharing class MFLManagePlayers {
 
     private static List<ADP_Player> getADP(){
 
-        MFL__c ghl = MFL__c.getInstance();
+        MFL__c mfl = MFL__c.getInstance();
 
-        String url = ghl.Generic_URL__c;
-        url += '/' + ghl.Year__c;
+        String url = mfl.Generic_URL__c;
+        url += '/' + mfl.Year__c;
         url += '/export?TYPE=adp&PERIOD=AUG1&FCOUNT=12&IS_PPR=1&IS_KEEPER=N&IS_MOCK=0&CUTOFF=10&DETAILS=&JSON=1';
 
         HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
@@ -220,10 +220,10 @@ public with sharing class MFLManagePlayers {
 
     private static List<Rank_Player> getRank(){
 
-        MFL__c ghl = MFL__c.getInstance();
+        MFL__c mfl = MFL__c.getInstance();
 
-        String url = ghl.Generic_URL__c;
-        url += '/' + ghl.Year__c;
+        String url = mfl.Generic_URL__c;
+        url += '/' + mfl.Year__c;
         url += '/export?TYPE=playerRanks&POS=&JSON=1';
 
         HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);

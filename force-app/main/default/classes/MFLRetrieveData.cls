@@ -28,13 +28,13 @@ public with sharing class MFLRetrieveData {
 
     public static HttpResponse mflPostCallout(String url, String draftResults){
 
-        MFL__c ghl = MFL__c.getInstance();
+        MFL__c mfl = MFL__c.getInstance();
 
         Http http = new Http();
         HttpRequest req = new HttpRequest();
         req.setEndpoint(url);
         req.setHeader('Content-Type', HttpFormBuilder.GetContentType());
-        req.setHeader('Cookie', 'MFL_USER_ID='+ghl.MFL_User_Id__c);
+        req.setHeader('Cookie', 'MFL_USER_ID='+mfl.MFL_User_Id__c);
         req.setMethod('POST');
 
         String body = '';

@@ -48,10 +48,10 @@ public with sharing class MFLManageByeWeeks {
 
     private static List<Team> getByeWeeks(){
 
-        MFL__c ghl = MFL__c.getInstance();
+        MFL__c mfl = MFL__c.getInstance();
 
-        String url = ghl.Generic_URL__c;
-        url += '/' + ghl.Year__c;
+        String url = mfl.Generic_URL__c;
+        url += '/' + mfl.Year__c;
         url += '/export?TYPE=nflByeWeeks&W=&JSON=1';
 
         HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
