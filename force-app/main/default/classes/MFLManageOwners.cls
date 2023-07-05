@@ -67,12 +67,12 @@ public class MFLManageOwners {
 
     private static List<Franchise> getFranchises(){
 
-        GHL__c ghl = GHL__c.getInstance();
+        MFL__c mfl = MFL__c.getInstance();
 
-        String url = ghl.Instance_URL__c;
-        url += '/' + ghl.Year__c;
-        url += '/export?TYPE=league&L=' + ghl.League_Id__c;
-        url += '&APIKEY=' + ghl.API_Key__c;
+        String url = mfl.Instance_URL__c;
+        url += '/' + mfl.Year__c;
+        url += '/export?TYPE=league&L=' + mfl.League_Id__c;
+        url += '&APIKEY=' + mfl.API_Key__c;
         url += '&JSON=1';
 
         HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);

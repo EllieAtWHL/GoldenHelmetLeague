@@ -44,10 +44,12 @@ public with sharing class MFLManagePlayers {
 
         List<ADP_Player> playersADP = getADP();
         Map<String, ADP_Player> mapPlayersADP = new Map<String, ADP_Player>();
-        for(ADP_Player adpPlayer: playersADP){
-            mapPlayersADP.put(adpPlayer.id, adpPlayer);
+        if(!playersADP.isEmpty()){
+            for(ADP_Player adpPlayer: playersADP){
+                mapPlayersADP.put(adpPlayer.id, adpPlayer);
+            }
         }
-
+        
         List<Rank_Player> playerRankList = getRank();
         Map<String, Rank_Player> mapPlayersRank = new Map<String, Rank_Player>();
         for(Rank_Player playerRank: playerRankList){
@@ -57,15 +59,17 @@ public with sharing class MFLManagePlayers {
         Map<String, NFL_Team__c> mapTeams = MFLManageByeWeeks.getNFLTeams();
         Set<String> positions = getPositions();
         List<Player__c> playersToUpsert = new List<Player__c>();
+        
+        Id freeAgentTeamId = freeAgentTeam();
 
         for(Player player : mflNFLPlayers){
             if(nflPlayers !=null && nflPlayers.containsKey(player.id)){
                 if(playerChanged(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapTeams) == true){
-                    Player__c updatedPlayer = createPlayer(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapTeams);
+                    Player__c updatedPlayer = createPlayer(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapTeams, freeAgentTeamId);
                     playersToUpsert.add(updatedPlayer);
                 }
             } else if(positions.contains(player.position)){
-                Player__c newPlayer = createPlayer(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapTeams);
+                Player__c newPlayer = createPlayer(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapTeams, freeAgentTeamId);
                 playersToUpsert.add(newPlayer);
             }
 
@@ -73,7 +77,7 @@ public with sharing class MFLManagePlayers {
         upsert playersToUpsert;
     }
 
-    private static Player__c createPlayer(Player player, Map<String, Player__c> nflPlayers, Map<String, ADP_Player> mapPlayersADP, Map<String, Rank_Player> mapPlayersRank, Map<String, NFL_Team__c> mapTeams){
+    private static Player__c createPlayer(Player player, Map<String, Player__c> nflPlayers, Map<String, ADP_Player> mapPlayersADP, Map<String, Rank_Player> mapPlayersRank, Map<String, NFL_Team__c> mapTeams, Id freeAgentTeamId){
 
         Decimal adpRank;
         Decimal adpAverage;
@@ -94,7 +98,7 @@ public with sharing class MFLManagePlayers {
         if(mapTeams.containsKey(player.team)){
             teamId = mapTeams.get(player.team).Id;
         } else{
-            teamId = 'a008d0000060D39AAE';
+            teamId = freeAgentTeamId;
         }
         if(nflPlayers.containsKey(player.id)){
             playerId = nflPlayers.get(player.id).Id;
@@ -150,12 +154,12 @@ public with sharing class MFLManagePlayers {
 
     private static List<Player> getPlayers(){
 
-        GHL__c ghl = GHL__c.getInstance();
+        MFL__c mfl = MFL__c.getInstance();
 
-        String url = ghl.Instance_URL__c;
-        url += '/' + ghl.Year__c;
-        url += '/export?TYPE=players&L=' + ghl.League_Id__c;
-        url += '&APIKEY=' + ghl.API_Key__c;
+        String url = mfl.Instance_URL__c;
+        url += '/' + mfl.Year__c;
+        url += '/export?TYPE=players&L=' + mfl.League_Id__c;
+        url += '&APIKEY=' + mfl.API_Key__c;
         url += '&DETAILS=&SINCE=&PLAYERS=&JSON=1';
 
         HttpResponse calloutResponse = new HttpResponse();
@@ -198,25 +202,28 @@ public with sharing class MFLManagePlayers {
 
     private static List<ADP_Player> getADP(){
 
-        GHL__c ghl = GHL__c.getInstance();
+        MFL__c mfl = MFL__c.getInstance();
 
-        String url = ghl.Generic_URL__c;
-        url += '/' + ghl.Year__c;
+        String url = mfl.Generic_URL__c;
+        url += '/' + mfl.Year__c;
         url += '/export?TYPE=adp&PERIOD=AUG1&FCOUNT=12&IS_PPR=1&IS_KEEPER=N&IS_MOCK=0&CUTOFF=10&DETAILS=&JSON=1';
 
         HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
 
         ADPResponse adpResponse = (ADPResponse) JSON.deserialize(calloutResponse.getBody(), ADPResponse.class);
 
+        if(adpResponse.adp.player == null){
+            return new List<ADP_Player>();
+        }
         return adpResponse.adp.player;  
     }
 
     private static List<Rank_Player> getRank(){
 
-        GHL__c ghl = GHL__c.getInstance();
+        MFL__c mfl = MFL__c.getInstance();
 
-        String url = ghl.Generic_URL__c;
-        url += '/' + ghl.Year__c;
+        String url = mfl.Generic_URL__c;
+        url += '/' + mfl.Year__c;
         url += '/export?TYPE=playerRanks&POS=&JSON=1';
 
         HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
@@ -224,6 +231,21 @@ public with sharing class MFLManagePlayers {
         RankPlayersResponse rankResponse = (RankPlayersResponse) JSON.deserialize(calloutResponse.getBody(), RankPlayersResponse.class);
 
         return rankResponse.player_ranks.player;
+    }
+
+    private static Id freeAgentTeam(){
+        system.debug('calling freeAgentTeam');
+        List<NFL_Team__c> fa = [SELECT Id FROM NFL_Team__c WHERE Name = 'FA' LIMIT 1];
+        if(fa.isEmpty()){
+            NFL_Team__c faTeam = new NFL_Team__c(
+                Name = 'FA',
+                Team_Name__c = 'Free Agent'
+            );
+            insert faTeam;
+            return faTeam.Id;
+        }else{
+            return fa[0].Id;
+        } 
     }
 
     @AuraEnabled (cacheable=true)
