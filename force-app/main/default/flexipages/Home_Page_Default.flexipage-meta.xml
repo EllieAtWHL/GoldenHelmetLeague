@@ -4,7 +4,6 @@
         <itemInstances>
             <componentInstance>
                 <componentName>manageRecords</componentName>
-                <identifier>c_manageRecords</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
@@ -49,7 +48,6 @@
                     <value>5</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:recentItems</componentName>
-                <identifier>flexipage_recentItems</identifier>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>
