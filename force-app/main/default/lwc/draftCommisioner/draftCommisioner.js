@@ -74,7 +74,7 @@ export default class DraftCommisioner extends LightningElement {
             this.loading = false;
         }
         if(result.error){
-            showToast('Upload unsuccessful', result.error?.body?.message, 'error', 'sticky');
+            showToast('Upload unsuccessful', result.error?.body?.message, 'error');
             this.loading = false;
         }
     }
