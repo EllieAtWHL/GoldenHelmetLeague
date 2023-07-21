@@ -48,5 +48,5 @@
             <lightning-button label="Save" onclick={handleSave}></lightning-button>
         </lightning-layout>
     </lightning-card>
-    <lightning-spinner lwc:else></lightning-spinner>
+    <lightning-spinner lwc:if={showSpinner}></lightning-spinner>
 </template>
