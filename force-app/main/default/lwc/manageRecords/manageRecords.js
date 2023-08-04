@@ -10,7 +10,7 @@ export default class ManageRecords extends NavigationMixin(LightningElement) {
     isProcessing;
 
     openBoard(){
-        this.navigateToPage('https://goldenhelmet2-dev-ed.my.site.com/draft/s/'); //TODO Don't hardcode these
+        this.navigateToPage('https://goldenhelmetleague-dev-ed.develop.my.site.com/draft'); //TODO Don't hardcode these
     }
 
     openControls(){
