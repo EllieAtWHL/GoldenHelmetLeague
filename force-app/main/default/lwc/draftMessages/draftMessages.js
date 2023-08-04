@@ -5,7 +5,7 @@ const PICK = 'THE PICK IS IN';
 
 export default class DraftMessages extends LightningElement {
     message = 'Welcome to the'; 
-    clock = 'Golden Helmet Draft 2022';
+    clock = 'Golden Helmet Draft 2023'; //TODO: Avoid hardcoding
 
     messageReceived(event){
         let message = event?.detail?.data?.payload?.Display_Message__c;
