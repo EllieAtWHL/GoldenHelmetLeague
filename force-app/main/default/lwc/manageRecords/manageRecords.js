@@ -1,6 +1,6 @@
 import { LightningElement } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { showToast } from 'c/toastUtility';
 import syncNFLTeams from '@salesforce/apex/MFLManageByeWeeks.manageByeWeeks';
 import syncNFLPlayers from '@salesforce/apex/MFLManagePlayers.managePlayers';
 import syncMFLFranchises from '@salesforce/apex/MFLManageOwners.manageOwners';
@@ -10,7 +10,7 @@ export default class ManageRecords extends NavigationMixin(LightningElement) {
     isProcessing;
 
     openBoard(){
-        this.navigateToPage('https://goldenhelmet2-dev-ed.my.site.com/draft/s/'); //TODO Don't hardcode these
+        this.navigateToPage('https://goldenhelmetleague-dev-ed.develop.my.site.com/draft'); //TODO Don't hardcode these
     }
 
     openControls(){
@@ -31,10 +31,10 @@ export default class ManageRecords extends NavigationMixin(LightningElement) {
         this.isProcessing = true;
         syncNFLTeams()
             .then( () => {
-                this.showToast('Sync successful', null, 'success');
+                showToast('Sync successful', null, 'success');
             })
             .catch( error => {
-                this.showToast('Sync unsuccessful', error.body.message, 'error');
+                showToast('Sync unsuccessful', error.body.message, 'error');
             })
             .finally( () => {
                 this.isProcessing = false;
@@ -44,10 +44,10 @@ export default class ManageRecords extends NavigationMixin(LightningElement) {
         this.isProcessing = true;
         syncNFLPlayers()
             .then( () => {
-                this.showToast('Sync successful', null, 'success');
+                showToast('Sync successful', null, 'success');
             })
             .catch( error => {
-                this.showToast('Sync unsuccessful', error.body.message, 'error');
+                showToast('Sync unsuccessful', error.body.message, 'error');
             })
             .finally( () => {
                 this.isProcessing = false;
@@ -57,23 +57,14 @@ export default class ManageRecords extends NavigationMixin(LightningElement) {
         this.isProcessing = true;
         syncMFLFranchises()
             .then( () => {
-                this.showToast('Sync successful', null, 'success');
+                showToast('Sync successful', null, 'success');
             })
             .catch( error => {
-                this.showToast('Sync unsuccessful', error.body.message, 'error');
+                showToast('Sync unsuccessful', error.body.message, 'error');
             })
             .finally( () => {
                 this.isProcessing = false;
             })
-    }
-
-    showToast(title, message, variant ) {
-        const event = new ShowToastEvent({
-            title: title,
-            message: message,
-            variant: variant
-        });
-        this.dispatchEvent(event);
     }
 
 }

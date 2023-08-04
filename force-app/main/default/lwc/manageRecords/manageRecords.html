@@ -1,8 +1,8 @@
 <template>
 
-    <lightning-card title="Manage Records">
+    <lightning-card class="slds-p-vertical_x-small" title="Manage Records">
 
-        <lightning-spinner if:true={isProcessing}></lightning-spinner>
+        <lightning-spinner lwc:if={isProcessing}></lightning-spinner>
 
         <lightning-layout>
 
@@ -10,23 +10,22 @@
 
                 <lightning-layout class="slds-box slds-m-around_small" horizontal-align="spread">
 
-                    <lightning-layout-item class="slds-align_absolute-center" size="6">
-                        <lightning-button
-                            label="Open Draft Board"
-                            icon-name="utility:open"
-                            variant="brand"
-                            onclick={openBoard}>
-                        </lightning-button>
-                    </lightning-layout-item>
-
-                    <lightning-layout-item class="slds-align_absolute-center" size="6">
-                        <lightning-button
-                            label="Open Draft Controls"
-                            icon-name="utility:open"
-                            variant="brand"
-                            onclick={openControls}
-                            disabled>  <!-- TODO: fix this! -->
-                        </lightning-button>
+                    <lightning-layout-item class="slds-align_absolute-center" size="12">
+                        <lightning-button-group>
+                            <lightning-button
+                                label="Open Draft Board"
+                                icon-name="utility:open"
+                                variant="brand"
+                                onclick={openBoard}>
+                            </lightning-button>
+                            <lightning-button
+                                label="Open Draft Controls"
+                                icon-name="utility:open"
+                                variant="brand"
+                                onclick={openControls}
+                                disabled>  <!-- TODO: fix this! -->
+                            </lightning-button>
+                        </lightning-button-group>
                     </lightning-layout-item>
 
                 </lightning-layout>
@@ -37,31 +36,27 @@
 
                 <lightning-layout class="slds-box slds-m-around_small" horizontal-align="spread">
 
-                    <lightning-layout-item class="slds-align_absolute-center" size="4">
-                        <lightning-button
-                            label="Sync Teams"                            
-                            icon-name="utility:sync"
-                            variant="brand"
-                            onclick={syncTeams}>
-                        </lightning-button>
-                    </lightning-layout-item>
-
-                    <lightning-layout-item class="slds-align_absolute-center" size="4">
-                        <lightning-button
-                            label="Sync Players"                            
-                            icon-name="utility:sync"
-                            variant="brand"
-                            onclick={syncPlayers}>
-                        </lightning-button>
-                    </lightning-layout-item>
-
-                    <lightning-layout-item class="slds-align_absolute-center" size="4">
-                        <lightning-button
-                            label="Sync Franchises"                            
-                            icon-name="utility:sync"
-                            variant="brand"
-                            onclick={syncFranchises}>
-                        </lightning-button>
+                    <lightning-layout-item class="slds-align_absolute-center" size="12">
+                        <lightning-button-group>
+                            <lightning-button
+                                label="Sync Teams"
+                                icon-name="utility:sync"
+                                variant="brand"
+                                onclick={syncTeams}>
+                            </lightning-button>
+                            <lightning-button
+                                label="Sync Players"  
+                                icon-name="utility:sync"
+                                variant="brand"
+                                onclick={syncPlayers}>
+                            </lightning-button>
+                            <lightning-button
+                                label="Sync Franchises"                   
+                                icon-name="utility:sync"
+                                variant="brand"
+                                onclick={syncFranchises}>
+                            </lightning-button>
+                        </lightning-button-group>
                     </lightning-layout-item>
 
                 </lightning-layout>

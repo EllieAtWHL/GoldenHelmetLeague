@@ -6,7 +6,7 @@
         <lightning-layout-item size="12">
             {message}
         </lightning-layout-item>
-        <lightning-layout-item if:true={clock} class="clock" size="12">
+        <lightning-layout-item lwc:if={clock} class="clock" size="12">
             {clock}
         </lightning-layout-item>
     </lightning-layout>

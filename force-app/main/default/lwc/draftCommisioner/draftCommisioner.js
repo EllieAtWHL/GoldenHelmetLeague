@@ -1,6 +1,6 @@
 import { LightningElement, track, wire } from 'lwc';
 import { refreshApex } from '@salesforce/apex';
-import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { showToast } from 'c/toastUtility';
 import getTeams from '@salesforce/apex/MFLManageOwners.getTeams';
 import getDraft from '@salesforce/apex/ManageDraft.getDraft';
 import undoPick from '@salesforce/apex/ManageDraft.undoPick';
@@ -74,8 +74,7 @@ export default class DraftCommisioner extends LightningElement {
             this.loading = false;
         }
         if(result.error){
-            
-            this.showToast('Upload unsuccessful', result.error?.body?.message, 'error');
+            showToast('Upload unsuccessful', result.error?.body?.message, 'error');
             this.loading = false;
         }
     }
@@ -155,7 +154,7 @@ export default class DraftCommisioner extends LightningElement {
                 this.refreshData();
             })
             .catch(error => {
-                this.showToast('Undo unsuccessful', error.body.message, 'error');
+                showToast('Undo unsuccessful', error.body.message, 'error');
                 this.loading = false;
             })
     }
@@ -180,20 +179,11 @@ export default class DraftCommisioner extends LightningElement {
 
         submitDraft({draftJSON: draftResults})
             .then( () => {
-                this.showToast('Upload successful', null, 'success');
+                showToast('Upload successful', null, 'success');
             })
             .catch( error => {
-                this.showToast('Upload unsuccessful', error.body?.message, 'error');
+                showToast('Upload unsuccessful', error.body?.message, 'error');
             })
-    }
-
-    showToast(title, message, variant ) {
-        const event = new ShowToastEvent({
-            title: title,
-            message: message,
-            variant: variant
-        });
-        this.dispatchEvent(event);
     }
 
 }

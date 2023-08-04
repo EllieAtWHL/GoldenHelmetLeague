@@ -2,7 +2,7 @@
 
     <lightning-layout class="slds-p-around_small slds-box" vertical-align="center">
         <lightning-layout-item size="6">
-            <template if:true={currentPick}>
+            <template lwc:if={currentPick}>
                 <lightning-layout multiple-rows>
                     <lightning-layout-item class="slds-p-around_x-small" size="12">
                         Round {currentRoundNumber} Pick {currentPickNumber}
@@ -36,7 +36,7 @@
                         </lightning-button>
                     </template>
 
-                    <template if:true={draftStarted}>
+                    <template lwc:if={draftStarted}>
                         <lightning-button
                             class="slds-p-around_x-small"
                             label="Pick" 
@@ -74,7 +74,7 @@
 
     <lightning-layout class="slds-p-around_small slds-box slds-scrollable logs" vertical-align="start" multiple-rows>
     
-        <template if:true={previousPicks} for:each={previousPicks} for:item="pick">
+        <template lwc:if={previousPicks} for:each={previousPicks} for:item="pick">
             <lightning-layout-item key={pick.Id} class={pick.cssClass} size="12">
                 {pick.round}.{pick.roundPickNumber} {pick.team} picked {pick.playerPickedName}
             </lightning-layout-item>
@@ -85,7 +85,7 @@
 
     
     <c-draft-select-pick
-        if:true={showSelectionScreen}
+        lwc:if={showSelectionScreen}
         onclosemodal={handleClose}
         current-round={currentRound}
         current-pick={currentPick}
