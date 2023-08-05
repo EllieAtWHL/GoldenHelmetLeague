@@ -2,6 +2,9 @@ public class ManageDraft {
 
     public class Draft{
         @AuraEnabled public List<DraftRound> rounds;
+        @AuraEnabled public string draftType; //TODO: Convert to ENUM?
+        @AuraEnabled public Integer numberOfRounds;
+        @AuraEnabled public decimal auctionBudget;
     }
     public class DraftRound{
         @AuraEnabled public Boolean reverse;
@@ -27,7 +30,11 @@ public class ManageDraft {
         Draft draft = new Draft();
         List<Team_Owner__c> teamsInDraft = MFLManageOwners.getTeams();
         Integer teamCount = teamsInDraft.size();
-        Integer roundCount = 17;
+        Draft_Settings__c draftSettings = LeagueSetup.getDraftSettings();
+        Integer roundCount = Integer.valueOf(draftSettings.Number_of_Rounds__c);
+        draft.numberOfRounds = roundCount;
+        draft.draftType = draftSettings.Draft_Type__c;
+        draft.auctionBudget = draftSettings.Auction_Budget__c;
 
         Map<Integer, Pick__c> picksMade = getPicks();
 
