@@ -23,8 +23,4 @@ export default class DraftBoard extends LightningElement {
         return tempAuction;
     }
 
-    get draftInfo(){
-        return isSnake ? this.draft : this.auctionDraft();
-    }
-
 }

@@ -1,0 +1,42 @@
+<template>
+
+    <table lwc:if={teams}>
+        <thead>
+            <tr>
+                <th>
+                </th>
+                <template for:each={teams} for:item="team">
+                    <th key={team.Team_Name__c}>
+                        <img class="logo" src={team.Icon_URL__c}>
+                    </th>
+                </template>
+            </tr>
+
+        </thead>
+
+        <tbody lwc:if={draft}>
+            <template for:each={draft.rounds} for:item="round">
+                <tr key={round.roundNumber}>
+                    <td class="slds-align_absolute-center round-number">{round.roundNumber}</td>
+                    <template for:each={round.picks} for:item="pick">
+                        <td if:false={pick.playerPickedName} key={pick.overallPickNumber} class="pick-number">{pick.overallPickNumber}</td>
+                        <td lwc:if={pick.playerPickedName} key={pick.overallPickNumber} class={pick.cssClass}><b>{pick.playerPickedName}</b> </br> {pick.playerPickedTeamAndByeWeek}</td>
+                    </template>
+                </tr>
+
+            </template>
+
+            <tr>
+                <th>
+                </th>
+                <template for:each={teams} for:item="team">
+                    <th key={team.Team_Name__c}>
+                        <img class="logo" src={team.Icon_URL__c}>
+                    </th>
+                </template>
+            </tr>
+
+        </tbody>
+    </table>
+    
+</template>
