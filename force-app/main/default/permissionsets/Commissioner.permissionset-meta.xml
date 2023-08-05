@@ -128,6 +128,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Team_Owner__c.Current_Budget__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Team_Owner__c.Franchise_Id__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -149,6 +154,11 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Team_Owner__c.Pick_Number__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
+        <field>Team_Owner__c.Starting_Budget__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
