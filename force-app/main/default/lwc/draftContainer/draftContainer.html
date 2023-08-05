@@ -8,45 +8,9 @@
 
     <c-draft-ticker if:false={isMobile} ticker-content={tickerPicks}></c-draft-ticker>
 
-    <table lwc:if{teams}>
-        <thead>
-            <tr>
-                <th>
-                </th>
-                <template for:each={teams} for:item="team">
-                    <th key={team.Team_Name__c}>
-                        <img class="logo" src={team.Icon_URL__c}>
-                    </th>
-                </template>
-            </tr>
+    <c-draft-board teams={teams} draft={draft}></c-draft-board>
 
-        </thead>
-        <tbody lwc:if={draft}>
-            <template for:each={draft.rounds} for:item="round">
-                <tr key={round.roundNumber}>
-                    <td class="slds-align_absolute-center round-number">{round.roundNumber}</td>
-                    <template for:each={round.picks} for:item="pick">
-                        <td if:false={pick.playerPickedName} key={pick.overallPickNumber} class="pick-number">{pick.overallPickNumber}</td>
-                        <td lwc:if={pick.playerPickedName} key={pick.overallPickNumber} class={pick.cssClass}><b>{pick.playerPickedName}</b> </br> {pick.playerPickedTeamAndByeWeek}</td>
-                    </template>
-                </tr>
-
-            </template>
-
-            <tr>
-                <th>
-                </th>
-                <template for:each={teams} for:item="team">
-                    <th key={team.Team_Name__c}>
-                        <img class="logo" src={team.Icon_URL__c}>
-                    </th>
-                </template>
-            </tr>
-
-        </tbody>
-    </table>
-
-    <c-draft-ticker if:false={isMobile} ticker-content={tickerPicks}></c-draft-ticker>
+    <!--<c-draft-ticker if:false={isMobile} ticker-content={tickerPicks}></c-draft-ticker>-->
 
     <c-draft-header if:false={isMobile}></c-draft-header>
     
