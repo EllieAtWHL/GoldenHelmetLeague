@@ -3,7 +3,7 @@
     height: 3vw;
 }
 
-td.round-number{
+.round-number{
     width: 2vw;
     height: 8vh;
     color: #FFCC01;
@@ -13,36 +13,36 @@ td.round-number{
     text-align: middle;
 }
 
-td.pick-number,
+.pick-number,
 td.pick-made{
     width: 8vw;
     height: 8vh;
     text-align: center;
 }
 
-td.pick-number{
+.pick-number{
     border:#FFCC01 1px solid;
 }
 
-td.pick-made{
+.pick-made{
     color: #222222
 }
 
-td.QB{
+.QB{
     background-color: #FAC898;
 }
-td.RB{
+.RB{
     background-color: #FDFD96;
 }
-td.WR{
+.WR{
     background-color: #A7C7E7;
 }
-td.TE{
+.TE{
     background-color: #C1E1C1;
 }
-td.PK{
+.PK{
     background-color: #F8C8DC;
 }
-td.Def{
+.Def{
     background-color: #D3D3D3;
 }
