@@ -19,7 +19,7 @@ Assign whomever needs it the Commissioner permission set, which should give acce
  - Api Key
     This can be found by logging into your MFL league, opening the HELP menu and opening the DEVELOPER'S API page 
  - Generic URL (can be preset)
-    This will always be https://api.myfantasyleague.com
+    This will always be `https://api.myfantasyleague.com`
  - Instance URL
     This can be found by visiting your league on MFL and copying the main part of the URL, it will be something like https://www47.myfantasyleague.com
  - League Id
@@ -31,11 +31,28 @@ Assign whomever needs it the Commissioner permission set, which should give acce
 
 #### Self
 
-Coming soon...
+First, create a Connected App, then populate the custom settings as below:
+[//]: # (//TODO: Explain how to xreate the connected app)
+
+- Username
+   Your Salesforce username
+- Password
+   Your Salesforce password, followed by your security token
+- Client Id
+   The client id from the connected app created above
+- Client Secret
+   The client secret from the connected app created above
+- Url
+   This should always be set to:
+   `https://login.salesforce.com/services/oauth2/token`
+- Grant Type
+   This should always be set to: `password`
+
 ### Create Experience Site and build pages
 Digital Experiences -> Settings
 Enable Digital Experiences and Save
-Sites -> New -> Build Your Own(LWR) -> Get Started
+Sites -> New -> Build Your Own(Aura) -> Get Started 
+[//]: # (Note: cometd for events won't work in LWR and would require a custom loadscript. //TODO: Consider custom script for future improvemnet/development)
 Name -> choose a name for your site
 URL (optional) -> enter any additional url for your site
 This takes a few minutes
@@ -46,6 +63,23 @@ Allow CSP Trusted Sites
 
 Publish Site
 
+### Guest User Access
+
+Give access to:
+- Apex Classes
+   - CometdController
+   - ManageDraft
+   MFLManageOwners
+- Custom Objects (All Fields)
+   - NFL Teams
+   - Picks
+   - Players
+   - Team Owners
+
+Create sharing rules to give access to all records for:
+- NFL Teams
+- Players
+- Team Owners
 
 ## Draft Setup
 Coming soon...

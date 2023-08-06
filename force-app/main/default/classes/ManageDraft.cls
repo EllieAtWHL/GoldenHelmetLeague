@@ -2,6 +2,9 @@ public class ManageDraft {
 
     public class Draft{
         @AuraEnabled public List<DraftRound> rounds;
+        @AuraEnabled public string draftType; //TODO: Convert to ENUM?
+        @AuraEnabled public Integer numberOfRounds;
+        @AuraEnabled public decimal auctionBudget;
     }
     public class DraftRound{
         @AuraEnabled public Boolean reverse;
@@ -20,6 +23,8 @@ public class ManageDraft {
         @AuraEnabled public String playerPickedPosition { get; set; }
         @AuraEnabled public String playerPickedTeamAndByeWeek { get; set; }
         @AuraEnabled public String cssClass { get; set; }
+        @AuraEnabled public Decimal auctionCost { get; set; }
+        @AuraEnabled public Id teamOwner { get; set; }
     }
 
     @AuraEnabled (cacheable=true)
@@ -27,7 +32,11 @@ public class ManageDraft {
         Draft draft = new Draft();
         List<Team_Owner__c> teamsInDraft = MFLManageOwners.getTeams();
         Integer teamCount = teamsInDraft.size();
-        Integer roundCount = 17;
+        Draft_Settings__c draftSettings = LeagueSetup.getDraftSettings();
+        draft.draftType = draftSettings.Draft_Type__c;
+        Integer roundCount = draft.draftType == 'snake' ? Integer.valueOf(draftSettings.Number_of_Rounds__c) : 20; // TODO: Is there a better way to manage this?
+        draft.numberOfRounds = roundCount;
+        draft.auctionBudget = draftSettings.Auction_Budget__c;
 
         Map<Integer, Pick__c> picksMade = getPicks();
 
@@ -68,6 +77,8 @@ public class ManageDraft {
                     thePick.playerPickedName = picksMade.get(thePick.overallPickNumber).Player__r.MFL_Name__c;
                     thePick.playerPickedPosition = picksMade.get(thePick.overallPickNumber).Player__r.Position__c;
                     thePick.cssClass = 'pick-made ' + thePick.playerPickedPosition;
+                    thePick.auctionCost = picksMade.get(thePick.overallPickNumber).Auction_Cost__c;
+                    thePick.teamOwner = picksMade.get(thePIck.overallPickNumber).Team_Owner__c;
                     String teamAndBye = picksMade.get(thePick.overallPickNumber).Player__r.NFL_Team__r.Name;
                     if(picksMade.get(thePick.overallPickNumber).Player__r.NFL_Team__r.Bye_Week__c != null){
                         teamAndBye += ' (' + picksMade.get(thePick.overallPickNumber).Player__r.NFL_Team__r.Bye_Week__c + ')';
@@ -88,7 +99,7 @@ public class ManageDraft {
     }
 
     private static Map<Integer, Pick__c> getPicks(){
-        List<Pick__c> picks =  [SELECT Id, Player__r.MFL_Name__c, Player__r.Position__c, Player__r.MFL_Id__c,  Player__r.NFL_Team__r.Name, Player__r.NFL_Team__r.Bye_Week__c, Round__c, Round_Pick_Number__c, Overall_Pick_Number__c FROM Pick__c];
+        List<Pick__c> picks =  [SELECT Id, Player__r.MFL_Name__c, Player__r.Position__c, Player__r.MFL_Id__c,  Player__r.NFL_Team__r.Name, Player__r.NFL_Team__r.Bye_Week__c, Round__c, Round_Pick_Number__c, Overall_Pick_Number__c, Team_Owner__c,Auction_Cost__c FROM Pick__c];
         Map<Integer, Pick__c> mapPicks = new Map<Integer, Pick__c>();
         for(Pick__c pick : picks){
             mapPicks.put(Integer.valueOf(pick.Overall_Pick_Number__c), pick);

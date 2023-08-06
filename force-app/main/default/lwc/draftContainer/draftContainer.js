@@ -10,7 +10,6 @@ export default class DraftContainer extends LightningElement {
     @track draft;
 
     draftResult;
-    draftOrder;
 
     loading;
     @wire(getTeams)
