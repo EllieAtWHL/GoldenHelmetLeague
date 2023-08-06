@@ -56,7 +56,6 @@ export default class DraftSelectPick extends LightningElement {
     }
 
     handleConfirm(){
-        console.log(JSON.stringify(this.currentPick))
         this.isLoaded = true;
         let pick = {
             Player__c: this.playerSelected,
@@ -64,8 +63,7 @@ export default class DraftSelectPick extends LightningElement {
             Overall_Pick_Number__c: this.currentPick.overallPickNumber,
             Round__c: this.currentRound.roundNumber,
         }
-        let teamId = this.currentPick.teamId
-        console.log(`Pick: ${JSON.stringify(pick)} | teamId: ${teamId}`)
+        let teamId = this.currentPick.teamId;
         makePick({pickMade: pick, teamId: teamId})
             .then(() => {
                 return refreshApex(this.playersResult);

@@ -9,10 +9,8 @@ export default class DraftMessages extends LightningElement {
 
     messageReceived(event){
         let message = event?.detail?.data?.payload?.Display_Message__c;
-        console.log(message);
         if(message.includes('</br>')){
             const textArray = message.split('</br>');
-            console.log(textArray);
             this.message = textArray[0];
             this.clock = textArray[1];
         } else {

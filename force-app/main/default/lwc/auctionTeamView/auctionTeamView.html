@@ -1,0 +1,38 @@
+<template>
+    <table>
+        <thead>
+            <tr>
+                <th>
+                    <img class="logo" src={team.Icon_URL__c}>
+                </th>
+            </tr>
+            <tr>
+                <th class="slds-align_absolute-center">
+                    <lightning-formatted-number 
+                            value={team.Current_Budget__c}
+                            format-style="currency">
+                    </lightning-formatted-number>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <template for:each={team.picks} for:item="pick">
+                <tr key={pick.overallPickNumber}>
+                    <td class={pick.cssClass}>
+                        <b>{pick.playerPickedName}</b>
+                        <br>
+                        {pick.playerPickedTeamAndByeWeek}
+                        <br>
+                        <lightning-formatted-number 
+                            value={pick.auctionCost}
+                            format-style="currency">
+                        </lightning-formatted-number>
+                        
+                    </td>
+                </tr>
+            </template>
+        </tbody>
+
+    </table>
+    
+</template>

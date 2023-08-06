@@ -1,0 +1,5 @@
+@import 'c/customCSS';
+
+table {
+    display: inline;
+}

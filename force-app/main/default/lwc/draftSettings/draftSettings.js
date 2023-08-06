@@ -40,7 +40,6 @@ export default class DraftSettings extends LightningElement {
 
     handleChange(event){
         this.draftSettings[event.target.name] = event.target.value;
-        console.log(JSON.stringify(this.draftSettings));
     }
 
     handleSave(){
