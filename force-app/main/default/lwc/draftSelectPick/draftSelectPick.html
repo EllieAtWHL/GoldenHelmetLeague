@@ -3,9 +3,12 @@
     <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open theme">
         <div class="slds-modal__container">
             <lightning-spinner if:false={isLoaded}></lightning-spinner>
-            <header class="slds-modal__header">
+            <header lwc:if={isSnake} class="slds-modal__header">
                 Round {currentRound.roundNumber}
                 Pick {currentPick.roundPickNumber}
+            </header>
+            <header lwc:else class="slds-modal__header">
+                Overall Pick {currentPick.overallPickNumber}
             </header>
             <div class="content slds-modal__content slds-var-p-around_small">   
                 <div 
@@ -26,6 +29,46 @@
                             </c-player-profile>
                         </lightning-layout-item>
                     </template>
+                </lightning-layout>
+                
+                <lightning-layout 
+                    lwc:if={isAuction} 
+                    horizontal-align="spread"
+                    class="search slds-m-vertical_x-small">
+                    <lightning-layout-item size="5">
+                        <lightning-combobox
+                            class="slds-p-right_small" 
+                            lwc:ref="winner"
+                            name="winner"
+                            label="Winner"
+                            options={teamValues}
+                            placeholder="--PLEASE SELECT--"
+                            onchange={handleChange}>
+                        </lightning-combobox>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="4">
+                        <lightning-input
+                            class="theme slds-p-right_small"
+                            type="number"
+                            formatter="currency"
+                            label="Budget Available"
+                            value={winnerBudget}
+                            readonly>
+                        </lightning-input>
+                    </lightning-layout-item>
+                    <lightning-layout-item size="3">
+                        <lightning-input 
+                            lwc:ref="price"
+                            name="price"
+                            label="Price"
+                            type="number"
+                            formatter="currency" 
+                            step="0.01"
+                            max={winnerBudget}
+                            message-when-range-overflow="Cannot afford"
+                            onchange={handleChange}>
+                        </lightning-input>
+                    </lightning-layout-item>
                 </lightning-layout>
             </div>
             <footer class="slds-modal__footer">

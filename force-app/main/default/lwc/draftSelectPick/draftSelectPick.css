@@ -1,5 +1,10 @@
+:host {
+    --slds-g-color-neutral-base-30: #dddddd;
+    --slds-g-color-neutral-base-10: #222222;
+}
+
 .theme {
-    color: #dddddd;
+    color: var(--slds-g-color-neutral-base-30);
 }
 
 header {
@@ -15,5 +20,9 @@ footer {
 }
 
 .search {
+    color: #222222;
+}
+
+.combo {
     color: #222222;
 }

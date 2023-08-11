@@ -9,16 +9,16 @@ export default class DraftBoard extends LightningElement {
     @api draft;
 
     get isSnake(){
-        return this.draft.draftType === SNAKE;
+        return this.draft?.draftType === SNAKE;
     }
 
     get isAuction(){
-        return this.draft.draftType === AUCTION;
+        return this.draft?.draftType === AUCTION;
     }
 
     get auctionDraft(){
         let tempDraft = {};
-        tempDraft.auctionBudget = this.draft.auctionBudget;
+        tempDraft.auctionBudget = this.draft?.auctionBudget;
         tempDraft.teams = JSON.parse(JSON.stringify(this.teams));
         tempDraft.teams.forEach( team => {
             team.picks = [];

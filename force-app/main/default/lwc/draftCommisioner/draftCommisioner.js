@@ -46,37 +46,28 @@ export default class DraftCommisioner extends LightningElement {
     wiredDraft(result){
         this.draftResult = result;
         if(result.data){
-            let tempDraft = JSON.parse(JSON.stringify(result.data));
-            tempDraft.rounds.forEach(round => { 
-                round.picks.forEach((pick) => {
-                    if(!this.currentPickNumber && !pick.playerPickedName){
-                        this.currentPickNumber = pick.roundPickNumber;
-                        this.currentRoundNumber = round.roundNumber;
-                        this.draftStarted = (this.currentPickNumber !== 1 || this.currentRoundNumber !== 1);
-                    }
-                })          
-                if(round.reverse){
-                    round.picks.reverse();
-                }
-                round.picks.forEach((pick, index) => {
-                    pick.teamId = this.draftOrder[index].Id;
-                    pick.owner = this.draftOrder[index].Owner;
-                    pick.team = this.draftOrder[index].Team;
-                    pick.round = round.roundNumber;
-                    pick.imageURL = this.draftOrder[index].imageURL;
-                    pick.franchiseId = this.draftOrder[index].franchiseId;
-                })
-            })
-            this.draft = tempDraft;
+            this.draft = this.createDraft(result.data);
             if(this.draftStarted && this.currentPick){
-                sendMessage({message: `On the clock: </br> ${this.currentPick.team}`})
+                sendMessage({message: `On the clock: </br> ${this.currentPick.pickTeam}`})
             }
             this.loading = false;
         }
         if(result.error){
-            showToast('Upload unsuccessful', result.error?.body?.message, 'error');
+            showToast('Unable to retrieve draft information', result.error?.body?.message, 'error');
             this.loading = false;
         }
+    }
+
+    get teamTotal(){
+        return this.draftOrder.length;
+    }
+
+    get isSnake(){
+        return this.draft.draftType === 'snake';
+    }
+    
+    get isAuction(){
+        return this.draft.draftType === 'auction';
     }
 
     get currentRound(){
@@ -86,6 +77,11 @@ export default class DraftCommisioner extends LightningElement {
     get currentPick(){
         let getPick = this.currentRound?.picks.filter(pick => pick.roundPickNumber === this.currentPickNumber);
         return getPick ? getPick[0] : null; 
+    }
+
+    get currentOverallPick(){
+        let overallPick = this.currentPickNumber + ((this.currentRoundNumber * this.teamTotal) - this.teamTotal);
+        return overallPick;
     }
 
     get previousPicks(){
@@ -114,9 +110,34 @@ export default class DraftCommisioner extends LightningElement {
         return this.currentRoundNumber && this.currentPick;
     }
 
+    createDraft(data){
+        let tempDraft = JSON.parse(JSON.stringify(data));
+        tempDraft.rounds.forEach(round => { 
+            round.picks.forEach((pick) => {
+                if(!this.currentPickNumber && !pick.playerPickedName){
+                    this.currentPickNumber = pick.roundPickNumber;
+                    this.currentRoundNumber = round.roundNumber;
+                    this.draftStarted = (this.currentPickNumber !== 1 || this.currentRoundNumber !== 1);
+                }
+            })          
+            if(round.reverse){
+                round.picks.reverse();
+            }
+            round.picks.forEach((pick, index) => {
+                pick.teamId = this.draftOrder[index].Id;
+                pick.owner = this.draftOrder[index].Owner;
+                pick.pickTeam = this.draftOrder[index].Team;
+                pick.round = round.roundNumber;
+                pick.imageURL = this.draftOrder[index].imageURL;
+                pick.franchiseId = this.draftOrder[index].franchiseId;
+            })
+        })
+        return tempDraft;
+    }
+
     startDraft(){
         this.draftStarted = true;
-        sendMessage({message: `On the clock: </br> ${this.currentPick.team}`})
+        sendMessage({message: `On the clock: </br> ${this.currentPick.pickTeam}`})
     }
 
     startPick(){

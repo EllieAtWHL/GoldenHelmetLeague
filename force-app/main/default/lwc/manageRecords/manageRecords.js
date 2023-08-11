@@ -1,9 +1,10 @@
-import { LightningElement } from 'lwc';
+import { LightningElement, wire } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { showToast } from 'c/toastUtility';
 import syncNFLTeams from '@salesforce/apex/MFLManageByeWeeks.manageByeWeeks';
 import syncNFLPlayers from '@salesforce/apex/MFLManagePlayers.managePlayers';
 import syncMFLFranchises from '@salesforce/apex/MFLManageOwners.manageOwners';
+import resetDraft from '@salesforce/apex/LeagueSetup.resetDraft';
 
 export default class ManageRecords extends NavigationMixin(LightningElement) {
 
@@ -16,6 +17,20 @@ export default class ManageRecords extends NavigationMixin(LightningElement) {
     openControls(){
         //https://goldenhelmet2-dev-ed.my.salesforce.com/servlet/networks/switch?networkId=0DB8d0000004E6b&
         this.navigateToPage('https://goldenhelmet2-dev-ed.my.site.com/draft/s/commissioner'); //TODO: This doesn't work as it doesn't log the user in properly
+    }
+
+    handleReset(){
+        this.isProcessing = true;
+        resetDraft()
+            .then( () => {
+                showToast('Reset Successful', null, 'success');
+            })
+            .catch( error => {
+                showToast('Reset unsuccessful', error.body.message, 'error');
+            })
+            .finally( () => {
+                this.isProcessing = false;
+            })
     }
 
     navigateToPage(url){

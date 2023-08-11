@@ -1,5 +1,7 @@
 import { LightningElement, api, track, wire } from 'lwc';
 import { refreshApex } from '@salesforce/apex';
+import { showToast } from 'c/toastUtility'; 
+import getTeams from '@salesforce/apex/MFLManageOwners.getTeams';
 import searchPlayers from '@salesforce/apex/MFLManagePlayers.searchPlayers';
 import makePick from '@salesforce/apex/ManageDraft.makePick';
 
@@ -7,17 +9,41 @@ export default class DraftSelectPick extends LightningElement {
 
     @api currentRound;
     @api currentPick;
+    @api isSnake;
    
     @track availablePlayers;
+
+    teamValues;
+    teams;
 
     playersResult;
 
     isLoaded;
     playerSelected;
+    winnerEntered;
+    priceEntered;
     searchTerm = null;
 
     get noPlayerSelected(){
-        return !this.playerSelected;
+        if(this.isSnake){
+            return !this.playerSelected;
+        } else {
+            return (!this.playerSelected || !this.winnerEntered || !this.priceEntered);
+        }
+    }
+
+    get isAuction(){
+        return !this.isSnake;
+    }
+
+    get winnerBudget(){
+        if(this.winnerEntered){
+            const winnerTeam = this.teams.find( team => {
+                return team.Id === this.winnerEntered;
+            });
+            return winnerTeam.Current_Budget__c !== undefined ? winnerTeam.Current_Budget__c : winnerTeam.Starting_Budget__c;
+        }
+        return null;
     }
 
     @wire(searchPlayers, { searchTerm: '$searchTerm' })
@@ -30,6 +56,24 @@ export default class DraftSelectPick extends LightningElement {
         }
         if(result.error){
             console.log(JSON.stringify(result.error));
+        }
+    }
+
+    @wire(getTeams)
+    wiredTeams(result){
+        this.teamResult === result;
+        if(result.data){
+            let values = [];
+            result.data.forEach(team => {
+                let value = {value: team.Id, label: team.Team_Name__c, budget: team.Current_Budget__c}
+                values.push(value);
+
+            })
+            this.teamValues = values;
+            this.teams = result.data;
+        }
+        if(result.error){
+            console.log(JSON.stringify(result.error))
         }
     }
 
@@ -55,18 +99,43 @@ export default class DraftSelectPick extends LightningElement {
         this.playerSelected = playerId;
     }
 
+    handleChange(event){
+        let valueChanged = event.target.name;
+        switch(valueChanged){
+            case 'winner':
+                this.winnerEntered = event.detail.value;
+                break;
+            case 'price':
+                if(this.winnerBudget < event.detail.value){
+                    event.target.validity === false;
+                } else {  
+                    this.priceEntered = event.detail.value;
+                }
+                break;
+            default:
+                console.log('Unexpected event')
+        }
+    }
+
     handleConfirm(){
         this.isLoaded = true;
-        let pick = {
+        const teamId = this.isSnake ? this.currentPick.teamId : this.refs.winner.value;
+        const pick = {
             Player__c: this.playerSelected,
+            Team_Owner__c: teamId,
             Round_Pick_Number__c: this.currentPick.roundPickNumber,
             Overall_Pick_Number__c: this.currentPick.overallPickNumber,
             Round__c: this.currentRound.roundNumber,
         }
-        let teamId = this.currentPick.teamId;
+        if(this.isAuction){
+            pick.Auction_Cost__c = this.refs.price.value;
+        }
         makePick({pickMade: pick, teamId: teamId})
             .then(() => {
                 return refreshApex(this.playersResult);
+            })
+            .then(() => {
+                return refreshApex(this.teamResult);
             })
             .then( () => {
                 this.dispatchEvent(new CustomEvent('pickmade'));
@@ -75,6 +144,7 @@ export default class DraftSelectPick extends LightningElement {
             })
             .catch(error => {
                 console.log(JSON.stringify(error))
+                showToast('Unable to complete transaction', error.body.message, 'error');
             })
     }
 
