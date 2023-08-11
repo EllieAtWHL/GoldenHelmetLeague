@@ -251,13 +251,13 @@ public with sharing class MFLManagePlayers {
     @AuraEnabled (cacheable=true)
     public static List<Player__c> searchPlayers(String searchTerm){
         if(searchTerm == null){
-            return [SELECT Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c FROM Player__c WHERE Team_Owner__c = NULL WITH USER_MODE ORDER BY ADP_Rank__c LIMIT 12];
+            return [SELECT Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c FROM Player__c WHERE Team_Owner__c = NULL WITH USER_MODE ORDER BY ADP_Rank__c LIMIT 8];
         }else{
             searchTerm = '*'+searchTerm+'*';
             List<List<SObject>> soslResult = [FIND :searchTerm IN ALL FIELDS 
                                                 RETURNING Player__c
                                                 (Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c WHERE Team_Owner__c = NULL ORDER BY ADP_Rank__c)
-                                                LIMIT 12];
+                                                LIMIT 8];
             List<Player__c> playerList = ((List<Player__c>)soslResult[0]);
             return playerList;
         }

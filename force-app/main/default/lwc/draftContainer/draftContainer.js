@@ -44,6 +44,10 @@ export default class DraftContainer extends LightningElement {
         return FORM_FACTOR === 'Small';
     }
 
+    get isSnake(){
+        return this.draft?.draftType === 'snake';
+    }
+
     get tickerPicks(){
         let lastTwelvePicks = [];
 

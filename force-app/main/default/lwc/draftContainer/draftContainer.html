@@ -6,11 +6,11 @@
 
     <lightning-spinner lwc:if={loading}></lightning-spinner>
 
-    <c-draft-ticker if:false={isMobile} ticker-content={tickerPicks}></c-draft-ticker>
+    <c-draft-ticker if:false={isMobile} ticker-content={tickerPicks} is-snake={isSnake}></c-draft-ticker>
 
     <c-draft-board teams={teams} draft={draft}></c-draft-board>
 
-    <!--<c-draft-ticker if:false={isMobile} ticker-content={tickerPicks}></c-draft-ticker>-->
+    <c-draft-ticker if:false={isMobile} ticker-content={tickerPicks}></c-draft-ticker>
 
     <c-draft-header if:false={isMobile}></c-draft-header>
     

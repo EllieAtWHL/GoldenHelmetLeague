@@ -2,9 +2,9 @@ public class ManageDraft {
 
     public class Draft{
         @AuraEnabled public List<DraftRound> rounds;
-        @AuraEnabled public string draftType; //TODO: Convert to ENUM?
+        @AuraEnabled public enum draftType {auction, snake};
         @AuraEnabled public Integer numberOfRounds;
-        @AuraEnabled public decimal auctionBudget;
+        @AuraEnabled public Decimal auctionBudget;
     }
     public class DraftRound{
         @AuraEnabled public Boolean reverse;
@@ -25,6 +25,7 @@ public class ManageDraft {
         @AuraEnabled public String cssClass { get; set; }
         @AuraEnabled public Decimal auctionCost { get; set; }
         @AuraEnabled public Id teamOwner { get; set; }
+        @AuraEnabled public String teamOwnerName { get; set; }
     }
 
     @AuraEnabled (cacheable=true)
@@ -44,22 +45,23 @@ public class ManageDraft {
 
         for(Integer round=0; round<roundCount; round++){
             Integer actualRound = round+1;
-            Boolean reverse;
-            switch on actualRound {
-                when 1 {
-                    reverse = false;
-                }
-                when 2 {
-                    reverse = true;
-                }
-                when else {
-                    if(math.mod((actualRound), 2) == 0){
+            Boolean reverse = false;
+            if(draft.draftType == 'snake'){
+                switch on actualRound {
+                    when 1 {
                         reverse = false;
-                    }else{
+                    }
+                    when 2 {
                         reverse = true;
+                    }
+                    when else {
+                        if(math.mod((actualRound), 2) == 0){
+                            reverse = false;
+                        }
                     }
                 }
             }
+            
             DraftRound theRound = new DraftRound();
             theRound.reverse = reverse;
             theRound.roundNumber = actualRound;
@@ -78,7 +80,10 @@ public class ManageDraft {
                     thePick.playerPickedPosition = picksMade.get(thePick.overallPickNumber).Player__r.Position__c;
                     thePick.cssClass = 'pick-made ' + thePick.playerPickedPosition;
                     thePick.auctionCost = picksMade.get(thePick.overallPickNumber).Auction_Cost__c;
-                    thePick.teamOwner = picksMade.get(thePIck.overallPickNumber).Team_Owner__c;
+                    thePick.teamOwner = picksMade.get(thePick.overallPickNumber).Team_Owner__c;
+
+                    thePick.teamOwnerName = picksMade.get(thePick.overallPickNumber).Team_Owner__r.Team_Name__c;
+
                     String teamAndBye = picksMade.get(thePick.overallPickNumber).Player__r.NFL_Team__r.Name;
                     if(picksMade.get(thePick.overallPickNumber).Player__r.NFL_Team__r.Bye_Week__c != null){
                         teamAndBye += ' (' + picksMade.get(thePick.overallPickNumber).Player__r.NFL_Team__r.Bye_Week__c + ')';
@@ -99,7 +104,7 @@ public class ManageDraft {
     }
 
     private static Map<Integer, Pick__c> getPicks(){
-        List<Pick__c> picks =  [SELECT Id, Player__r.MFL_Name__c, Player__r.Position__c, Player__r.MFL_Id__c,  Player__r.NFL_Team__r.Name, Player__r.NFL_Team__r.Bye_Week__c, Round__c, Round_Pick_Number__c, Overall_Pick_Number__c, Team_Owner__c,Auction_Cost__c FROM Pick__c];
+        List<Pick__c> picks =  [SELECT Id, Player__r.MFL_Name__c, Player__r.Position__c, Player__r.MFL_Id__c,  Player__r.NFL_Team__r.Name, Player__r.NFL_Team__r.Bye_Week__c, Round__c, Round_Pick_Number__c, Overall_Pick_Number__c, Team_Owner__c, Team_Owner__r.Team_Name__c, Auction_Cost__c FROM Pick__c];
         Map<Integer, Pick__c> mapPicks = new Map<Integer, Pick__c>();
         for(Pick__c pick : picks){
             mapPicks.put(Integer.valueOf(pick.Overall_Pick_Number__c), pick);
@@ -118,7 +123,16 @@ public class ManageDraft {
             Team_Owner__c = teamId
         );
         recordsToUpsert.add(playerToUpdate);
-        
+
+        if(pickMade.Auction_Cost__c != null){
+            Team_Owner__c teamBudget = [SELECT Id,Current_Budget__c, Starting_Budget__c FROM Team_Owner__c WHERE Id = :teamId LIMIT 1];
+            Decimal budget = teamBudget.Current_Budget__c == NULL ? teamBudget.Starting_Budget__c : teamBudget.Current_Budget__c;
+            if (budget - pickMade.Auction_Cost__c < 0){
+                throw new AuraHandledException('Winner cannot afford offered price.');
+            }
+            teamBudget.Current_Budget__c = budget - pickMade.Auction_Cost__c;
+            recordsToUpsert.add(teamBudget);
+        }
         upsert recordsToUpsert;
 
         publishDraftUpdatedPlatformEvent();

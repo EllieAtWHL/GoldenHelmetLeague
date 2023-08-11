@@ -4,9 +4,14 @@
         <lightning-layout-item size="6">
             <template lwc:if={currentPick}>
                 <lightning-layout multiple-rows>
-                    <lightning-layout-item class="slds-p-around_x-small" size="12">
+                    <lightning-layout-item lwc:if={isSnake} class="slds-p-around_x-small" size="12">
                         Round {currentRoundNumber} Pick {currentPickNumber}
                     </lightning-layout-item>
+                    
+                    <lightning-layout-item lwc:if={isAuction} class="slds-p-around_x-small" size="12">
+                        Current Pick {currentOverallPick}
+                    </lightning-layout-item>
+
                     <lightning-layout-item class="slds-p-around_x-small" size="12">
                         <img class="logo" src={currentPick.imageURL}>
                     </lightning-layout-item>
@@ -76,7 +81,7 @@
     
         <template lwc:if={previousPicks} for:each={previousPicks} for:item="pick">
             <lightning-layout-item key={pick.Id} class={pick.cssClass} size="12">
-                {pick.round}.{pick.roundPickNumber} {pick.team} picked {pick.playerPickedName}
+                <span lwc:if={isSnake}>{pick.round}.{pick.roundPickNumber}</span><span lwc:else>{pick.overallPickNumber}.</span> {pick.pickTeam} <span lwc:if={isSnake}>picked</span> <span lwc:else>submitted</span> {pick.playerPickedName} <span lwc:if={isAuction}> bought by {pick.teamOwnerName} for £{pick.auctionCost}</span>
             </lightning-layout-item>
         </template>
 
@@ -89,6 +94,7 @@
         onclosemodal={handleClose}
         current-round={currentRound}
         current-pick={currentPick}
+        is-snake={isSnake}
         onpickmade={handlePickMade}>
     </c-draft-select-pick>
     

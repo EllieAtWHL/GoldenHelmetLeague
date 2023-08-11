@@ -1,0 +1,28 @@
+<template>
+    <h1>Manage Session Id</h1>
+        <div lwc:if={sessionIdMismatch}>
+            <lightning-icon 
+                icon-name="action:close" 
+                alternative-text="Mismatch" 
+                title="Mismatch"
+                size="xx-small">
+            </lightning-icon>
+            The stored session id is not valid, please refresh.
+            <lightning-button
+                label="Refresh"
+                icon-name="action:refresh"
+                variant="brand"
+                onclick={refreshStoredSessionId}>
+            </lightning-button>
+        </div>
+        <div lwc:else>
+            <lightning-icon 
+                icon-name="action:approval" 
+                alternative-text="Success" 
+                title="Success"
+                size="xx-small">
+            </lightning-icon>
+            The current stored session id is valid
+        </div>
+    
+</template>
