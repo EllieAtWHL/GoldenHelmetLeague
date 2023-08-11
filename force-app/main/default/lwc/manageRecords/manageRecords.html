@@ -13,17 +13,23 @@
                     <lightning-layout-item class="slds-align_absolute-center" size="12">
                         <lightning-button-group>
                             <lightning-button
-                                label="Open Draft Board"
+                                label="Open Board"
                                 icon-name="utility:open"
                                 variant="brand"
                                 onclick={openBoard}>
                             </lightning-button>
                             <lightning-button
-                                label="Open Draft Controls"
+                                label="Open Controls"
                                 icon-name="utility:open"
                                 variant="brand"
                                 onclick={openControls}
                                 disabled>  <!-- TODO: fix this! -->
+                            </lightning-button>
+                            <lightning-button
+                                label="Reset"
+                                icon-name="utility:undo"
+                                variant="brand"
+                                onclick={handleReset}>
                             </lightning-button>
                         </lightning-button-group>
                     </lightning-layout-item>
@@ -65,23 +71,9 @@
 
         </lightning-layout>
 
-        <!-- <lightning-layout class="slds-box slds-m-around_small">
 
-            <h1 class="slds-text-heading_small">Manage My Fantasy League Settings</h1>
-
-            <div>
-
-                <lightning-input label="Year"></lightning-input>
-                <lightning-input label="League Id"></lightning-input>
-                <lightning-input label="Generic URL"></lightning-input>
-                <lightning-input label="Instance URL"></lightning-input>
-                <lightning-input label="API Key" type="password"></lightning-input>
-                <lightning-input label="User Id" type="password"></lightning-input>
-
-            </div>
-            
-
-        </lightning-layout>
+ 
+        <!-- 
 
         <lightning-layout class="slds-box slds-m-around_small">
 
