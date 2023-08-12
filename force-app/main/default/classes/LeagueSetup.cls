@@ -48,12 +48,6 @@ public with sharing class LeagueSetup {
         try {
             List<Pick__c> allPicks = [SELECT Id FROM Pick__c];
             delete allPicks;
-
-            List<Team_Owner__c> owners = [SELECT Id, Current_Budget__c FROM Team_Owner__c];
-            for(Team_Owner__c team : owners){
-                team.Current_Budget__c = null;
-            }
-            update owners;
             
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());

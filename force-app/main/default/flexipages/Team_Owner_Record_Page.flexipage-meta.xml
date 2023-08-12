@@ -57,7 +57,7 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Starting_Budget__c</fieldItem>
+                <fieldItem>Record.Name__c</fieldItem>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -66,7 +66,7 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Current_Budget__c</fieldItem>
+                <fieldItem>Record.Pick_Number__c</fieldItem>
             </fieldInstance>
         </itemInstances>
         <name>Facet-q1hicj1kioq</name>
@@ -79,7 +79,7 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Name__c</fieldItem>
+                <fieldItem>Record.Starting_Budget__c</fieldItem>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -88,7 +88,16 @@
                     <name>uiBehavior</name>
                     <value>none</value>
                 </fieldInstanceProperties>
-                <fieldItem>Record.Pick_Number__c</fieldItem>
+                <fieldItem>Record.Total_Spend__c</fieldItem>
+            </fieldInstance>
+        </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.Remaining_Budget__c</fieldItem>
             </fieldInstance>
         </itemInstances>
         <name>Facet-eg0l1imbb6w</name>

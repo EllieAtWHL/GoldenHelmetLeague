@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Team_Owner__c</fullName>
-    <deleteConstraint>Restrict</deleteConstraint>
     <externalId>false</externalId>
     <label>Team Owner</label>
     <referenceTo>Team_Owner__c</referenceTo>
     <relationshipLabel>Picks</relationshipLabel>
     <relationshipName>Picks</relationshipName>
-    <required>false</required>
+    <relationshipOrder>1</relationshipOrder>
+    <reparentableMasterDetail>false</reparentableMasterDetail>
     <trackTrending>false</trackTrending>
-    <type>Lookup</type>
+    <type>MasterDetail</type>
+    <writeRequiresMasterRead>false</writeRequiresMasterRead>
 </CustomField>
