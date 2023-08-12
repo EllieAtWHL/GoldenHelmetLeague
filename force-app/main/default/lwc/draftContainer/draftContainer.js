@@ -10,10 +10,12 @@ export default class DraftContainer extends LightningElement {
     @track draft;
 
     draftResult;
+    teamsResult;
 
     loading;
     @wire(getTeams)
     wiredTeams(result){
+        this.teamsResult = result;
         if(result.data){
             this.teams = result.data;
         }
@@ -75,6 +77,9 @@ export default class DraftContainer extends LightningElement {
 
     handlePickMade(){
         refreshApex(this.draftResult)
+            .then( () => {
+                return refreshApex(this.teamsResult);
+            })
             .then( () => {
                 this.loading = false;
             })
