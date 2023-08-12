@@ -41,7 +41,7 @@ export default class DraftSelectPick extends LightningElement {
             const winnerTeam = this.teams.find( team => {
                 return team.Id === this.winnerEntered;
             });
-            return winnerTeam.Current_Budget__c !== undefined ? winnerTeam.Current_Budget__c : winnerTeam.Starting_Budget__c;
+            return winnerTeam.Remaining_Budget__c;
         }
         return null;
     }
@@ -65,7 +65,7 @@ export default class DraftSelectPick extends LightningElement {
         if(result.data){
             let values = [];
             result.data.forEach(team => {
-                let value = {value: team.Id, label: team.Team_Name__c, budget: team.Current_Budget__c}
+                let value = {value: team.Id, label: team.Team_Name__c}
                 values.push(value);
 
             })

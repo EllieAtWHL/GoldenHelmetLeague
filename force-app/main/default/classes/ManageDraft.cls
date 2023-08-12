@@ -2,7 +2,7 @@ public class ManageDraft {
 
     public class Draft{
         @AuraEnabled public List<DraftRound> rounds;
-        @AuraEnabled public enum draftType {auction, snake};
+        @AuraEnabled public String draftType;
         @AuraEnabled public Integer numberOfRounds;
         @AuraEnabled public Decimal auctionBudget;
     }
@@ -125,13 +125,10 @@ public class ManageDraft {
         recordsToUpsert.add(playerToUpdate);
 
         if(pickMade.Auction_Cost__c != null){
-            Team_Owner__c teamBudget = [SELECT Id,Current_Budget__c, Starting_Budget__c FROM Team_Owner__c WHERE Id = :teamId LIMIT 1];
-            Decimal budget = teamBudget.Current_Budget__c == NULL ? teamBudget.Starting_Budget__c : teamBudget.Current_Budget__c;
-            if (budget - pickMade.Auction_Cost__c < 0){
+            Team_Owner__c teamBudget = [SELECT Id,Remaining_Budget__c FROM Team_Owner__c WHERE Id = :teamId LIMIT 1];
+            if (teamBudget.Remaining_Budget__c - pickMade.Auction_Cost__c < 0){
                 throw new AuraHandledException('Winner cannot afford offered price.');
             }
-            teamBudget.Current_Budget__c = budget - pickMade.Auction_Cost__c;
-            recordsToUpsert.add(teamBudget);
         }
         upsert recordsToUpsert;
 

@@ -24,7 +24,6 @@ export default class DraftBoard extends LightningElement {
             team.picks = [];
             let teamPicks = this.findAllPicks(team);
             if(teamPicks.length > 0) team.picks = teamPicks;
-            if(team.Current_Budget__c === undefined) team.Current_Budget__c = team.Starting_Budget__c;
         })    
         return tempDraft;
     }

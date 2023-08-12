@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Total_Spend__c</fullName>
+    <externalId>false</externalId>
+    <label>Total Spend</label>
+    <summarizedField>Pick__c.Auction_Cost__c</summarizedField>
+    <summaryForeignKey>Pick__c.Team_Owner__c</summaryForeignKey>
+    <summaryOperation>sum</summaryOperation>
+    <trackTrending>false</trackTrending>
+    <type>Summary</type>
+</CustomField>
