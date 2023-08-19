@@ -107,7 +107,7 @@ export default class DraftCommisioner extends LightningElement {
     }
 
     get draftRunning(){
-        return this.currentRoundNumber && this.currentPick;
+        return this.currentRoundNumber && this.currentPick && this.isSnake;
     }
 
     createDraft(data){
@@ -129,7 +129,10 @@ export default class DraftCommisioner extends LightningElement {
                 pick.pickTeam = this.draftOrder[index].Team;
                 pick.round = round.roundNumber;
                 pick.imageURL = this.draftOrder[index].imageURL;
-                pick.franchiseId = this.draftOrder[index].franchiseId;
+                if(!pick.franchiseId){
+                    pick.franchiseId = this.draftOrder[index].franchiseId;
+                }
+                
             })
         })
         return tempDraft;
