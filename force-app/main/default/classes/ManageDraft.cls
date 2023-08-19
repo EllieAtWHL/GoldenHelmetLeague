@@ -81,7 +81,6 @@ public class ManageDraft {
                     thePick.cssClass = 'pick-made ' + thePick.playerPickedPosition;
                     thePick.auctionCost = picksMade.get(thePick.overallPickNumber).Auction_Cost__c;
                     thePick.teamOwner = picksMade.get(thePick.overallPickNumber).Team_Owner__c;
-
                     thePick.teamOwnerName = picksMade.get(thePick.overallPickNumber).Team_Owner__r.Team_Name__c;
 
                     String teamAndBye = picksMade.get(thePick.overallPickNumber).Player__r.NFL_Team__r.Name;
@@ -91,6 +90,7 @@ public class ManageDraft {
                     thePick.playerPickedTeamAndByeWeek = teamAndBye;
                     thePick.roundNumber = Integer.valueOf(picksMade.get(thePick.overallPickNumber).Round__c);
                     thePick.playerMFLId = picksMade.get(thePick.overallPickNumber).Player__r.MFL_Id__c;
+                    thePick.franchiseId = picksMade.get(thePick.overallPickNumber).Team_Owner__r.Franchise_Id__c;
                 }
                 picks.add(thePick);
                 if(actualPick == teamCount){
@@ -104,7 +104,21 @@ public class ManageDraft {
     }
 
     private static Map<Integer, Pick__c> getPicks(){
-        List<Pick__c> picks =  [SELECT Id, Player__r.MFL_Name__c, Player__r.Position__c, Player__r.MFL_Id__c,  Player__r.NFL_Team__r.Name, Player__r.NFL_Team__r.Bye_Week__c, Round__c, Round_Pick_Number__c, Overall_Pick_Number__c, Team_Owner__c, Team_Owner__r.Team_Name__c, Auction_Cost__c FROM Pick__c];
+        List<Pick__c> picks =  [SELECT 
+                                    Id, 
+                                    Player__r.MFL_Name__c, 
+                                    Player__r.Position__c, 
+                                    Player__r.MFL_Id__c,  
+                                    Player__r.NFL_Team__r.Name, 
+                                    Player__r.NFL_Team__r.Bye_Week__c, 
+                                    Round__c, 
+                                    Round_Pick_Number__c, 
+                                    Overall_Pick_Number__c, 
+                                    Team_Owner__c, 
+                                    Team_Owner__r.Team_Name__c, 
+                                    Team_Owner__r.Franchise_Id__c, 
+                                    Auction_Cost__c 
+                                FROM Pick__c];
         Map<Integer, Pick__c> mapPicks = new Map<Integer, Pick__c>();
         for(Pick__c pick : picks){
             mapPicks.put(Integer.valueOf(pick.Overall_Pick_Number__c), pick);
@@ -167,7 +181,9 @@ public class ManageDraft {
 
         String draftXML = convertJSONtoXML(draftJSON);
 
-        HttpResponse res = MFLRetrieveData.mflPostCallout(url, draftXML);
+        system.debug(draftXML); //TODO: check if MFL will accept franchise id not in draft order specified in settings
+
+        //HttpResponse res = MFLRetrieveData.mflPostCallout(url, draftXML); //TODO: Uncomment this to check integration to MFL
     }
 
     private static string convertJSONtoXML(List<RoundPick> draft){
