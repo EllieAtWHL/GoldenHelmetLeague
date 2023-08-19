@@ -31,6 +31,7 @@ public class MFLManageOwners {
                 if(teamChanged(franchise, owners)){                    
                     Team_Owner__c team = new Team_Owner__c(
                         Id = owners.get(franchise.id).Id,
+                        Name = franchise.name,
                         Team_Name__c = franchise.name,
                         Name__c = franchise.owner_name,
                         Franchise_Id__c = franchise.id,
@@ -41,6 +42,7 @@ public class MFLManageOwners {
             } else{
                 Team_Owner__c team = new Team_Owner__c(
                     Team_Name__c = franchise.name,
+                    Name = franchise.name,
                     Name__c = franchise.owner_name,
                     Franchise_Id__c = franchise.id,
                     Icon_URL__c = franchise.icon
