@@ -234,7 +234,6 @@ public with sharing class MFLManagePlayers {
     }
 
     private static Id freeAgentTeam(){
-        system.debug('calling freeAgentTeam');
         List<NFL_Team__c> fa = [SELECT Id FROM NFL_Team__c WHERE Name = 'FA' LIMIT 1];
         if(fa.isEmpty()){
             NFL_Team__c faTeam = new NFL_Team__c(
