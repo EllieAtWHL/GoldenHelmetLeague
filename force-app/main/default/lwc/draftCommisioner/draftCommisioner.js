@@ -48,7 +48,7 @@ export default class DraftCommisioner extends LightningElement {
         if(result.data){
             this.draft = this.createDraft(result.data);
             if(this.draftStarted && this.currentPick){
-                sendMessage({message: `On the clock: </br> ${this.currentPick.pickTeam}`})
+                sendMessage({message: this.message})
             }
             this.loading = false;
         }
@@ -56,6 +56,11 @@ export default class DraftCommisioner extends LightningElement {
             showToast('Unable to retrieve draft information', result.error?.body?.message, 'error');
             this.loading = false;
         }
+    }
+
+    get message(){
+        return this.isSnake ? 
+            `On the clock: </br> ${this.currentPick.pickTeam}` : `Next to nominate: </br> ${this.currentPick.pickTeam}`;
     }
 
     get teamTotal(){
@@ -140,7 +145,7 @@ export default class DraftCommisioner extends LightningElement {
 
     startDraft(){
         this.draftStarted = true;
-        sendMessage({message: `On the clock: </br> ${this.currentPick.pickTeam}`})
+        sendMessage({message: this.message})
     }
 
     startPick(){
