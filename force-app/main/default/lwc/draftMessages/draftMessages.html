@@ -4,10 +4,10 @@
 
     <lightning-layout class={textClass} multiple-rows="true">
         <lightning-layout-item size="12">
-            {message}
+            {line1}
         </lightning-layout-item>
-        <lightning-layout-item lwc:if={clock} class="clock" size="12">
-            {clock}
+        <lightning-layout-item lwc:if={line2} class={line2Class} size="12">
+            {line2}
         </lightning-layout-item>
     </lightning-layout>
 

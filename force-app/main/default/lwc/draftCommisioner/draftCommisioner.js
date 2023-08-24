@@ -48,7 +48,7 @@ export default class DraftCommisioner extends LightningElement {
         if(result.data){
             this.draft = this.createDraft(result.data);
             if(this.draftStarted && this.currentPick){
-                sendMessage({message: `On the clock: </br> ${this.currentPick.pickTeam}`})
+                sendMessage({message: this.message})
             }
             this.loading = false;
         }
@@ -56,6 +56,11 @@ export default class DraftCommisioner extends LightningElement {
             showToast('Unable to retrieve draft information', result.error?.body?.message, 'error');
             this.loading = false;
         }
+    }
+
+    get message(){
+        return this.isSnake ? 
+            `On the clock: </br> ${this.currentPick.pickTeam}` : `Next to nominate: </br> ${this.currentPick.pickTeam}`;
     }
 
     get teamTotal(){
@@ -107,7 +112,7 @@ export default class DraftCommisioner extends LightningElement {
     }
 
     get draftRunning(){
-        return this.currentRoundNumber && this.currentPick;
+        return this.currentRoundNumber && this.currentPick && this.isSnake;
     }
 
     createDraft(data){
@@ -129,7 +134,10 @@ export default class DraftCommisioner extends LightningElement {
                 pick.pickTeam = this.draftOrder[index].Team;
                 pick.round = round.roundNumber;
                 pick.imageURL = this.draftOrder[index].imageURL;
-                pick.franchiseId = this.draftOrder[index].franchiseId;
+                if(!pick.franchiseId){
+                    pick.franchiseId = this.draftOrder[index].franchiseId;
+                }
+                
             })
         })
         return tempDraft;
@@ -137,11 +145,13 @@ export default class DraftCommisioner extends LightningElement {
 
     startDraft(){
         this.draftStarted = true;
-        sendMessage({message: `On the clock: </br> ${this.currentPick.pickTeam}`})
+        sendMessage({message: this.message})
     }
 
     startPick(){
-        sendMessage({message: 'THE PICK IS IN'})
+        if(this.isSnake){
+            sendMessage({message: 'THE PICK IS IN'})
+        }
         this.showSelectionScreen = true;
     }
 

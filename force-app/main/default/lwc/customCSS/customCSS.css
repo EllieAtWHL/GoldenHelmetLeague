@@ -15,8 +15,10 @@
 
 .pick-number,
 td.pick-made{
+    font-size: 12px;
+    font-weight: bold;
     width: 8vw;
-    height: 8vh;
+    height: 6vh;
     text-align: center;
 }
 
@@ -25,17 +27,17 @@ td.pick-made{
 }
 
 .pick-made{
-    color: #222222
+    color: #000000
 }
 
 .QB{
-    background-color: #FAC898;
+    background-color: #f7d2b0;
 }
 .RB{
-    background-color: #FDFD96;
+    background-color: #f8f8b2;
 }
 .WR{
-    background-color: #A7C7E7;
+    background-color: #c0d2e4;
 }
 .TE{
     background-color: #C1E1C1;

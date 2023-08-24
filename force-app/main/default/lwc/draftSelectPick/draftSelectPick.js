@@ -4,6 +4,7 @@ import { showToast } from 'c/toastUtility';
 import getTeams from '@salesforce/apex/MFLManageOwners.getTeams';
 import searchPlayers from '@salesforce/apex/MFLManagePlayers.searchPlayers';
 import makePick from '@salesforce/apex/ManageDraft.makePick';
+import sendMessage from '@salesforce/apex/ManageDraft.publishDraftMessagePlatformEvent';
 
 export default class DraftSelectPick extends LightningElement {
 
@@ -97,6 +98,14 @@ export default class DraftSelectPick extends LightningElement {
             }
         })
         this.playerSelected = playerId;
+        if(this.isAuction){
+            let playersArray = this.availablePlayers.filter( player => {
+                return player.Id === playerId;
+            })
+            const player = playersArray[0];
+            const message = `Bidding on: ${player.MFL_Name__c}</br>${player.Team__c}</br>${player.Position__c}`
+            sendMessage({message: message});
+        }
     }
 
     handleChange(event){
