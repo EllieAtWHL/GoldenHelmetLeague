@@ -1,16 +1,21 @@
+@import 'c/customCSS';
+
 .full-height{
     height: 100%;
 }
 
-.pick{
+.pick, .bidding {
     margin-left: 20px;
     margin-right: 20px;
     border-radius: 5px;
     font-family: 'Trebuchet MS', sans-serif;
     font-weight: bold;
+    color: #222222;
+}
+
+.pick {
     font-size: 50px;
     background-color: #FFCC00;
-    color: #222222;
 }
 
 .clock{

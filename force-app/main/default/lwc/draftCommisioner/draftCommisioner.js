@@ -144,7 +144,9 @@ export default class DraftCommisioner extends LightningElement {
     }
 
     startPick(){
-        sendMessage({message: 'THE PICK IS IN'})
+        if(this.isSnake){
+            sendMessage({message: 'THE PICK IS IN'})
+        }
         this.showSelectionScreen = true;
     }
 
