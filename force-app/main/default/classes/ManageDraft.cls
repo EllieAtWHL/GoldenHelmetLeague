@@ -35,7 +35,7 @@ public class ManageDraft {
         Integer teamCount = teamsInDraft.size();
         Draft_Settings__c draftSettings = LeagueSetup.getDraftSettings();
         draft.draftType = draftSettings.Draft_Type__c;
-        Integer roundCount = draft.draftType == 'snake' ? Integer.valueOf(draftSettings.Number_of_Rounds__c) : 20; // TODO: Is there a better way to manage this?
+        Integer roundCount = draft.draftType == 'snake' ? Integer.valueOf(draftSettings.Number_of_Rounds__c) : 17; // TODO: Is there a better way to manage this?
         draft.numberOfRounds = roundCount;
         draft.auctionBudget = draftSettings.Auction_Budget__c;
 
@@ -177,13 +177,16 @@ public class ManageDraft {
         url += '/' + mfl.Year__c;
         url += '/import?TYPE=draftResults&L=' + mfl.League_Id__c;
         url += '&APIKEY=' + mfl.API_Key__c;
-        url += '&JSON=1';  
 
         String draftXML = convertJSONtoXML(draftJSON);
 
-        system.debug(draftXML); //TODO: check if MFL will accept franchise id not in draft order specified in settings
+        system.debug(draftXML);
 
-        //HttpResponse res = MFLRetrieveData.mflPostCallout(url, draftXML); //TODO: Uncomment this to check integration to MFL
+        HttpResponse res = MFLRetrieveData.mflPostCallout(url, draftXML);
+
+        if(res.getStatusCode() != 200){
+            throw new AuraHandledException(res.getStatus());
+        }
     }
 
     private static string convertJSONtoXML(List<RoundPick> draft){
