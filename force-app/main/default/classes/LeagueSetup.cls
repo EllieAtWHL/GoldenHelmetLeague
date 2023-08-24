@@ -46,7 +46,7 @@ public with sharing class LeagueSetup {
     @AuraEnabled
     public static void resetDraft(){
         try {
-            List<Pick__c> allPicks = [SELECT Id FROM Pick__c];
+            List<Pick__c> allPicks =    [SELECT Id FROM Pick__c];
             delete allPicks;
             
         } catch (Exception e) {

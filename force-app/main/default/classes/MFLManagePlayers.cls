@@ -177,7 +177,19 @@ public with sharing class MFLManagePlayers {
 
     private static Map<String, Player__c> getNFLPlayers(){
 
-        List<Player__c> players = [SELECT Id, MFL_Id__c, MFL_Name__c, NFL_Team__c, NFL_Team__r.Name, Position__c, MFL_Status__c, ADP_Average__c, ADP_Rank__c, Experts_Rank__c FROM Player__c WITH USER_MODE ORDER BY ADP_Rank__c];
+        List<Player__c> players =   [SELECT 
+                                        Id, 
+                                        MFL_Id__c, 
+                                        MFL_Name__c, 
+                                        NFL_Team__c, 
+                                        NFL_Team__r.Name, Position__c, 
+                                        MFL_Status__c, 
+                                        ADP_Average__c, 
+                                        ADP_Rank__c, 
+                                        Experts_Rank__c 
+                                    FROM Player__c 
+                                    WITH USER_MODE 
+                                    ORDER BY ADP_Rank__c];
 
         Map<String, Player__c> mapPlayers = new Map<String, Player__c>();
 
@@ -234,7 +246,10 @@ public with sharing class MFLManagePlayers {
     }
 
     private static Id freeAgentTeam(){
-        List<NFL_Team__c> fa = [SELECT Id FROM NFL_Team__c WHERE Name = 'FA' LIMIT 1];
+        List<NFL_Team__c> fa = [SELECT Id 
+                                FROM NFL_Team__c 
+                                WHERE Name = 'FA' 
+                                LIMIT 1];
         if(fa.isEmpty()){
             NFL_Team__c faTeam = new NFL_Team__c(
                 Name = 'FA',
@@ -250,7 +265,18 @@ public with sharing class MFLManagePlayers {
     @AuraEnabled (cacheable=true)
     public static List<Player__c> searchPlayers(String searchTerm){
         if(searchTerm == null){
-            return [SELECT Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c FROM Player__c WHERE Team_Owner__c = NULL WITH USER_MODE ORDER BY ADP_Rank__c LIMIT 8];
+            return  [SELECT 
+                        Id, 
+                        MFL_Name__c, 
+                        Photo_URL_Formula__c, 
+                        Position__c, 
+                        Team__c, 
+                        MFL_Status__c 
+                    FROM Player__c 
+                    WHERE Team_Owner__c = NULL 
+                    WITH USER_MODE 
+                    ORDER BY ADP_Rank__c 
+                    LIMIT 8];
         }else{
             searchTerm = '*'+searchTerm+'*';
             List<List<SObject>> soslResult = [FIND :searchTerm IN ALL FIELDS 

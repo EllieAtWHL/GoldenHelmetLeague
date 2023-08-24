@@ -86,7 +86,14 @@ public class MFLManageOwners {
     }
 
     private static Map<String, Team_Owner__c> getOwners(){
-        List<Team_Owner__c> teams = [SELECT Id, Name__c, Team_Name__c, Icon_URL__c, Franchise_Id__c FROM Team_Owner__c ORDER BY Pick_Number__c];
+        List<Team_Owner__c> teams =     [SELECT 
+                                            Id, 
+                                            Name__c, 
+                                            Team_Name__c, 
+                                            Icon_URL__c, 
+                                            Franchise_Id__c 
+                                        FROM Team_Owner__c 
+                                        ORDER BY Pick_Number__c];
         Map<String, Team_Owner__c> mapTeams = new Map<String, Team_Owner__c>();
         for(Team_Owner__c team : teams){
             mapTeams.put(team.Franchise_Id__c, team);
@@ -97,7 +104,16 @@ public class MFLManageOwners {
     @AuraEnabled (cacheable=true)
     public static List<Team_Owner__c> getTeams(){
         try {
-            return [SELECT Id, Name__c, Team_Name__c, Icon_URL__c, Franchise_Id__c, Starting_Budget__c, Remaining_Budget__c FROM Team_Owner__c ORDER BY Pick_Number__c];
+            return  [SELECT 
+                        Id, 
+                        Name__c, 
+                        Team_Name__c, 
+                        Icon_URL__c, 
+                        Franchise_Id__c, 
+                        Starting_Budget__c, 
+                        Remaining_Budget__c 
+                    FROM Team_Owner__c 
+                    ORDER BY Pick_Number__c];
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }

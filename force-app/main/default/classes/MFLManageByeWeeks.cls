@@ -64,7 +64,12 @@ public with sharing class MFLManageByeWeeks {
 
     public static Map<String, NFL_Team__c> getNFLTeams(){
         
-        List<NFL_Team__c> teams = [SELECT Id, Name, Bye_Week__c FROM NFL_Team__c WITH USER_MODE];
+        List<NFL_Team__c> teams =   [SELECT 
+                                        Id, 
+                                        Name, 
+                                        Bye_Week__c 
+                                    FROM NFL_Team__c 
+                                    WITH USER_MODE];
 
         Map<String, NFL_Team__c> mapTeams = new Map<String, NFL_Team__c>();
 

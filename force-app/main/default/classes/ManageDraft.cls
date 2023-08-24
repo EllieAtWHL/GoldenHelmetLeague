@@ -139,7 +139,11 @@ public class ManageDraft {
         recordsToUpsert.add(playerToUpdate);
 
         if(pickMade.Auction_Cost__c != null){
-            Team_Owner__c teamBudget = [SELECT Id,Remaining_Budget__c FROM Team_Owner__c WHERE Id = :teamId LIMIT 1];
+            Team_Owner__c teamBudget = [SELECT 
+                                            Id,
+                                            Remaining_Budget__c 
+                                        FROM Team_Owner__c 
+                                        WHERE Id = :teamId LIMIT 1];
             if (teamBudget.Remaining_Budget__c - pickMade.Auction_Cost__c < 0){
                 throw new AuraHandledException('Winner cannot afford offered price.');
             }
@@ -151,7 +155,10 @@ public class ManageDraft {
 
     @AuraEnabled
     public static void undoPick(Integer pickNumber){
-        Pick__c pickToDelete = [SELECT Id FROM Pick__c WHERE Overall_Pick_Number__c = :pickNumber LIMIT 1];
+        Pick__c pickToDelete =  [SELECT Id 
+                                FROM Pick__c 
+                                WHERE Overall_Pick_Number__c = :pickNumber 
+                                LIMIT 1];
         delete pickToDelete;
         publishDraftUpdatedPlatformEvent();
     }
