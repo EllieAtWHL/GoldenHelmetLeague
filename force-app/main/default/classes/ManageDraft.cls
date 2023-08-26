@@ -169,9 +169,10 @@ public class ManageDraft {
     }
 
     @AuraEnabled
-    public static void publishDraftMessagePlatformEvent(String message){
+    public static void publishDraftMessagePlatformEvent(String message, String cssClass){
         Draft_Message__e event = new Draft_Message__e();
         event.Display_Message__c = message;
+        event.CSS_Class__c = cssClass;
         EventBus.publish(event);
     }
 
