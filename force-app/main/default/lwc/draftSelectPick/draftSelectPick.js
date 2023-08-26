@@ -4,7 +4,6 @@ import { showToast } from 'c/toastUtility';
 import getTeams from '@salesforce/apex/MFLManageOwners.getTeams';
 import searchPlayers from '@salesforce/apex/MFLManagePlayers.searchPlayers';
 import makePick from '@salesforce/apex/ManageDraft.makePick';
-import sendMessage from '@salesforce/apex/ManageDraft.publishDraftMessagePlatformEvent';
 
 export default class DraftSelectPick extends LightningElement {
 
@@ -103,8 +102,11 @@ export default class DraftSelectPick extends LightningElement {
                 return player.Id === playerId;
             })
             const player = playersArray[0];
-            const message = `Bidding on: ${player.MFL_Name__c}</br>${player.Team__c}</br>${player.Position__c}`
-            sendMessage({message: message});
+            const shortenedName = player.MFL_Name__c.split(',',1)[0];
+            const message = `Bidding on: ${player.MFL_Name__c.length > 15 ? shortenedName : player.MFL_Name__c} - ${player.Team__c}`;
+            const detail = {message: message, class: player.Position__c};
+                const playerSelectedEvent = new CustomEvent('playerselected', {detail: detail});
+            this.dispatchEvent(playerSelectedEvent);
         }
     }
 
