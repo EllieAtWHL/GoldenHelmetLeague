@@ -48,7 +48,7 @@ export default class DraftCommisioner extends LightningElement {
         if(result.data){
             this.draft = this.createDraft(result.data);
             if(this.draftStarted && this.currentPick){
-                sendMessage({message: this.message})
+                sendMessage({message: this.message, cssClass: null})
             }
             this.loading = false;
         }
@@ -60,7 +60,7 @@ export default class DraftCommisioner extends LightningElement {
 
     get message(){
         return this.isSnake ? 
-            `On the clock: </br> ${this.currentPick.pickTeam}` : `Next to nominate: </br> ${this.currentPick.pickTeam}`;
+            `On the clock: </br> ${this.currentPick.pickTeam}` : `Now nominating: </br> ${this.currentPick.pickTeam}`;
     }
 
     get teamTotal(){
@@ -81,6 +81,11 @@ export default class DraftCommisioner extends LightningElement {
 
     get currentPick(){
         let getPick = this.currentRound?.picks.filter(pick => pick.roundPickNumber === this.currentPickNumber);
+        return getPick ? getPick[0] : null; 
+    }
+
+    get nextPick(){
+        let getPick = this.currentRound?.picks.filter(pick => pick.roundPickNumber === (this.currentPickNumber + 1));
         return getPick ? getPick[0] : null; 
     }
 
@@ -145,18 +150,25 @@ export default class DraftCommisioner extends LightningElement {
 
     startDraft(){
         this.draftStarted = true;
-        sendMessage({message: this.message})
+        sendMessage({message: this.message, cssClass: null})
     }
 
     startPick(){
         if(this.isSnake){
-            sendMessage({message: 'THE PICK IS IN'})
+            sendMessage({message: 'THE PICK IS IN', cssClass: null})
         }
         this.showSelectionScreen = true;
     }
 
     handleClose(){
         this.showSelectionScreen = false;
+    }
+
+    handlePlayerSelected(event){
+        let nextMessage = this.nextPick.pickTeam;
+        let message = `${event.detail.message}</br>Next up: ${nextMessage}`;
+        sendMessage({message: message, cssClass: event.detail.class});
+        
     }
 
     handlePickMade(){
