@@ -11,8 +11,6 @@ export default class DraftMessages extends LightningElement {
     messageReceived(event){
         let message = event?.detail?.data?.payload?.Display_Message__c;
         this.cssClass = event?.detail?.data?.payload?.CSS_Class__c;
-        console.log(event.detail.data);
-        console.log(JSON.stringify(event.detail.data));
         if(message.includes('</br>')){
             const textArray = message.split('</br>');
             this.line1 = textArray[0];
