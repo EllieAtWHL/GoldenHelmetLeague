@@ -4,9 +4,10 @@
         class="slds-p-vertical_small"
         title="Draft Settings"
         lwc:if={draftSettings}>
+
         <lightning-layout>
             <lightning-layout-item
-                flexibility="auto"
+                size="6"
                 padding="around-small">
 
                 <lightning-combobox
@@ -18,7 +19,28 @@
                     options={draftTypeOptions}
                     onchange={handleChange}>
                 </lightning-combobox>
+
             </lightning-layout-item>
+            <lightning-layout-item
+                size="6"
+                padding="around-small">
+
+                <lightning-combobox
+                    lwc:ref="rankingoption"
+                    name="Ranking_Option__c"
+                    label="Ranking Option"
+                    value={draftSettings.Ranking_Option__c}
+                    placeholder="-SELECT TYPE-"
+                    options={rankingOptions}
+                    onchange={handleChange}>
+                </lightning-combobox>
+                
+            </lightning-layout-item>
+            
+        </lightning-layout>
+
+        <lightning-layout>
+
             <lightning-layout-item
                 size="6"
                 padding="around-small">
@@ -38,6 +60,22 @@
                     label="Number of Rounds"
                     value={draftSettings.Number_of_Rounds__c}
                     type="number"
+                    lwc:if={isSnake}>
+                </lightning-input>
+
+            </lightning-layout-item>
+
+            <lightning-layout-item
+                size="6"
+                padding="around-small">
+
+                <lightning-input
+                    lwc:ref="reverse"
+                    label="Third Round Reversal"
+                    value={draftSettings.Third_Round_Reversal__c}
+                    type="toggle"
+                    checked={draftSettings.Third_Round_Reversal__c}
+                    onchange={handleChange}
                     lwc:if={isSnake}>
                 </lightning-input>
 

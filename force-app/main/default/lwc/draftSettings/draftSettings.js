@@ -9,6 +9,10 @@ const DRAFT_TYPE_OPTIONS = [
     { label: 'Snake', value: SNAKE},
     { label: 'Auction', value: AUCTION}
 ]
+const RANKING_OPTIONS = [
+    { label: 'ADP', value: 'ADP'},
+    { label: 'Fantasy Sharks', value: 'Fantasy Sharks'}
+]
 
 export default class DraftSettings extends LightningElement {
 
@@ -30,6 +34,10 @@ export default class DraftSettings extends LightningElement {
         return DRAFT_TYPE_OPTIONS;
     }
 
+    get rankingOptions(){
+        return RANKING_OPTIONS;
+    }
+
     get isAuction(){
         return this.draftSettings.Draft_Type__c === AUCTION;
     }
@@ -47,8 +55,10 @@ export default class DraftSettings extends LightningElement {
         let newDraftSettings = {};
         newDraftSettings.Id = this.draftSettings.Id;
         newDraftSettings.Draft_Type__c = this.refs.drafttype.value;
+        newDraftSettings.Ranking_Option__c = this.refs.rankingoption.value;
         newDraftSettings.Auction_Budget__c = this.refs.budget ? this.refs.budget.value : null;
         newDraftSettings.Number_of_Rounds__c = this.refs.rounds ? this.refs.rounds.value : null;
+        newDraftSettings.Third_Round_Reversal__c = this.refs.reverse ? this.refs.reverse.checked : false;
         saveDraftSetup({settings: newDraftSettings})
             .then( () => {
                 this.saving = false;
