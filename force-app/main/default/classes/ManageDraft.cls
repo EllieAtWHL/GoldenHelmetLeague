@@ -45,7 +45,7 @@ public class ManageDraft {
 
         for(Integer round=0; round<roundCount; round++){
             Integer actualRound = round+1;
-            Boolean reverse = false;
+            Boolean reverse = draftSettings.Third_Round_Reversal__c;
             if(draft.draftType == 'snake'){
                 switch on actualRound {
                     when 1 {
@@ -56,7 +56,7 @@ public class ManageDraft {
                     }
                     when else {
                         if(math.mod((actualRound), 2) == 0){
-                            reverse = false;
+                            reverse = !draftSettings.Third_Round_Reversal__c;
                         }
                     }
                 }
