@@ -6,8 +6,13 @@ import getDraft from '@salesforce/apex/ManageDraft.getDraft';
 import undoPick from '@salesforce/apex/ManageDraft.undoPick';
 import submitDraft from '@salesforce/apex/ManageDraft.submitDraft';
 import sendMessage from '@salesforce/apex/ManageDraft.publishDraftMessagePlatformEvent';
+import { publish, MessageContext } from 'lightning/messageService';
+import draftMessage from '@salesforce/messageChannel/DraftMessage__c';
 
 export default class DraftCommisioner extends LightningElement {
+
+    @wire(MessageContext)
+    messageContext;
 
     @track teams;
     @track draft;
@@ -181,6 +186,16 @@ export default class DraftCommisioner extends LightningElement {
             this.currentPickNumber++;
         }
         this.refreshData();
+
+        const payload =  {
+            type: 'checkWiggle',
+            detail: {
+                roundNumber: this.currentRoundNumber,
+                pickNumber: this.currentPickNumber
+            }
+        }
+
+        publish(this.messageContext, draftMessage, payload);
     }
 
     handleUndo(){
