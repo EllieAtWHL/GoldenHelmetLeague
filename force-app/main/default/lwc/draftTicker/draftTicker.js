@@ -1,13 +1,15 @@
 import { LightningElement, api } from 'lwc';
+import { getCurrentYear } from 'c/dateUtility';
 
 export default class DraftTicker extends LightningElement {
 
     @api tickerContent;
     @api isSnake;
+    year = getCurrentYear();
 
     get tickerContentFormatted(){
         if(!this.tickerContent.length){
-            return `Welcome to the 2023 Golden Helmet League Draft`; //TODO: Avoid hard-coding
+            return `Welcome to the ${this.year} Golden Helmet League Draft`;
         }
 
         let content = `Recent picks: `;

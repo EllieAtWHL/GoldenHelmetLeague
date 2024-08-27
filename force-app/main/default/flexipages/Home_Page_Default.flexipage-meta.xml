@@ -3,7 +3,7 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>manageRecords</componentName>
+                <componentName>leagueSetup</componentName>
             </componentInstance>
         </itemInstances>
         <mode>Replace</mode>

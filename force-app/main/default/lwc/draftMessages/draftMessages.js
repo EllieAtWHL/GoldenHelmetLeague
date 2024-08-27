@@ -1,12 +1,15 @@
 import { LightningElement } from 'lwc';
+import { getCurrentYear } from 'c/dateUtility';
 
 const CLASSES = 'slds-align_absolute-center slds-text-align_center slds-text-heading_large slds-m-around_xx-small slds-p-vertical_xx-small full-height';
 const PICK = 'THE PICK IS IN';
 
 export default class DraftMessages extends LightningElement {
+    year = getCurrentYear();
     line1 = 'Welcome to the'; 
-    line2 = 'Golden Helmet Draft 2023'; //TODO: Avoid hardcoding
+    line2 = `Golden Helmet Draft ${this.year}`;
     cssClass;
+
 
     messageReceived(event){
         let message = event?.detail?.data?.payload?.Display_Message__c;
