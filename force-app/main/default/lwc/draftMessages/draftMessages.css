@@ -1,7 +1,7 @@
 @import 'c/customCSS';
 
 .full-height{
-    height: 100px;
+    height: 100%;
 }
 
 .pick, .bidding {
@@ -14,7 +14,7 @@
 }
 
 .bidding {
-    font-size: 22px;
+    font-size: 26px;
 }
 
 .pick {
