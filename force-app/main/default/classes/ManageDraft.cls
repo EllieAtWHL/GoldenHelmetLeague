@@ -103,6 +103,7 @@ public class ManageDraft {
         return draft;
     }
 
+    @TestVisible
     private static Map<Integer, Pick__c> getPicks(){
         List<Pick__c> picks =  [SELECT 
                                     Id, 
