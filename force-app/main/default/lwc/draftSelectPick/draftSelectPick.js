@@ -88,14 +88,19 @@ export default class DraftSelectPick extends LightningElement {
 
     handleClick(event){
         let playerId = event.target.parentNode.name;
-        let profileElements = this.template.querySelectorAll('c-player-profile');
+        if(playerId == this.playerSelected && this.isSnake){
+            this.handleConfirm();
+        } else {
+            let profileElements = this.template.querySelectorAll('c-player-profile');
         profileElements.forEach(element => {
             if(playerId === element.name){
                 element.makeActive();
             }else{
                 element.makeInactive();
             }
-        })
+            })
+        }
+        
         this.playerSelected = playerId;
         if(this.isAuction){
             let playersArray = this.availablePlayers.filter( player => {
