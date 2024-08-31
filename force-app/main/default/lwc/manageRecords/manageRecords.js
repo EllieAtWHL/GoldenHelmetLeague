@@ -5,6 +5,7 @@ import syncNFLTeams from '@salesforce/apex/MFLManageByeWeeks.manageByeWeeks';
 import syncNFLPlayers from '@salesforce/apex/MFLManagePlayers.managePlayers';
 import syncMFLFranchises from '@salesforce/apex/MFLManageOwners.manageOwners';
 import resetDraft from '@salesforce/apex/LeagueSetup.resetDraft';
+import cleanPlayers from '@salesforce/apex/MFLManagePlayers.deleteUnavailablePlayers';
 
 export default class ManageRecords extends NavigationMixin(LightningElement) {
 
@@ -31,6 +32,20 @@ export default class ManageRecords extends NavigationMixin(LightningElement) {
             .finally( () => {
                 this.isProcessing = false;
             })
+    }
+
+    handleClean(){
+        this.isProcessing = true;
+        cleanPlayers()
+            .then( () => {
+                 showToast('Clean Successful', null, 'success');
+             })
+             .catch( error => {
+                 showToast('Clean unsuccessful', error.body.message, 'error');
+                 })
+             .finally( () => {
+                 this.isProcessing = false;
+             })
     }
 
     navigateToPage(url){

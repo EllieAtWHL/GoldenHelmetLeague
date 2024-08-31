@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>57.0</apiVersion>
-    <isExposed>false</isExposed>
+    <isExposed>true</isExposed>
+    <masterLabel>League Details</masterLabel>
+    <description>Allows the user to input specifics for the integration to their My Fantasy League instance.</description>
+    <targets>
+        <target>lightning__HomePage</target>
+    </targets>
 </LightningComponentBundle>

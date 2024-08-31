@@ -18,18 +18,24 @@
                                 variant="brand"
                                 onclick={openBoard}>
                             </lightning-button>
-                            <lightning-button
+                            <!--<lightning-button
                                 label="Open Controls"
                                 icon-name="utility:open"
                                 variant="brand"
                                 onclick={openControls}
-                                disabled>  <!-- TODO: fix this! -->
-                            </lightning-button>
+                                disabled>
+                            </lightning-button> TODO: fix this! -->
                             <lightning-button
                                 label="Reset"
                                 icon-name="utility:undo"
                                 variant="brand"
                                 onclick={handleReset}>
+                            </lightning-button>
+                            <lightning-button
+                                label="Clean Players"
+                                icon-name="utility:recycle_bin_empty"
+                                variant="brand"
+                                onclick={handleClean}>
                             </lightning-button>
                         </lightning-button-group>
                     </lightning-layout-item>

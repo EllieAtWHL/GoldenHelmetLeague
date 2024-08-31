@@ -3,6 +3,7 @@
     <apiVersion>55.0</apiVersion>
     <isExposed>true</isExposed>
     <masterLabel>Manage Records</masterLabel>
+    <description>Allow the user to manage the app, such as syncing from My Fantasy League or resetting the draft board.</description>
     <targets>
         <target>lightning__HomePage</target>
     </targets>
