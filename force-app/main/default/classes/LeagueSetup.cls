@@ -48,6 +48,9 @@ public with sharing class LeagueSetup {
         try {
             List<Pick__c> allPicks = [SELECT Id FROM Pick__c];
             delete allPicks;
+
+            DraftUpdated__e event = new DraftUpdated__e();
+            EventBus.publish(event);
             
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
