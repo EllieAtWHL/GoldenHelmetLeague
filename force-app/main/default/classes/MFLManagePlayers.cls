@@ -63,7 +63,7 @@ public with sharing class MFLManagePlayers {
         Id freeAgentTeamId = freeAgentTeam();
 
         for(Player player : mflNFLPlayers){
-            if(nflPlayers !=null && nflPlayers.containsKey(player.id)){
+            if(nflPlayers !=null && nflPlayers.containsKey(player.id) && positions.contains(player.position)){
                 if(playerChanged(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapTeams) == true){
                     Player__c updatedPlayer = createPlayer(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapTeams, freeAgentTeamId);
                     playersToUpsert.add(updatedPlayer);
@@ -291,5 +291,17 @@ public with sharing class MFLManagePlayers {
             List<Player__c> playerList = ((List<Player__c>)soslResult[0]);
             return playerList;
         }
+    }
+
+    @AuraEnabled
+    public static void deleteUnavailablePlayers(){
+
+        DateTime oneYearAgo = Datetime.now().addYears(-1);
+        System.debug(oneYearAgo);
+
+        List<Player__c> unavailablePlayers = [SELECT Id
+                                                FROM Player__c
+                                                WHERE LastModifiedDate < :oneYearAgo];
+        delete unavailablePlayers;
     }
 }
