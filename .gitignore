@@ -1,0 +1,6 @@
+.sfdx/
+config/
+hardis-report/
+.forceignore
+.DS_Store
+jsconfig.json
