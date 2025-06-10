@@ -1,16 +1,16 @@
 public with sharing class MFLManageByeWeeks {
-
+    @TestVisible
     private Class ByeWeekResponse{
-        ByeWeek nflByeWeeks;
+        @TestVisible ByeWeek nflByeWeeks;
     }
-
+    @TestVisible
     private Class ByeWeek{
-        List<Team> team;
+        @TestVisible List<Team> team;
     }
-
+    @TestVisible
     private Class Team{
-        Integer bye_week;
-        String id;
+        @TestVisible Integer bye_week;
+        @TestVisible String id;
     }
 
     @AuraEnabled
@@ -46,6 +46,7 @@ public with sharing class MFLManageByeWeeks {
 
     }
 
+    @TestVisible
     private static List<Team> getByeWeeks(){
 
         MFL__c mfl = MFL__c.getInstance();

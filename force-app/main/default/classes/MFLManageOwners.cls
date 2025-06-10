@@ -1,21 +1,25 @@
 public class MFLManageOwners {
+    @TestVisible
     private Class LeagueResponse{
-        League league;
+        @TestVisible League league;
     }
 
+    @TestVisible
     private Class League{
-        Franchises franchises;
+        @TestVisible Franchises franchises;
     }
 
+    @TestVisible
     private Class Franchises{
-        List<Franchise> franchise;
+        @TestVisible List<Franchise> franchise;
     }
 
+    @TestVisible
     private Class Franchise{
-        String name;
-        String owner_name;
-        String id;
-        String icon;
+        @TestVisible String name;
+        @TestVisible String owner_name;
+        @TestVisible String id;
+        @TestVisible String icon;
     }
 
     

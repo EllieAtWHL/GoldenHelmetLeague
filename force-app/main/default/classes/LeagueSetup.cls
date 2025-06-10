@@ -12,11 +12,7 @@ public with sharing class LeagueSetup {
     @AuraEnabled
     public static void saveSettings(MFL__c settings){
         try {
-            if(settings.Id == NULL){
-                insert settings;
-            } else {
-                update settings;
-            }
+            upsert settings;
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -33,11 +29,7 @@ public with sharing class LeagueSetup {
     @AuraEnabled
     public static void saveDraftSettings(Draft_Settings__c settings){
         try {
-            if(settings.Id == NULL){
-                insert settings;
-            } else {
-                update settings;
-            }
+            upsert settings;
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }

@@ -1,17 +1,19 @@
 public with sharing class MFLManagePlayers {
+    @TestVisible
     private Class PlayersResponse{
-        Players players;
+        @TestVisible Players players;
     }
-
+    @TestVisible
     private Class Players{
-        List<Player> player;
+        @TestVisible List<Player> player;
     }
+    @TestVisible
     private Class Player{
-        String id;
-        String name;
-        String team;
-        String position;
-        String status;
+        @TestVisible String id;
+        @TestVisible String name;
+        @TestVisible String team;
+        @TestVisible String position;
+        @TestVisible String status;
     }
     private Class ADPResponse{
         ADP adp;
@@ -151,7 +153,7 @@ public with sharing class MFLManagePlayers {
         }
         return false;
     }
-
+    @TestVisible
     private static List<Player> getPlayers(){
 
         MFL__c mfl = MFL__c.getInstance();
