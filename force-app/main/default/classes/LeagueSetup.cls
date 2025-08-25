@@ -35,6 +35,7 @@ public with sharing class LeagueSetup {
             throw new AuraHandledException(e.getMessage());
         }
     }
+
     @AuraEnabled
     public static void saveDraftSettings(Draft_Settings__c settings){
         Logger.setScenario('Saving Draft Settings');
@@ -64,6 +65,10 @@ public with sharing class LeagueSetup {
             Logger.saveLog();
             throw new AuraHandledException(e.getMessage());
         }
+    }
+
+    public static Boolean isSnakeDraft(){
+        return getDraftSettings().Draft_Type__c == 'snake';
     }
 
 }

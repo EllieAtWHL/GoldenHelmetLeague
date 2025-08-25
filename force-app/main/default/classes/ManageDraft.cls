@@ -27,9 +27,19 @@ public class ManageDraft {
         @AuraEnabled public Id teamOwner { get; set; }
         @AuraEnabled public String teamOwnerName { get; set; }
     }
+    public class MFLDraft{
+        @AuraEnabled public DraftResults draftResults { get; set; }
+    }
+    public class DraftResults{
+        @AuraEnabled public DraftUnit draftUnit { get; set; }
+    }
+    public class DraftUnit{
+        @AuraEnabled public String round1DraftOrder { get; set; }
+    }
 
     @AuraEnabled (cacheable=true)
     public static Draft getDraft(){
+        Logger.setScenario('Retrieving Salesforce Draft Information');
         Draft draft = new Draft();
         List<Team_Owner__c> teamsInDraft = MFLManageOwners.getTeams();
         Integer teamCount = teamsInDraft.size();
@@ -130,13 +140,16 @@ public class ManageDraft {
     }
 
     @AuraEnabled
-    public static void makePick(Pick__c pickMade, Id teamId){
-
+    public static void makePick(Pick__c pickMade, String playerName){
+        Logger.setScenario('Making Draft Pick');
+        Logger.info('Player picked: ' + playerName, pickMade.Player__c);
+        Logger.info('Team making pick: ' + pickMade.Team_Owner__c, pickMade.Team_Owner__c);
+        Logger.info('All pickMade info: ' + pickMade);
         List<SObject> recordsToUpsert = new List<SObject>();
         recordsToUpsert.add(pickMade);
         Player__c playerToUpdate = new Player__c(
             Id = pickMade.Player__c,
-            Team_Owner__c = teamId
+            Team_Owner__c = pickMade.Team_Owner__c
         );
         recordsToUpsert.add(playerToUpdate);
 
@@ -145,7 +158,7 @@ public class ManageDraft {
                                             Id,
                                             Remaining_Budget__c 
                                         FROM Team_Owner__c 
-                                        WHERE Id = :teamId LIMIT 1];
+                                        WHERE Id = :pickMade.Team_Owner__c LIMIT 1];
             if (teamBudget.Remaining_Budget__c - pickMade.Auction_Cost__c < 0){
                 Logger.warn('Winner cannot afford offered price. Remaining Budget: ' + teamBudget.Remaining_Budget__c + ', Offered Price: ' + pickMade.Auction_Cost__c);
                 Logger.saveLog();
@@ -228,6 +241,29 @@ public class ManageDraft {
         EventBus.publish(event);
     }
 
+    public static String getDraftOrder(){
+        Logger.setScenario('Getting Draft Order from MFL');
+
+        MFL__c mfl = MFL__c.getInstance();
+
+        String url = mfl.Instance_URL__c;
+        url += '/' + mfl.Year__c;
+        url += '/export?TYPE=draftResults&L=' + mfl.League_Id__c;
+        url += '&APIKEY=' + mfl.API_Key__c;
+        url += '&JSON=1';
+
+        HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
+
+        try{ 
+            MFLDraft mflDraft = (MFLDraft) JSON.deserialize(calloutResponse.getBody(), MFLDraft.class);
+            return mflDraft.draftResults.draftUnit.round1DraftOrder;
+        } catch(Exception e){
+            Logger.exception('Error parsing draft order from MFL response', e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error parsing draft order from MFL response: ' + e.getMessage());
+        }
+    }
+    
     @AuraEnabled
     public static void submitDraft(List<RoundPick> draftJSON){
         Logger.setScenario('Submitting Draft to MFL');
