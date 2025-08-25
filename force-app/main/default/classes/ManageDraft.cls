@@ -27,9 +27,19 @@ public class ManageDraft {
         @AuraEnabled public Id teamOwner { get; set; }
         @AuraEnabled public String teamOwnerName { get; set; }
     }
+    public class MFLDraft{
+        @AuraEnabled public DraftResults draftResults { get; set; }
+    }
+    public class DraftResults{
+        @AuraEnabled public DraftUnit draftUnit { get; set; }
+    }
+    public class DraftUnit{
+        @AuraEnabled public String round1DraftOrder { get; set; }
+    }
 
     @AuraEnabled (cacheable=true)
     public static Draft getDraft(){
+        Logger.setScenario('Retrieving Salesforce Draft Information');
         Draft draft = new Draft();
         List<Team_Owner__c> teamsInDraft = MFLManageOwners.getTeams();
         Integer teamCount = teamsInDraft.size();
@@ -105,6 +115,7 @@ public class ManageDraft {
 
     @TestVisible
     private static Map<Integer, Pick__c> getPicks(){
+        Logger.setScenario('Retrieving Picks Made');
         List<Pick__c> picks =  [SELECT 
                                     Id, 
                                     Player__r.MFL_Name__c, 
@@ -129,13 +140,16 @@ public class ManageDraft {
     }
 
     @AuraEnabled
-    public static void makePick(Pick__c pickMade, Id teamId){
-
+    public static void makePick(Pick__c pickMade, String playerName){
+        Logger.setScenario('Making Draft Pick');
+        Logger.info('Player picked: ' + playerName, pickMade.Player__c);
+        Logger.info('Team making pick: ' + pickMade.Team_Owner__c, pickMade.Team_Owner__c);
+        Logger.info('All pickMade info: ' + pickMade);
         List<SObject> recordsToUpsert = new List<SObject>();
         recordsToUpsert.add(pickMade);
         Player__c playerToUpdate = new Player__c(
             Id = pickMade.Player__c,
-            Team_Owner__c = teamId
+            Team_Owner__c = pickMade.Team_Owner__c
         );
         recordsToUpsert.add(playerToUpdate);
 
@@ -144,42 +158,115 @@ public class ManageDraft {
                                             Id,
                                             Remaining_Budget__c 
                                         FROM Team_Owner__c 
-                                        WHERE Id = :teamId LIMIT 1];
+                                        WHERE Id = :pickMade.Team_Owner__c LIMIT 1];
             if (teamBudget.Remaining_Budget__c - pickMade.Auction_Cost__c < 0){
+                Logger.warn('Winner cannot afford offered price. Remaining Budget: ' + teamBudget.Remaining_Budget__c + ', Offered Price: ' + pickMade.Auction_Cost__c);
+                Logger.saveLog();
                 throw new AuraHandledException('Winner cannot afford offered price.');
             }
         }
-        upsert recordsToUpsert;
+        try{
+            upsert recordsToUpsert;
+            Logger.saveLog();
+        } catch (Exception e){
+            if(e.getMessage().contains('DUPLICATE_VALUE')){
+                Logger.warn('Duplicate pick detected for overall pick number: ' + pickMade.Overall_Pick_Number__c);
+                Logger.saveLog();
+                throw new AuraHandledException('Duplicate pick detected. This pick has already been made.');
+            }
+            Logger.exception('Error making pick and updating player and team owner', e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error making pick and updating player and team owner: ' + e.getMessage());
+        }
 
         publishDraftUpdatedPlatformEvent();
     }
 
     @AuraEnabled
     public static void undoPick(Integer pickNumber){
-        Pick__c pickToDelete =  [SELECT Id 
+        Logger.setScenario('Undoing Draft Pick');
+        Pick__c pickToDelete = new Pick__c();
+        
+        try{
+            pickToDelete =  [SELECT Id, Player__c, Team_Owner__c, Player__r.MFL_Name__c, Team_Owner__r.Team_Name__c 
                                 FROM Pick__c 
                                 WHERE Overall_Pick_Number__c = :pickNumber 
                                 LIMIT 1];
-        delete pickToDelete;
+        } catch (Exception e){
+            Logger.exception('Error finding pick to undo for pick number: ' + pickNumber, e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error finding pick to undo for pick number ' + pickNumber + ': ' + e.getMessage());
+        }
+        
+        try{
+            Logger.info('Pick to delete: ' + pickToDelete, pickToDelete.Id);
+            Database.DeleteResult dr = Database.delete(pickToDelete, false);
+
+            if (dr.isSuccess()) {
+            Logger.info(
+                'Successfully deleted pick record',
+                dr.getId()
+            );
+        } else {
+            for (Database.Error err : dr.getErrors()) {
+                DmlException wrapped = new DmlException(
+                    'StatusCode=' + err.getStatusCode() +
+                    ', Fields=' + String.join(err.getFields(), ',') +
+                    ', Message=' + err.getMessage()
+                );
+                Logger.exception('Unable to undo pick', wrapped);
+            }
+        }
+
+        } catch (Exception e){
+            Logger.exception('Error undoing pick', e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error undoing pick: ' + e.getMessage());
+        }
         publishDraftUpdatedPlatformEvent();
     }
 
     private static void publishDraftUpdatedPlatformEvent(){
+        Logger.setScenario('Publishing Draft Updated Platform Event');
         DraftUpdated__e event = new DraftUpdated__e();
         EventBus.publish(event);
     }
 
     @AuraEnabled
     public static void publishDraftMessagePlatformEvent(String message, String cssClass){
+        Logger.setScenario('Publishing Draft Message Platform Event');
         Draft_Message__e event = new Draft_Message__e();
         event.Display_Message__c = message;
         event.CSS_Class__c = cssClass;
         EventBus.publish(event);
     }
 
+    public static String getDraftOrder(){
+        Logger.setScenario('Getting Draft Order from MFL');
+
+        MFL__c mfl = MFL__c.getInstance();
+
+        String url = mfl.Instance_URL__c;
+        url += '/' + mfl.Year__c;
+        url += '/export?TYPE=draftResults&L=' + mfl.League_Id__c;
+        url += '&APIKEY=' + mfl.API_Key__c;
+        url += '&JSON=1';
+
+        HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
+
+        try{ 
+            MFLDraft mflDraft = (MFLDraft) JSON.deserialize(calloutResponse.getBody(), MFLDraft.class);
+            return mflDraft.draftResults.draftUnit.round1DraftOrder;
+        } catch(Exception e){
+            Logger.exception('Error parsing draft order from MFL response', e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error parsing draft order from MFL response: ' + e.getMessage());
+        }
+    }
+    
     @AuraEnabled
     public static void submitDraft(List<RoundPick> draftJSON){
-
+        Logger.setScenario('Submitting Draft to MFL');
         MFL__c mfl = MFL__c.getInstance();
 
         String url = mfl.Instance_URL__c;

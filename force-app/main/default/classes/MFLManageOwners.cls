@@ -1,30 +1,49 @@
 public class MFLManageOwners {
+    @TestVisible
     private Class LeagueResponse{
-        League league;
+        @TestVisible League league;
     }
 
+    @TestVisible
     private Class League{
-        Franchises franchises;
+        @TestVisible Franchises franchises;
     }
 
+    @TestVisible
     private Class Franchises{
-        List<Franchise> franchise;
+        @TestVisible List<Franchise> franchise;
     }
 
+    @TestVisible
     private Class Franchise{
-        String name;
-        String owner_name;
-        String id;
-        String icon;
+        @TestVisible String name;
+        @TestVisible String owner_name;
+        @TestVisible String id;
+        @TestVisible String icon;
+        @TestVisible Integer pickNumber;
     }
 
     
     @AuraEnabled
     public static void manageOwners(){
 
+        Logger.setScenario('Managing Team Owners/Franchises');
+
         List<Franchise> franchises = getFranchises();
         Map<String, Team_Owner__c> owners = getOwners();
         List<Team_Owner__c> ownersToUpsert = new List<Team_Owner__c>();
+
+        Boolean isSnakeDraft = LeagueSetup.isSnakeDraft();
+        Map<String, Integer> draftOrderMap = new Map<String, Integer>();
+
+        if(isSnakeDraft){
+            String draftOrderString = ManageDraft.getDraftOrder();
+            List<String> draftOrderList = draftOrderString.split(',');
+
+            for (Integer i = 0; i < draftOrderList.size(); i++) {
+                draftOrderMap.put(draftOrderList[i], i + 1);
+            }
+        }
 
         for(Franchise franchise : franchises){
             if(owners != null && owners.containsKey(franchise.id)){
@@ -37,6 +56,9 @@ public class MFLManageOwners {
                         Franchise_Id__c = franchise.id,
                         Icon_URL__c = franchise.icon
                     );
+                    if(isSnakeDraft){
+                        team.Pick_Number__c = draftOrderMap.get(franchise.id);
+                    }
                     ownersToUpsert.add(team);
                 }
             } else{
@@ -64,6 +86,10 @@ public class MFLManageOwners {
             return true;
         }
 
+        if(franchise.pickNumber != owners.get(franchise.id).Pick_Number__c){
+            return true;
+        }
+
         return false;
     }
 
@@ -81,8 +107,14 @@ public class MFLManageOwners {
 
         LeagueResponse leagueResponse = (LeagueResponse) JSON.deserialize(calloutResponse.getBody(), LeagueResponse.class);
 
-        return leagueResponse.league.franchises.franchise;
-
+        try{ 
+            return leagueResponse.league.franchises.franchise;
+        } catch(Exception e){
+            Logger.exception('Error parsing franchises from MFL response', e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error parsing franchises from MFL response: ' + e.getMessage());
+        }
+        
     }
 
     private static Map<String, Team_Owner__c> getOwners(){
@@ -91,7 +123,8 @@ public class MFLManageOwners {
                                             Name__c, 
                                             Team_Name__c, 
                                             Icon_URL__c, 
-                                            Franchise_Id__c 
+                                            Franchise_Id__c,
+                                            Pick_Number__c
                                         FROM Team_Owner__c 
                                         ORDER BY Pick_Number__c];
         Map<String, Team_Owner__c> mapTeams = new Map<String, Team_Owner__c>();
@@ -115,6 +148,8 @@ public class MFLManageOwners {
                     FROM Team_Owner__c 
                     ORDER BY Pick_Number__c];
         } catch (Exception e) {
+            Logger.exception('Error getting team owners', e);
+            Logger.saveLog();
             throw new AuraHandledException(e.getMessage());
         }
     }

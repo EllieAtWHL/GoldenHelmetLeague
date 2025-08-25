@@ -1,5 +1,5 @@
 import { LightningElement } from 'lwc';
-import LEAGUE_LOGO from '@salesforce/label/c.League_Logo';
+import LEAGUE_LOGO from '@salesforce/resourceUrl/draftLogo';
 
 export default class DraftHeader extends LightningElement {
 

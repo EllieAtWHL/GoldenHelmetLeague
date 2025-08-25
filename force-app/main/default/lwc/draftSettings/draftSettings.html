@@ -31,8 +31,7 @@
                     label="Ranking Option"
                     value={draftSettings.Ranking_Option__c}
                     placeholder="-SELECT TYPE-"
-                    options={rankingOptions}
-                    onchange={handleChange}>
+                    options={rankingOptions}>
                 </lightning-combobox>
                 
             </lightning-layout-item>
@@ -75,11 +74,40 @@
                     value={draftSettings.Third_Round_Reversal__c}
                     type="toggle"
                     checked={draftSettings.Third_Round_Reversal__c}
-                    onchange={handleChange}
                     lwc:if={isSnake}>
                 </lightning-input>
 
             </lightning-layout-item>
+        </lightning-layout>
+
+        <lightning-layout>
+            <lightning-layout-item
+                size="6"
+                padding="around-small">
+
+                <lightning-input
+                    lwc:ref="draftstart"
+                    label="Draft Start Date"
+                    value={draftSettings.Draft_Start_Date__c}
+                    type="datetime-local">
+                </lightning-input>
+
+            </lightning-layout-item>
+
+                        <lightning-layout-item
+                size="6"
+                padding="around-small">
+
+                <lightning-input
+                    lwc:ref="countdown"
+                    label="Enable Countdown Timer"
+                    value={draftSettings.Enable_Countdown__c}
+                    type="toggle"
+                    checked={draftSettings.Enable_Countdown__c}>
+                </lightning-input>
+
+            </lightning-layout-item>
+
         </lightning-layout>
         
         <lightning-layout slot="actions">

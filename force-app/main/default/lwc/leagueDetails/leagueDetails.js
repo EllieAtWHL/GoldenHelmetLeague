@@ -21,12 +21,20 @@ export default class LeagueDetails extends LightningElement {
         }
     }
 
-    get APIKeyVisibility(){
+    get apiKeyVisibility(){
         return this.showAPIKey ? 'text' : 'password';
     }
 
-    get MFLUserIdVisibility(){
+    get apiKeyIcon(){
+        return this.showAPIKey ? 'utility:hide' : 'utility:preview';
+    }
+
+    get mflUserIdVisibility(){
         return this.showMFLUserId ? 'text' : 'password';
+    }
+
+    get mflUserIdKeyIcon(){
+        return this.showMFLUserId ? 'utility:hide' : 'utility:preview';
     }
 
     get showSpinner(){

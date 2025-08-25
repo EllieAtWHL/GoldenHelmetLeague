@@ -4,3 +4,10 @@ hardis-report/
 .forceignore
 .DS_Store
 jsconfig.json
+.sf/config.json
+.vscode/
+node_modules/
+scripts/
+data-archive/
+.sf/
+docs/

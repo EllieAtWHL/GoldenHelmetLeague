@@ -1,20 +1,22 @@
 public with sharing class MFLManageByeWeeks {
-
+    @TestVisible
     private Class ByeWeekResponse{
-        ByeWeek nflByeWeeks;
+        @TestVisible ByeWeek nflByeWeeks;
     }
-
+    @TestVisible
     private Class ByeWeek{
-        List<Team> team;
+        @TestVisible List<Team> team;
     }
-
+    @TestVisible
     private Class Team{
-        Integer bye_week;
-        String id;
+        @TestVisible Integer bye_week;
+        @TestVisible String id;
     }
 
     @AuraEnabled
     public static void manageByeWeeks(){
+
+        Logger.setScenario('Managing NFL Bye Weeks');
 
         List<Team> mflNFLTeams = getByeWeeks();
         Map<String, NFL_Team__c> nflTeams = getNFLTeams();
@@ -41,11 +43,14 @@ public with sharing class MFLManageByeWeeks {
         try{
             upsert teamsToUpsert;
         } catch (Exception e){
-            system.debug(e.getMessage());
+            Logger.exception('Error upserting NFL Teams with Bye Weeks', e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error upserting NFL Teams with Bye Weeks: ' + e.getMessage());
         }
 
     }
 
+    @TestVisible
     private static List<Team> getByeWeeks(){
 
         MFL__c mfl = MFL__c.getInstance();

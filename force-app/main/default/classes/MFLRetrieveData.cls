@@ -6,8 +6,19 @@ public with sharing class MFLRetrieveData {
         HttpRequest req = new HttpRequest();
         req.setEndpoint(url);
         req.setMethod('POST');
+        HttpResponse res = new HttpResponse();
 
-        HttpResponse res = http.send(req);
+        try{
+            res = http.send(req);
+            Logger.info('Calling SF API: POST method')
+                .setHttpRequestDetails(req)
+                .setHttpResponseDetails(res);
+            Logger.saveLog();
+        } catch (Exception e){
+            Logger.exception('Error making POST callout to SF', e);
+            Logger.saveLog();
+            throw new CalloutException(e.getMessage());
+        }
         return res;
 
     }
@@ -18,9 +29,23 @@ public with sharing class MFLRetrieveData {
         HttpRequest req = new HttpRequest();
         req.setEndpoint(url);
         req.setMethod('GET');
+        HttpResponse res = new HttpResponse();
 
-        HttpResponse res = http.send(req);
+        try{
+            res = http.send(req);
+            Logger.info('Calling MFL API: GET method')
+                .setHttpRequestDetails(req)
+                .setHttpResponseDetails(res);
+            Logger.saveLog();
+        } catch (Exception e){
+            Logger.exception('Error making GET callout to MFL', e);
+            Logger.saveLog();
+            throw new CalloutException(e.getMessage());
+        }
+        
         if(res.getStatusCode() != 200){
+            Logger.error('Error making GET callout to MFL: ' + res.getBody());
+            Logger.saveLog();
             throw new CalloutException(res.getBody());
         }
         return res;
@@ -47,7 +72,24 @@ public with sharing class MFLRetrieveData {
         req.setHeader('Content-Length', String.valueOf(formBlob.size()));
         req.setBodyAsBlob(formBlob);
 
-        HttpResponse res = http.send(req);
+        HttpResponse res = new HttpResponse(); 
+        try{
+            res = http.send(req);
+            Logger.info('Calling MFL API: POST method')
+                .setHttpRequestDetails(req)
+                .setHttpResponseDetails(res);
+            Logger.saveLog();
+        } catch (Exception e){
+            Logger.exception('Error making POST callout to MFL', e);
+            Logger.saveLog();
+            throw new CalloutException(e.getMessage());
+        }
+
+        if(res.getStatusCode() != 200){
+            Logger.error('Error making POST callout to MFL: ' + res.getBody());
+            Logger.saveLog();
+            throw new CalloutException(res.getBody());
+        }
         return res;
     }
 

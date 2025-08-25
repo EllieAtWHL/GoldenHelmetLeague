@@ -16,6 +16,19 @@ export default class DraftBoard extends LightningElement {
         return this.draft?.draftType === AUCTION;
     }
 
+    get countdownEnabled(){
+        if(this.draft?.countdownEnabled && this.draft.draftStartTime){
+            const startTime = new Date(this.draft.draftStartTime).getTime();
+            const now = Date.now();
+            return startTime > now;
+        }
+        return false;
+    }
+
+    get draftStartTime(){
+        return this.draft?.draftStartTime;
+    }
+
     get auctionDraft(){
         let tempDraft = {};
         tempDraft.auctionBudget = this.draft?.auctionBudget;
