@@ -40,6 +40,7 @@ public with sharing class MFLManagePlayers {
     
     @AuraEnabled
     public static void managePlayers(){
+        Logger.setScenario('Managing NFL Players');
         List<Player> mflNFLPlayers = getPlayers();
 
         Map<String, Player__c> nflPlayers = getNFLPlayers();
@@ -168,7 +169,8 @@ public with sharing class MFLManagePlayers {
         try {
             calloutResponse = MFLRetrieveData.mflGetCallout(url);
         } catch(Exception e){
-            system.debug(e.getMessage());
+            Logger.exception('Error getting players from MFL', e);
+            Logger.saveLog();
             throw e;
         }
 

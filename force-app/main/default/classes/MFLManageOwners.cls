@@ -26,6 +26,8 @@ public class MFLManageOwners {
     @AuraEnabled
     public static void manageOwners(){
 
+        Logger.setScenario('Managing Team Owners/Franchises');
+
         List<Franchise> franchises = getFranchises();
         Map<String, Team_Owner__c> owners = getOwners();
         List<Team_Owner__c> ownersToUpsert = new List<Team_Owner__c>();
@@ -85,8 +87,14 @@ public class MFLManageOwners {
 
         LeagueResponse leagueResponse = (LeagueResponse) JSON.deserialize(calloutResponse.getBody(), LeagueResponse.class);
 
-        return leagueResponse.league.franchises.franchise;
-
+        try{ 
+            return leagueResponse.league.franchises.franchise;
+        } catch(Exception e){
+            Logger.exception('Error parsing franchises from MFL response', e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error parsing franchises from MFL response: ' + e.getMessage());
+        }
+        
     }
 
     private static Map<String, Team_Owner__c> getOwners(){
@@ -119,6 +127,8 @@ public class MFLManageOwners {
                     FROM Team_Owner__c 
                     ORDER BY Pick_Number__c];
         } catch (Exception e) {
+            Logger.exception('Error getting team owners', e);
+            Logger.saveLog();
             throw new AuraHandledException(e.getMessage());
         }
     }

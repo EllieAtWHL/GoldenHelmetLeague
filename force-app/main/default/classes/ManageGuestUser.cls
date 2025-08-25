@@ -4,6 +4,7 @@ public with sharing class ManageGuestUser {
     }
 
     public static string getSessionId(){
+        Logger.setScenario('Getting Session ID for use for Guest User');
 
         Self__c selfSettings = Self__c.getInstance();
 

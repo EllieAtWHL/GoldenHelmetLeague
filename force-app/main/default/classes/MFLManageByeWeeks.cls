@@ -16,6 +16,8 @@ public with sharing class MFLManageByeWeeks {
     @AuraEnabled
     public static void manageByeWeeks(){
 
+        Logger.setScenario('Managing NFL Bye Weeks');
+
         List<Team> mflNFLTeams = getByeWeeks();
         Map<String, NFL_Team__c> nflTeams = getNFLTeams();
         List<NFL_Team__c> teamsToUpsert = new List<NFL_Team__c>();
@@ -41,7 +43,9 @@ public with sharing class MFLManageByeWeeks {
         try{
             upsert teamsToUpsert;
         } catch (Exception e){
-            system.debug(e.getMessage());
+            Logger.exception('Error upserting NFL Teams with Bye Weeks', e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error upserting NFL Teams with Bye Weeks: ' + e.getMessage());
         }
 
     }

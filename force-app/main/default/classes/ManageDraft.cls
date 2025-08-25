@@ -105,6 +105,7 @@ public class ManageDraft {
 
     @TestVisible
     private static Map<Integer, Pick__c> getPicks(){
+        Logger.setScenario('Retrieving Picks Made');
         List<Pick__c> picks =  [SELECT 
                                     Id, 
                                     Player__r.MFL_Name__c, 
@@ -146,31 +147,81 @@ public class ManageDraft {
                                         FROM Team_Owner__c 
                                         WHERE Id = :teamId LIMIT 1];
             if (teamBudget.Remaining_Budget__c - pickMade.Auction_Cost__c < 0){
+                Logger.warn('Winner cannot afford offered price. Remaining Budget: ' + teamBudget.Remaining_Budget__c + ', Offered Price: ' + pickMade.Auction_Cost__c);
+                Logger.saveLog();
                 throw new AuraHandledException('Winner cannot afford offered price.');
             }
         }
-        upsert recordsToUpsert;
+        try{
+            upsert recordsToUpsert;
+            Logger.saveLog();
+        } catch (Exception e){
+            if(e.getMessage().contains('DUPLICATE_VALUE')){
+                Logger.warn('Duplicate pick detected for overall pick number: ' + pickMade.Overall_Pick_Number__c);
+                Logger.saveLog();
+                throw new AuraHandledException('Duplicate pick detected. This pick has already been made.');
+            }
+            Logger.exception('Error making pick and updating player and team owner', e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error making pick and updating player and team owner: ' + e.getMessage());
+        }
 
         publishDraftUpdatedPlatformEvent();
     }
 
     @AuraEnabled
     public static void undoPick(Integer pickNumber){
-        Pick__c pickToDelete =  [SELECT Id 
+        Logger.setScenario('Undoing Draft Pick');
+        Pick__c pickToDelete = new Pick__c();
+        
+        try{
+            pickToDelete =  [SELECT Id, Player__c, Team_Owner__c, Player__r.MFL_Name__c, Team_Owner__r.Team_Name__c 
                                 FROM Pick__c 
                                 WHERE Overall_Pick_Number__c = :pickNumber 
                                 LIMIT 1];
-        delete pickToDelete;
+        } catch (Exception e){
+            Logger.exception('Error finding pick to undo for pick number: ' + pickNumber, e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error finding pick to undo for pick number ' + pickNumber + ': ' + e.getMessage());
+        }
+        
+        try{
+            Logger.info('Pick to delete: ' + pickToDelete, pickToDelete.Id);
+            Database.DeleteResult dr = Database.delete(pickToDelete, false);
+
+            if (dr.isSuccess()) {
+            Logger.info(
+                'Successfully deleted pick record',
+                dr.getId()
+            );
+        } else {
+            for (Database.Error err : dr.getErrors()) {
+                DmlException wrapped = new DmlException(
+                    'StatusCode=' + err.getStatusCode() +
+                    ', Fields=' + String.join(err.getFields(), ',') +
+                    ', Message=' + err.getMessage()
+                );
+                Logger.exception('Unable to undo pick', wrapped);
+            }
+        }
+
+        } catch (Exception e){
+            Logger.exception('Error undoing pick', e);
+            Logger.saveLog();
+            throw new AuraHandledException('Error undoing pick: ' + e.getMessage());
+        }
         publishDraftUpdatedPlatformEvent();
     }
 
     private static void publishDraftUpdatedPlatformEvent(){
+        Logger.setScenario('Publishing Draft Updated Platform Event');
         DraftUpdated__e event = new DraftUpdated__e();
         EventBus.publish(event);
     }
 
     @AuraEnabled
     public static void publishDraftMessagePlatformEvent(String message, String cssClass){
+        Logger.setScenario('Publishing Draft Message Platform Event');
         Draft_Message__e event = new Draft_Message__e();
         event.Display_Message__c = message;
         event.CSS_Class__c = cssClass;
@@ -179,7 +230,7 @@ public class ManageDraft {
 
     @AuraEnabled
     public static void submitDraft(List<RoundPick> draftJSON){
-
+        Logger.setScenario('Submitting Draft to MFL');
         MFL__c mfl = MFL__c.getInstance();
 
         String url = mfl.Instance_URL__c;
