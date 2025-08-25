@@ -9,6 +9,7 @@ export default class DraftMessages extends LightningElement {
     draftSettings;
     starttime;
     timeRemaining;
+    intervalId;
     year = getCurrentYear();
     line1 = 'Welcome to the'; 
     line2 = `Golden Helmet Draft ${this.year}`;
@@ -30,6 +31,10 @@ export default class DraftMessages extends LightningElement {
         }
     }
 
+    disconnectedCallback(){ 
+        clearInterval(this.intervalId); 
+    }
+
     get showCountdown(){
         if(this.draftSettings?.Enable_Countdown__c && this.draftSettings?.Draft_Start_Date__c){
             const startTime = new Date(this.draftSettings.Draft_Start_Date__c).getTime();
@@ -39,7 +44,7 @@ export default class DraftMessages extends LightningElement {
         return false;
     }
 
-        startCountdown() {
+    startCountdown() {
         if (!this.starttime) {
             return;
         }
@@ -66,6 +71,9 @@ export default class DraftMessages extends LightningElement {
     }
 
     messageReceived(event){
+        
+        clearInterval(this.intervalId);
+
         let message = event?.detail?.data?.payload?.Display_Message__c;
         this.cssClass = event?.detail?.data?.payload?.CSS_Class__c;
         if(message.includes('</br>')){
