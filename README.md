@@ -9,7 +9,7 @@ There are two community pages that are used to host the draft.
 
 The home page of the community is a publically available site that anybody can view - meaning that as well as sharing the draft board in the room, anyone who joins remotely can easily view the draft as it happens on any device.
 
-The commissioner page is only available if you are logged into the community as a user and allows the commissioner to run the draft by selecting the players - or undoing picks if required - and uoploading the draft when finished.
+The commissioner page is only available if you are logged into the community as a user and allows the commissioner to run the draft by selecting the players - or undoing picks if required - and uploading the draft when finished.
 
 ## Initial Set up
 ### Assign permission set
@@ -23,7 +23,7 @@ Assign whomever needs it the Commissioner permission set, which should give acce
  - Instance URL
     This can be found by visiting your league on MFL and copying the main part of the URL, it will be something like https://www47.myfantasyleague.com
  - League Id
-    Your league id can be found by visiting the homepage of your league, the id is after the final slash, nit including the # or anything after it, if there is one
+    Your league id can be found by visiting the homepage of your league, the id is after the final slash, not including the # or anything after it, if there is one
  - MFL User Id
     This is found by using the login API. This will be deprecated and will dynamically get the MFL_User_Id by calling the login api in the code and setting it
  - Year
@@ -32,7 +32,7 @@ Assign whomever needs it the Commissioner permission set, which should give acce
 #### Self
 
 First, create a Connected App, then populate the custom settings as below:
-[//]: # (//TODO: Explain how to xreate the connected app)
+[//]: # (//TODO: Explain how to create the connected app)
 
 - Username
    Your Salesforce username
@@ -68,8 +68,9 @@ Publish Site
 Give access to:
 - Apex Classes
    - CometdController
+   - LeagueSetup
    - ManageDraft
-   MFLManageOwners
+   - MFLManageOwners
 - Custom Objects (All Fields)
    - NFL Teams
    - Picks
