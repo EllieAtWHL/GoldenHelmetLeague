@@ -59,6 +59,8 @@ export default class DraftSettings extends LightningElement {
         newDraftSettings.Auction_Budget__c = this.refs.budget ? this.refs.budget.value : null;
         newDraftSettings.Number_of_Rounds__c = this.refs.rounds ? this.refs.rounds.value : null;
         newDraftSettings.Third_Round_Reversal__c = this.refs.reverse ? this.refs.reverse.checked : false;
+        newDraftSettings.Draft_Start_Date__c = this.refs.draftstart ? this.refs.draftstart.value : null;
+        newDraftSettings.Enable_Countdown__c = this.refs.countdown ? this.refs.countdown.checked : false;
         saveDraftSetup({settings: newDraftSettings})
             .then( () => {
                 this.saving = false;
