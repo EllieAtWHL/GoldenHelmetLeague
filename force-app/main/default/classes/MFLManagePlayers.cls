@@ -269,29 +269,19 @@ public with sharing class MFLManagePlayers {
     @AuraEnabled (cacheable=true)
     public static List<Player__c> searchPlayers(String searchTerm){
         Draft_Settings__c draftSettings = LeagueSetup.getDraftSettings();
-        String orderField = 'ADP_Rank__c';
-        if(draftSettings.Ranking_Option__c == 'Fantasy Sharks'){
-            orderField = 'Experts_Rank__c';
-        }
+        String orderField = (draftSettings.Ranking_Option__c == 'Fantasy Sharks')
+            ? 'Experts_Rank__c'
+            : 'ADP_Rank__c';
         String query;
-        if(searchTerm == null){
+        if(searchTerm == null || searchTerm.length() < 2){
             query = 'SELECT Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c FROM Player__c WHERE Team_Owner__c = NULL WITH USER_MODE ORDER BY ' + orderField + ' LIMIT 8';
             return  Database.query(query);
         }else{
-            searchTerm = '*'+searchTerm+'*';
-            List<List<SObject>> soslResult = new List<List<SObject>>();
-            if(orderField == 'Experts_Rank__c'){
-                soslResult = [FIND :searchTerm IN ALL FIELDS 
-                                                RETURNING Player__c
-                                                (Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c WHERE Team_Owner__c = NULL ORDER BY Experts_Rank__c)
-                                                LIMIT 8];
-            } else {
-                soslResult = [FIND :searchTerm IN ALL FIELDS 
-                                                RETURNING Player__c
-                                                (Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c WHERE Team_Owner__c = NULL ORDER BY ADP_Rank__c)
-                                                LIMIT 8];
-            }
-            
+            String safeSearchTerm = String.escapeSingleQuotes('*' + searchTerm + '*');
+            query = 'FIND \'' + safeSearchTerm + '\' IN ALL FIELDS RETURNING Player__c ' +
+                   '(Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c ' +
+                   'WHERE Team_Owner__c = NULL ORDER BY ' + orderField + ' LIMIT 8)';
+            List<List<SObject>> soslResult = Search.query(query);
             List<Player__c> playerList = ((List<Player__c>)soslResult[0]);
             return playerList;
         }

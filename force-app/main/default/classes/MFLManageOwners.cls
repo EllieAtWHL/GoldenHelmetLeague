@@ -20,6 +20,7 @@ public class MFLManageOwners {
         @TestVisible String owner_name;
         @TestVisible String id;
         @TestVisible String icon;
+        @TestVisible Integer pickNumber;
     }
 
     
@@ -32,6 +33,18 @@ public class MFLManageOwners {
         Map<String, Team_Owner__c> owners = getOwners();
         List<Team_Owner__c> ownersToUpsert = new List<Team_Owner__c>();
 
+        Boolean isSnakeDraft = LeagueSetup.isSnakeDraft();
+        Map<String, Integer> draftOrderMap = new Map<String, Integer>();
+
+        if(isSnakeDraft){
+            String draftOrderString = ManageDraft.getDraftOrder();
+            List<String> draftOrderList = draftOrderString.split(',');
+
+            for (Integer i = 0; i < draftOrderList.size(); i++) {
+                draftOrderMap.put(draftOrderList[i], i + 1);
+            }
+        }
+
         for(Franchise franchise : franchises){
             if(owners != null && owners.containsKey(franchise.id)){
                 if(teamChanged(franchise, owners)){                    
@@ -43,6 +56,9 @@ public class MFLManageOwners {
                         Franchise_Id__c = franchise.id,
                         Icon_URL__c = franchise.icon
                     );
+                    if(isSnakeDraft){
+                        team.Pick_Number__c = draftOrderMap.get(franchise.id);
+                    }
                     ownersToUpsert.add(team);
                 }
             } else{
@@ -67,6 +83,10 @@ public class MFLManageOwners {
             return true;
         }
         if(franchise.icon == owners.get(franchise.id).Icon_URL__c){
+            return true;
+        }
+
+        if(franchise.pickNumber != owners.get(franchise.id).Pick_Number__c){
             return true;
         }
 
@@ -103,7 +123,8 @@ public class MFLManageOwners {
                                             Name__c, 
                                             Team_Name__c, 
                                             Icon_URL__c, 
-                                            Franchise_Id__c 
+                                            Franchise_Id__c,
+                                            Pick_Number__c
                                         FROM Team_Owner__c 
                                         ORDER BY Pick_Number__c];
         Map<String, Team_Owner__c> mapTeams = new Map<String, Team_Owner__c>();

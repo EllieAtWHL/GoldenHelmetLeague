@@ -20,6 +20,7 @@ export default class DraftSelectPick extends LightningElement {
 
     isLoaded;
     playerSelected;
+    playerSelectedName;
     winnerEntered;
     priceEntered;
     searchTerm = null;
@@ -88,6 +89,10 @@ export default class DraftSelectPick extends LightningElement {
 
     handleClick(event){
         let playerId = event.target.parentNode.name;
+        let playersArray = this.availablePlayers.filter( player => {
+                return player.Id === playerId;
+            });
+        const player = playersArray[0];
         if(playerId == this.playerSelected && this.isSnake){
             this.handleConfirm();
         } else {
@@ -100,15 +105,12 @@ export default class DraftSelectPick extends LightningElement {
             }
             })
         }
-        
         this.playerSelected = playerId;
+        this.playerSelectedName = player.MFL_Name__c;
+        
         if(this.isAuction){
-            let playersArray = this.availablePlayers.filter( player => {
-                return player.Id === playerId;
-            })
-            const player = playersArray[0];
-            const shortenedName = player.MFL_Name__c.split(',',1)[0];
-            const message = `Bidding on: ${player.MFL_Name__c.length > 15 ? shortenedName : player.MFL_Name__c} - ${player.Team__c}`;
+            const shortenedName = this.playerSelectedName.split(',',1)[0];
+            const message = `Bidding on: ${this.playerSelectedName.length > 15 ? shortenedName : this.playerSelectedName} - ${player.Team__c}`;
             const detail = {message: message, class: player.Position__c};
                 const playerSelectedEvent = new CustomEvent('playerselected', {detail: detail});
             this.dispatchEvent(playerSelectedEvent);
@@ -146,7 +148,7 @@ export default class DraftSelectPick extends LightningElement {
         if(this.isAuction){
             pick.Auction_Cost__c = this.refs.price.value;
         }
-        makePick({pickMade: pick, teamId: teamId})
+        makePick({pickMade: pick, playerName: this.playerSelectedName})
             .then(() => {
                 return refreshApex(this.playersResult);
             })
@@ -159,8 +161,12 @@ export default class DraftSelectPick extends LightningElement {
                 this.closeModal();
             })
             .catch(error => {
-                console.log(JSON.stringify(error))
-                showToast('Unable to complete transaction', error.body.message, 'error');
+                const errorMessage = error?.body?.message || 'An unexpected error occurred';
+                if (errorMessage === 'Duplicate pick detected. This pick has already been made.') {
+                    showToast('Duplicate pick', errorMessage, 'warning', false);
+                } else {
+                    showToast('Unable to complete transaction', errorMessage, 'error', true);
+                }
             })
     }
 
