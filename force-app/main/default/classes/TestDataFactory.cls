@@ -40,6 +40,7 @@ public with sharing class TestDataFactory {
 
         List<Pick__c> picks = createPicks(player.Id, franchise.Id, 5);
         insert picks;
+        //TODO: Make sure its different players and franchises
     }
 
 }
