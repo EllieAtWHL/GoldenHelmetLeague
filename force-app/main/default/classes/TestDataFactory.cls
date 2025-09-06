@@ -9,7 +9,7 @@ public with sharing class TestDataFactory {
         return players;
     }
     
-    public static List<Team_Owner__c> createFranchise(Integer numberOfFranchises){
+    public static List<Team_Owner__c> createFranchises(Integer numberOfFranchises){
         List<Team_Owner__c> franchises = new List<Team_Owner__c>();
         for(Integer i=0; i<numberOfFranchises; i++){
             Team_Owner__c franchise = new Team_Owner__c();
@@ -34,12 +34,13 @@ public with sharing class TestDataFactory {
         List<SObject> recordsToInsert = new List<SObject>();
         Player__c player = createPlayers(1)[0];
         recordsToInsert.add(player);
-        Team_Owner__c franchise = createFranchise(1)[0];
+        Team_Owner__c franchise = createFranchises(1)[0];
         recordsToInsert.add(franchise);
         insert recordsToInsert;
 
         List<Pick__c> picks = createPicks(player.Id, franchise.Id, 5);
         insert picks;
+        //TODO: Make sure its different players and franchises
     }
 
 }
