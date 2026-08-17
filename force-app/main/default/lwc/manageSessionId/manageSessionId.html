@@ -1,6 +1,6 @@
 <template>
   <h1>Manage Session Id</h1>
-  <div lwc:if="{sessionIdMismatch}">
+  <div lwc:if={sessionIdMismatch}>
     <lightning-icon
       icon-name="action:close"
       alternative-text="Mismatch"
@@ -16,7 +16,7 @@
         label="Refresh"
         icon-name="action:refresh"
         variant="brand"
-        onclick="{refreshStoredSessionId}"
+        onclick={refreshStoredSessionId}
       >
       </lightning-button>
     </lightning-layout>

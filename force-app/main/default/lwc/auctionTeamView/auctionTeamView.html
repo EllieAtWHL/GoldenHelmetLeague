@@ -5,15 +5,15 @@
         <th>
           <img
             class="logo"
-            src="{team.Icon_URL__c}"
-            alt-text="{team.Team_Name__c}"
+            src={team.Icon_URL__c}
+            alt-text={team.Team_Name__c}
           />
         </th>
       </tr>
       <tr>
         <th class="slds-align_absolute-center">
           <lightning-formatted-number
-            value="{team.Remaining_Budget__c}"
+            value={team.Remaining_Budget__c}
             format-style="currency"
           >
           </lightning-formatted-number>
@@ -21,20 +21,20 @@
       </tr>
     </thead>
     <tbody>
-      <template for:each="{teamPicks}" for:item="pick">
-        <tr key="{pick.overallPickNumber}">
-          <td class="{pick.cssClass}">
+      <template for:each={teamPicks} for:item="pick">
+        <tr key={pick.overallPickNumber}>
+          <td class={pick.cssClass}>
             <b>{pick.playerPickedName}</b>
             <br />
             {pick.playerPickedTeamAndByeWeek}
-            <span lwc:if="{pick.auctionCost}">£</span>{pick.auctionCost}
+            <span lwc:if={pick.auctionCost}>£</span>{pick.auctionCost}
           </td>
         </tr>
       </template>
       <tr>
         <th class="slds-align_absolute-center">
           <lightning-formatted-number
-            value="{team.Remaining_Budget__c}"
+            value={team.Remaining_Budget__c}
             format-style="currency"
             maximum-fraction-digits="0"
           >
@@ -45,8 +45,8 @@
         <th>
           <img
             class="logo"
-            src="{team.Icon_URL__c}"
-            alt-text="{team.Team_Name__c}"
+            src={team.Icon_URL__c}
+            alt-text={team.Team_Name__c}
           />
         </th>
       </tr>

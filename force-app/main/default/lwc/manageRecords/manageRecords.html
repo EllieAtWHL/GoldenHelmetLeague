@@ -1,6 +1,6 @@
 <template>
   <lightning-card class="slds-p-vertical_x-small" title="Manage Records">
-    <lightning-spinner lwc:if="{isProcessing}"></lightning-spinner>
+    <lightning-spinner lwc:if={isProcessing}></lightning-spinner>
 
     <lightning-layout>
       <lightning-layout-item size="6">
@@ -14,7 +14,7 @@
                 label="Open Board"
                 icon-name="utility:open"
                 variant="brand"
-                onclick="{openBoard}"
+                onclick={openBoard}
               >
               </lightning-button>
               <!--<lightning-button
@@ -28,14 +28,14 @@
                 label="Reset"
                 icon-name="utility:undo"
                 variant="brand"
-                onclick="{handleReset}"
+                onclick={handleReset}
               >
               </lightning-button>
               <lightning-button
                 label="Clean Players"
                 icon-name="utility:recycle_bin_empty"
                 variant="brand"
-                onclick="{handleClean}"
+                onclick={handleClean}
               >
               </lightning-button>
             </lightning-button-group>
@@ -54,21 +54,21 @@
                 label="Sync Teams"
                 icon-name="utility:sync"
                 variant="brand"
-                onclick="{syncTeams}"
+                onclick={syncTeams}
               >
               </lightning-button>
               <lightning-button
                 label="Sync Players"
                 icon-name="utility:sync"
                 variant="brand"
-                onclick="{syncPlayers}"
+                onclick={syncPlayers}
               >
               </lightning-button>
               <lightning-button
                 label="Sync Franchises"
                 icon-name="utility:sync"
                 variant="brand"
-                onclick="{syncFranchises}"
+                onclick={syncFranchises}
               >
               </lightning-button>
             </lightning-button-group>

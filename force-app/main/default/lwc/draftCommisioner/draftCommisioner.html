@@ -4,10 +4,10 @@
     vertical-align="center"
   >
     <lightning-layout-item size="6">
-      <template lwc:if="{currentPick}">
+      <template lwc:if={currentPick}>
         <lightning-layout multiple-rows>
           <lightning-layout-item
-            lwc:if="{isSnake}"
+            lwc:if={isSnake}
             class="slds-p-around_x-small"
             size="12"
           >
@@ -15,7 +15,7 @@
           </lightning-layout-item>
 
           <lightning-layout-item
-            lwc:if="{isAuction}"
+            lwc:if={isAuction}
             class="slds-p-around_x-small"
             size="12"
           >
@@ -23,7 +23,7 @@
           </lightning-layout-item>
 
           <lightning-layout-item class="slds-p-around_x-small" size="12">
-            <img class="logo" src="{currentPick.imageURL}" />
+            <img class="logo" src={currentPick.imageURL} />
           </lightning-layout-item>
           <lightning-layout-item class="slds-p-around_x-small" size="12">
             {currentPick.owner}
@@ -42,26 +42,26 @@
         multiple-rows
       >
         <lightning-layout-item class="slds-p-around_small">
-          <template if:false="{draftStarted}">
+          <template if:false={draftStarted}>
             <lightning-button
               class="slds-p-around_x-small"
               label="Start"
               variant="inverse"
               icon-name="utility:check"
-              onclick="{startDraft}"
-              disabled="{draftStarted}"
+              onclick={startDraft}
+              disabled={draftStarted}
             >
             </lightning-button>
           </template>
 
-          <template lwc:if="{draftStarted}">
+          <template lwc:if={draftStarted}>
             <lightning-button
               class="slds-p-around_x-small"
               label="Pick"
               variant="inverse"
               icon-name="utility:check"
-              onclick="{startPick}"
-              disabled="{draftComplete}"
+              onclick={startPick}
+              disabled={draftComplete}
             >
             </lightning-button>
 
@@ -70,8 +70,8 @@
               label="Undo"
               variant="inverse"
               icon-name="utility:undo"
-              onclick="{handleUndo}"
-              disabled="{firstPick}"
+              onclick={handleUndo}
+              disabled={firstPick}
             >
             </lightning-button>
 
@@ -80,8 +80,8 @@
               label="Upload"
               variant="inverse"
               icon-name="utility:upload"
-              onclick="{handleUpload}"
-              disabled="{draftRunning}"
+              onclick={handleUpload}
+              disabled={draftRunning}
             >
             </lightning-button>
           </template>
@@ -98,16 +98,16 @@
     multiple-rows
   >
     <template
-      lwc:if="{previousPicks}"
-      for:each="{previousPicks}"
+      lwc:if={previousPicks}
+      for:each={previousPicks}
       for:item="pick"
     >
-      <lightning-layout-item key="{pick.Id}" class="{pick.cssClass}" size="12">
-        <span lwc:if="{isSnake}">{pick.round}.{pick.roundPickNumber}</span
+      <lightning-layout-item key={pick.Id} class={pick.cssClass} size="12">
+        <span lwc:if={isSnake}>{pick.round}.{pick.roundPickNumber}</span
         ><span lwc:else>{pick.overallPickNumber}.</span> {pick.pickTeam}
-        <span lwc:if="{isSnake}">picked</span>
+        <span lwc:if={isSnake}>picked</span>
         <span lwc:else>submitted</span> {pick.playerPickedName}
-        <span lwc:if="{isAuction}">
+        <span lwc:if={isAuction}>
           bought by {pick.teamOwnerName} for £{pick.auctionCost}</span
         >
       </lightning-layout-item>
@@ -115,13 +115,13 @@
   </lightning-layout>
 
   <c-draft-select-pick
-    lwc:if="{showSelectionScreen}"
-    onclosemodal="{handleClose}"
-    current-round="{currentRound}"
-    current-pick="{currentPick}"
-    is-snake="{isSnake}"
-    onpickmade="{handlePickMade}"
-    onplayerselected="{handlePlayerSelected}"
+    lwc:if={showSelectionScreen}
+    onclosemodal={handleClose}
+    current-round={currentRound}
+    current-pick={currentPick}
+    is-snake={isSnake}
+    onpickmade={handlePickMade}
+    onplayerselected={handlePlayerSelected}
   >
   </c-draft-select-pick>
 </template>

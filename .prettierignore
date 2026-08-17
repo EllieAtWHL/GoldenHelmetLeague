@@ -1,0 +1,6 @@
+# Prettier's HTML formatter doesn't understand LWC's unquoted brace binding
+# syntax (attr={expr}, for:each={list}, lwc:if={cond}) and rewrites it back
+# to quoted attr="{expr}", which the LWC compiler then treats as ambiguous
+# and refuses to compile. Exclude LWC templates until a template-aware
+# formatter is available.
+force-app/main/default/lwc/**/*.html

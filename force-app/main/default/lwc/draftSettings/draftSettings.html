@@ -2,7 +2,7 @@
   <lightning-card
     class="slds-p-vertical_small"
     title="Draft Settings"
-    lwc:if="{draftSettings}"
+    lwc:if={draftSettings}
   >
     <lightning-layout>
       <lightning-layout-item size="6" padding="around-small">
@@ -10,10 +10,10 @@
           lwc:ref="drafttype"
           name="Draft_Type__c"
           label="Draft Type"
-          value="{draftSettings.Draft_Type__c}"
+          value={draftSettings.Draft_Type__c}
           placeholder="-SELECT TYPE-"
-          options="{draftTypeOptions}"
-          onchange="{handleChange}"
+          options={draftTypeOptions}
+          onchange={handleChange}
         >
         </lightning-combobox>
       </lightning-layout-item>
@@ -22,9 +22,9 @@
           lwc:ref="rankingoption"
           name="Ranking_Option__c"
           label="Ranking Option"
-          value="{draftSettings.Ranking_Option__c}"
+          value={draftSettings.Ranking_Option__c}
           placeholder="-SELECT TYPE-"
-          options="{rankingOptions}"
+          options={rankingOptions}
         >
         </lightning-combobox>
       </lightning-layout-item>
@@ -35,20 +35,20 @@
         <lightning-input
           lwc:ref="budget"
           label="Budget"
-          value="{draftSettings.Auction_Budget__c}"
+          value={draftSettings.Auction_Budget__c}
           type="number"
           formatter="currency"
           step="0.01"
-          lwc:if="{isAuction}"
+          lwc:if={isAuction}
         >
         </lightning-input>
 
         <lightning-input
           lwc:ref="rounds"
           label="Number of Rounds"
-          value="{draftSettings.Number_of_Rounds__c}"
+          value={draftSettings.Number_of_Rounds__c}
           type="number"
-          lwc:if="{isSnake}"
+          lwc:if={isSnake}
         >
         </lightning-input>
       </lightning-layout-item>
@@ -57,10 +57,10 @@
         <lightning-input
           lwc:ref="reverse"
           label="Third Round Reversal"
-          value="{draftSettings.Third_Round_Reversal__c}"
+          value={draftSettings.Third_Round_Reversal__c}
           type="toggle"
-          checked="{draftSettings.Third_Round_Reversal__c}"
-          lwc:if="{isSnake}"
+          checked={draftSettings.Third_Round_Reversal__c}
+          lwc:if={isSnake}
         >
         </lightning-input>
       </lightning-layout-item>
@@ -71,7 +71,7 @@
         <lightning-input
           lwc:ref="draftstart"
           label="Draft Start Date"
-          value="{draftSettings.Draft_Start_Date__c}"
+          value={draftSettings.Draft_Start_Date__c}
           type="datetime-local"
         >
         </lightning-input>
@@ -81,16 +81,16 @@
         <lightning-input
           lwc:ref="countdown"
           label="Enable Countdown Timer"
-          value="{draftSettings.Enable_Countdown__c}"
+          value={draftSettings.Enable_Countdown__c}
           type="toggle"
-          checked="{draftSettings.Enable_Countdown__c}"
+          checked={draftSettings.Enable_Countdown__c}
         >
         </lightning-input>
       </lightning-layout-item>
     </lightning-layout>
 
     <lightning-layout slot="actions">
-      <lightning-button label="Save" onclick="{handleSave}"> </lightning-button>
+      <lightning-button label="Save" onclick={handleSave}> </lightning-button>
     </lightning-layout>
   </lightning-card>
 </template>
