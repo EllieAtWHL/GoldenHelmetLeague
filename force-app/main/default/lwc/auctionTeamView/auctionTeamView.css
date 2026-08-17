@@ -3,3 +3,7 @@
 table {
   display: inline;
 }
+
+.budget-remaining {
+  font-size: 26px;
+}

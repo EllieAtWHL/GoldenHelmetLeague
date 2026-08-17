@@ -11,10 +11,11 @@
         </th>
       </tr>
       <tr>
-        <th class="slds-align_absolute-center">
+        <th class="slds-align_absolute-center budget-remaining">
           <lightning-formatted-number
             value={team.Remaining_Budget__c}
             format-style="currency"
+            maximum-fraction-digits="0"
           >
           </lightning-formatted-number>
         </th>
@@ -32,7 +33,7 @@
         </tr>
       </template>
       <tr>
-        <th class="slds-align_absolute-center">
+        <th class="slds-align_absolute-center budget-remaining">
           <lightning-formatted-number
             value={team.Remaining_Budget__c}
             format-style="currency"
