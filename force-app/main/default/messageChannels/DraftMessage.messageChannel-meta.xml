@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <LightningMessageChannel xmlns="http://soap.sforce.com/2006/04/metadata">
-    <description>Passes draft events from the commissioner page to the draft board.</description>
+    <description
+  >Passes draft events from the commissioner page to the draft board.</description>
     <isExposed>true</isExposed>
     <lightningMessageFields>
         <description>This is the type of event</description>

@@ -1,5 +1,5 @@
-import { LightningElement, api } from 'lwc';
+import { LightningElement, api } from "lwc";
 
 export default class AuctionBoard extends LightningElement {
-    @api draft;
+  @api draft;
 }
