@@ -1,14 +1,13 @@
 <template>
+  <c-comet-d
+    channel="Draft_Message__e"
+    onmessage={messageReceived}
+  ></c-comet-d>
 
-    <c-comet-d channel="Draft_Message__e" onmessage={messageReceived}></c-comet-d>
-
-    <lightning-layout class={textClass} multiple-rows="true">
-        <lightning-layout-item size="12">
-            {line1}
-        </lightning-layout-item>
-        <lightning-layout-item lwc:if={line2} class={line2Class} size="12">
-            {line2}
-        </lightning-layout-item>
-    </lightning-layout>
-
+  <lightning-layout class={textClass} multiple-rows="true">
+    <lightning-layout-item size="12"> {line1} </lightning-layout-item>
+    <lightning-layout-item lwc:if={line2} class={line2Class} size="12">
+      {line2}
+    </lightning-layout-item>
+  </lightning-layout>
 </template>

@@ -1,50 +1,50 @@
-.logo{
-    width: 8vw;
-    height: 3vw;
+.logo {
+  width: 8vw;
+  height: 3vw;
 }
 
-.round-number{
-    width: 2vw;
-    height: 8vh;
-    color: #FFCC01;
-    font-style: italic;
-    font-weight: bold;
-    font-size: 18px;
-    text-align: middle;
+.round-number {
+  width: 2vw;
+  height: 8vh;
+  color: #ffcc01;
+  font-style: italic;
+  font-weight: bold;
+  font-size: 18px;
+  text-align: middle;
 }
 
 .pick-number,
-td.pick-made{
-    font-size: 12px;
-    font-weight: bold;
-    width: 8vw;
-    height: 6vh;
-    text-align: center;
+td.pick-made {
+  font-size: 12px;
+  font-weight: bold;
+  width: 8vw;
+  height: 6vh;
+  text-align: center;
 }
 
-.pick-number{
-    border:#FFCC01 1px solid;
+.pick-number {
+  border: #ffcc01 1px solid;
 }
 
-.pick-made{
-    color: #000000
+.pick-made {
+  color: #000000;
 }
 
-.QB{
-    background-color: #f7d2b0;
+.QB {
+  background-color: #f7d2b0;
 }
-.RB{
-    background-color: #f8f8b2;
+.RB {
+  background-color: #f8f8b2;
 }
-.WR{
-    background-color: #c0d2e4;
+.WR {
+  background-color: #c0d2e4;
 }
-.TE{
-    background-color: #C1E1C1;
+.TE {
+  background-color: #c1e1c1;
 }
-.PK{
-    background-color: #F8C8DC;
+.PK {
+  background-color: #f8c8dc;
 }
-.Def{
-    background-color: #D3D3D3;
+.Def {
+  background-color: #d3d3d3;
 }

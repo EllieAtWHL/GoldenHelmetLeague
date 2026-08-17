@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
     <fullName>Team__c</fullName>
     <externalId>false</externalId>
-    <formula>NFL_Team__r.Name + &apos;(&apos; + TEXT(NFL_Team__r.Bye_Week__c)  + &apos;)&apos;</formula>
+    <formula
+  >NFL_Team__r.Name + &apos;(&apos; + TEXT(NFL_Team__r.Bye_Week__c)  + &apos;)&apos;</formula>
     <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
     <label>Team</label>
     <required>false</required>

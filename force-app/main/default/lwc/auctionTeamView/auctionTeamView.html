@@ -1,47 +1,55 @@
 <template>
-    <table>
-        <thead>
-            <tr>
-                <th>
-                    <img class="logo" src={team.Icon_URL__c} alt-text={team.Team_Name__c}>
-                </th>
-            </tr>
-            <tr>
-                <th class="slds-align_absolute-center">
-                    <lightning-formatted-number 
-                            value={team.Remaining_Budget__c}
-                            format-style="currency">
-                    </lightning-formatted-number>
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <template for:each={teamPicks} for:item="pick">
-                <tr key={pick.overallPickNumber}>
-                    <td class={pick.cssClass}>
-                        <b>{pick.playerPickedName}</b>
-                        <br>
-                        {pick.playerPickedTeamAndByeWeek} <span lwc:if={pick.auctionCost}>£</span>{pick.auctionCost}
-                        
-                    </td>
-                </tr>
-            </template>
-            <tr>
-                <th class="slds-align_absolute-center">
-                    <lightning-formatted-number 
-                            value={team.Remaining_Budget__c}
-                            format-style="currency"
-                            maximum-fraction-digits="0">
-                    </lightning-formatted-number>
-                </th>
-            </tr>
-            <tr>
-                <th>
-                    <img class="logo" src={team.Icon_URL__c} alt-text={team.Team_Name__c}>
-                </th>
-            </tr>
-        </tbody>
-
-    </table>
-    
+  <table>
+    <thead>
+      <tr>
+        <th>
+          <img
+            class="logo"
+            src={team.Icon_URL__c}
+            alt-text={team.Team_Name__c}
+          />
+        </th>
+      </tr>
+      <tr>
+        <th class="slds-align_absolute-center">
+          <lightning-formatted-number
+            value={team.Remaining_Budget__c}
+            format-style="currency"
+          >
+          </lightning-formatted-number>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <template for:each={teamPicks} for:item="pick">
+        <tr key={pick.overallPickNumber}>
+          <td class={pick.cssClass}>
+            <b>{pick.playerPickedName}</b>
+            <br />
+            {pick.playerPickedTeamAndByeWeek}
+            <span lwc:if={pick.auctionCost}>£</span>{pick.auctionCost}
+          </td>
+        </tr>
+      </template>
+      <tr>
+        <th class="slds-align_absolute-center">
+          <lightning-formatted-number
+            value={team.Remaining_Budget__c}
+            format-style="currency"
+            maximum-fraction-digits="0"
+          >
+          </lightning-formatted-number>
+        </th>
+      </tr>
+      <tr>
+        <th>
+          <img
+            class="logo"
+            src={team.Icon_URL__c}
+            alt-text={team.Team_Name__c}
+          />
+        </th>
+      </tr>
+    </tbody>
+  </table>
 </template>

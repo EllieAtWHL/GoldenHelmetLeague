@@ -1,10 +1,10 @@
-@import 'c/customCSS';
+@import "c/customCSS";
 
-img.logo{
-    height: 12.5vh;
-    width: auto;
+img.logo {
+  height: 12.5vh;
+  width: auto;
 }
 
-.logs{
-    height: 60vh;
+.logs {
+  height: 60vh;
 }

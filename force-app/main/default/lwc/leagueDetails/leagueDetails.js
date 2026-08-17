@@ -1,73 +1,72 @@
-import { LightningElement, wire } from 'lwc';
-import { showToast } from 'c/toastUtility'; 
-import getLeagueSetup from '@salesforce/apex/LeagueSetup.getSettings';
-import saveLeagueSetup from '@salesforce/apex/LeagueSetup.saveSettings';
+import { LightningElement, wire } from "lwc";
+import { showToast } from "c/toastUtility";
+import getLeagueSetup from "@salesforce/apex/LeagueSetup.getSettings";
+import saveLeagueSetup from "@salesforce/apex/LeagueSetup.saveSettings";
 
 export default class LeagueDetails extends LightningElement {
+  leagueSettings;
+  error;
+  saving;
+  showAPIKey;
+  showMFLUserId;
 
-    leagueSettings;
-    error;
-    saving;
-    showAPIKey;
-    showMFLUserId;
-
-    @wire(getLeagueSetup)
-    wiredLeagueSettings(result){
-        if(result.data){
-            this.leagueSettings = result.data;
-        } else {
-            this.error = true;
-            console.log(JSON.stringify(result));
-        }
+  @wire(getLeagueSetup)
+  wiredLeagueSettings(result) {
+    if (result.data) {
+      this.leagueSettings = result.data;
+    } else {
+      this.error = true;
+      console.log(JSON.stringify(result));
     }
+  }
 
-    get apiKeyVisibility(){
-        return this.showAPIKey ? 'text' : 'password';
-    }
+  get apiKeyVisibility() {
+    return this.showAPIKey ? "text" : "password";
+  }
 
-    get apiKeyIcon(){
-        return this.showAPIKey ? 'utility:hide' : 'utility:preview';
-    }
+  get apiKeyIcon() {
+    return this.showAPIKey ? "utility:hide" : "utility:preview";
+  }
 
-    get mflUserIdVisibility(){
-        return this.showMFLUserId ? 'text' : 'password';
-    }
+  get mflUserIdVisibility() {
+    return this.showMFLUserId ? "text" : "password";
+  }
 
-    get mflUserIdKeyIcon(){
-        return this.showMFLUserId ? 'utility:hide' : 'utility:preview';
-    }
+  get mflUserIdKeyIcon() {
+    return this.showMFLUserId ? "utility:hide" : "utility:preview";
+  }
 
-    get showSpinner(){
-        return !this.leagueSettings || !this.error || this.saving;
-    }
+  get showSpinner() {
+    return !this.leagueSettings || this.saving;
+  }
 
-    handleAPIKeyVisibility(){
-        this.showAPIKey = !this.showAPIKey;
-    }
+  handleAPIKeyVisibility() {
+    this.showAPIKey = !this.showAPIKey;
+  }
 
-    handleMFLUserIdVisibility(){
-        this.showMFLUserId = !this.showMFLUserId;
-    }
+  handleMFLUserIdVisibility() {
+    this.showMFLUserId = !this.showMFLUserId;
+  }
 
-    handleSave(){
-        this.saving = true;
-        let mflSettings = {};
-        mflSettings.Id = this.leagueSettings.Id;
-        mflSettings.Year__c = this.refs.year.value;
-        mflSettings.League_Id__c = this.refs.leagueId.value;
-        mflSettings.Generic_URL__c = this.refs.genericURL.value;
-        mflSettings.Instance_URL__c = this.refs.instanceURL.value;
-        mflSettings.API_Key__c = this.refs.apiKey.value;
-        mflSettings.MFL_User_Id__c = this.refs.mflUserId.value;
-        saveLeagueSetup({settings: mflSettings})
-            .then( () =>{       
-                this.saving = false;    
-                showToast('Success!', 'Settings Updated', 'success');
-            })
-            .catch((error)=>{ 
-                this.saving = false;
-                this.error = true;
-                showToast('Unable to update settings', error.body.message, 'error');
-            })
-    }
+  handleSave() {
+    this.saving = true;
+    let mflSettings = {};
+    mflSettings.Id = this.leagueSettings.Id;
+    mflSettings.Year__c = this.refs.year.value;
+    mflSettings.League_Id__c = this.refs.leagueId.value;
+    mflSettings.Generic_URL__c = this.refs.genericURL.value;
+    mflSettings.Instance_URL__c = this.refs.instanceURL.value;
+    mflSettings.API_Key__c = this.refs.apiKey.value;
+    mflSettings.MFL_User_Id__c = this.refs.mflUserId.value;
+    saveLeagueSetup({ settings: mflSettings })
+      .then(() => {
+        this.saving = false;
+        showToast("Success!", "Settings Updated", "success");
+      })
+      .catch((error) => {
+        this.saving = false;
+        this.error = true;
+        showToast("Unable to update settings", error.body.message, "error");
+      });
+  }
 }

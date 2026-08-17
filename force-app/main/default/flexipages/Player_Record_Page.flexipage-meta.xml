@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
     <flexiPageRegions>
         <name>header</name>
@@ -404,7 +404,8 @@
                     <name>secondaryFields</name>
                     <value>Facet-77072baf-2d39-4862-a68c-e5f8bf163106</value>
                 </componentInstanceProperties>
-                <componentName>record_flexipage:dynamicHighlights</componentName>
+                <componentName
+        >record_flexipage:dynamicHighlights</componentName>
             </componentInstance>
         </itemInstances>
         <itemInstances>

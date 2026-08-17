@@ -1,27 +1,28 @@
-@import 'c/customCSS';
+@import "c/customCSS";
 
-.full-height{
-    height: 100%;
+.full-height {
+  height: 100%;
 }
 
-.pick, .bidding {
-    margin-left: 20px;
-    margin-right: 20px;
-    border-radius: 5px;
-    font-family: 'Trebuchet MS', sans-serif;
-    font-weight: bold;
-    color: #222222;
+.pick,
+.bidding {
+  margin-left: 20px;
+  margin-right: 20px;
+  border-radius: 5px;
+  font-family: "Trebuchet MS", sans-serif;
+  font-weight: bold;
+  color: #222222;
 }
 
 .bidding {
-    font-size: 26px;
+  font-size: 26px;
 }
 
 .pick {
-    font-size: 50px;
-    background-color: #FFCC00;
+  font-size: 50px;
+  background-color: #ffcc00;
 }
 
-.clock{
-    color: #FFCC00;
+.clock {
+  color: #ffcc00;
 }

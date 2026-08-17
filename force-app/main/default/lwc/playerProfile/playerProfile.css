@@ -1,35 +1,35 @@
 .profile {
-    border: #FFFFFF 1px none;
-    border-radius: 5px;
-    color: #222222;
-    margin: 2px;
-    opacity: 60%;
+  border: #ffffff 1px none;
+  border-radius: 5px;
+  color: #222222;
+  margin: 2px;
+  opacity: 60%;
 }
 
-img.photo{
-    height: 110px;
-    width: auto;
+img.photo {
+  height: 110px;
+  width: auto;
 }
 
-.QB{
-    background-color: #FAC898;
+.QB {
+  background-color: #fac898;
 }
-.RB{
-    background-color: #FDFD96;
+.RB {
+  background-color: #fdfd96;
 }
-.WR{
-    background-color: #A7C7E7;
+.WR {
+  background-color: #a7c7e7;
 }
-.TE{
-    background-color: #C1E1C1;
+.TE {
+  background-color: #c1e1c1;
 }
-.PK{
-    background-color: #F8C8DC;
+.PK {
+  background-color: #f8c8dc;
 }
-.Def{
-    background-color: #D3D3D3;
+.Def {
+  background-color: #d3d3d3;
 }
 
-.active{
-    opacity: 100%;
+.active {
+  opacity: 100%;
 }
