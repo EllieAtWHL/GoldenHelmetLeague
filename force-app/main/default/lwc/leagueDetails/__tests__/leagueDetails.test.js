@@ -44,6 +44,42 @@ describe("c-league-details", () => {
     expect(element.shadowRoot.querySelector("lightning-card")).toBeNull();
   });
 
+  it("shows the spinner before the league settings wire returns data", () => {
+    const element = createElement("c-league-details", { is: LeagueDetails });
+    document.body.appendChild(element);
+
+    expect(
+      element.shadowRoot.querySelector("lightning-spinner")
+    ).not.toBeNull();
+  });
+
+  it("hides the spinner once the league settings have loaded", async () => {
+    const element = await createLeagueDetails();
+
+    expect(element.shadowRoot.querySelector("lightning-spinner")).toBeNull();
+  });
+
+  it("shows the spinner again while a save is in flight, then hides it once saved", async () => {
+    let resolveSave;
+    saveLeagueSetup.mockImplementationOnce(
+      () => new Promise((resolve) => (resolveSave = resolve))
+    );
+    const element = await createLeagueDetails();
+
+    element.shadowRoot.querySelector("lightning-button").click();
+    await flushPromises();
+
+    expect(
+      element.shadowRoot.querySelector("lightning-spinner")
+    ).not.toBeNull();
+
+    resolveSave();
+    await flushPromises();
+    await flushPromises();
+
+    expect(element.shadowRoot.querySelector("lightning-spinner")).toBeNull();
+  });
+
   it("hides the API key and MFL user id behind password fields by default", async () => {
     const element = await createLeagueDetails();
 

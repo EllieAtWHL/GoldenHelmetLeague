@@ -37,7 +37,7 @@ export default class LeagueDetails extends LightningElement {
   }
 
   get showSpinner() {
-    return !this.leagueSettings || !this.error || this.saving;
+    return !this.leagueSettings || this.saving;
   }
 
   handleAPIKeyVisibility() {
