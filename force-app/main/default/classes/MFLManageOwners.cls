@@ -76,13 +76,13 @@ public class MFLManageOwners {
     }
 
     private static Boolean teamChanged(Franchise franchise, Map<String, Team_Owner__c> owners){
-        if(franchise.name == owners.get(franchise.id).Team_Name__c){
+        if(franchise.name != owners.get(franchise.id).Team_Name__c){
             return true;
         }
-        if(franchise.owner_name == owners.get(franchise.id).Name__c){
+        if(franchise.owner_name != owners.get(franchise.id).Name__c){
             return true;
         }
-        if(franchise.icon == owners.get(franchise.id).Icon_URL__c){
+        if(franchise.icon != owners.get(franchise.id).Icon_URL__c){
             return true;
         }
 
