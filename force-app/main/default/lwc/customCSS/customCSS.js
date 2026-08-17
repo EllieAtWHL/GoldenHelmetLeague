@@ -1,3 +1,1 @@
-import { LightningElement } from "lwc";
-
-export default class CustomCSS extends LightningElement {}
+export { default } from "./customCSS.css";
