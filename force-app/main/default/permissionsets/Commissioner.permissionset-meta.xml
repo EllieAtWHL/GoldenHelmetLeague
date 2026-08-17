@@ -88,6 +88,11 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Player__c.Predicted_Auction_Cost__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Player__c.MFL_Name__c</field>
         <readable>true</readable>
     </fieldPermissions>

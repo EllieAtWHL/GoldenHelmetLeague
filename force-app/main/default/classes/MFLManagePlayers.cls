@@ -26,6 +26,16 @@ public with sharing class MFLManagePlayers {
         String rank;
         String averagePick;
     }
+    private Class AAVResponse{
+        AAV aav;
+    }
+    private Class AAV{
+        List<AAV_Player> player;
+    }
+    private Class AAV_Player{
+        String id;
+        String averageValue;
+    }
     private Class RankPlayersResponse{
         PlayerRanks player_ranks;
     }
@@ -59,20 +69,27 @@ public with sharing class MFLManagePlayers {
             mapPlayersRank.put(playerRank.id, playerRank);
         }
 
+        List<AAV_Player> playersAAV = getAAV();
+        Map<String, AAV_Player> mapPlayersAAV = new Map<String, AAV_Player>();
+        for(AAV_Player aavPlayer: playersAAV){
+            mapPlayersAAV.put(aavPlayer.id, aavPlayer);
+        }
+        Decimal totalAuctionBudget = getTotalAuctionBudget();
+
         Map<String, NFL_Team__c> mapTeams = MFLManageByeWeeks.getNFLTeams();
         Set<String> positions = getPositions();
         List<Player__c> playersToUpsert = new List<Player__c>();
-        
+
         Id freeAgentTeamId = freeAgentTeam();
 
         for(Player player : mflNFLPlayers){
             if(nflPlayers !=null && nflPlayers.containsKey(player.id) && positions.contains(player.position)){
-                if(playerChanged(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapTeams) == true){
-                    Player__c updatedPlayer = createPlayer(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapTeams, freeAgentTeamId);
+                if(playerChanged(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapPlayersAAV, totalAuctionBudget, mapTeams) == true){
+                    Player__c updatedPlayer = createPlayer(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapPlayersAAV, totalAuctionBudget, mapTeams, freeAgentTeamId);
                     playersToUpsert.add(updatedPlayer);
                 }
             } else if(positions.contains(player.position)){
-                Player__c newPlayer = createPlayer(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapTeams, freeAgentTeamId);
+                Player__c newPlayer = createPlayer(player, nflPlayers, mapPlayersADP, mapPlayersRank, mapPlayersAAV, totalAuctionBudget, mapTeams, freeAgentTeamId);
                 playersToUpsert.add(newPlayer);
             }
 
@@ -80,7 +97,7 @@ public with sharing class MFLManagePlayers {
         upsert playersToUpsert;
     }
 
-    private static Player__c createPlayer(Player player, Map<String, Player__c> nflPlayers, Map<String, ADP_Player> mapPlayersADP, Map<String, Rank_Player> mapPlayersRank, Map<String, NFL_Team__c> mapTeams, Id freeAgentTeamId){
+    private static Player__c createPlayer(Player player, Map<String, Player__c> nflPlayers, Map<String, ADP_Player> mapPlayersADP, Map<String, Rank_Player> mapPlayersRank, Map<String, AAV_Player> mapPlayersAAV, Decimal totalAuctionBudget, Map<String, NFL_Team__c> mapTeams, Id freeAgentTeamId){
 
         Decimal adpRank;
         Decimal adpAverage;
@@ -98,6 +115,7 @@ public with sharing class MFLManagePlayers {
         }else{
             rank = 9999;
         }
+        Decimal predictedAuctionCost = getPredictedAuctionCost(player.id, mapPlayersAAV, totalAuctionBudget);
         if(mapTeams.containsKey(player.team)){
             teamId = mapTeams.get(player.team).Id;
         } else{
@@ -115,13 +133,22 @@ public with sharing class MFLManagePlayers {
             ADP_Rank__c = adpRank,
             ADP_Average__c = adpAverage,
             Experts_Rank__c = rank,
+            Predicted_Auction_Cost__c = predictedAuctionCost,
             NFL_Team__c = teamId
         );
 
         return newPlayer;
     }
 
-    private static Boolean playerChanged(Player player, Map<String, Player__c> nflPlayers, Map<String, ADP_Player> mapPlayersADP, Map<String, Rank_Player> mapPlayersRank, Map<String, NFL_Team__c> mapTeams){
+    private static Decimal getPredictedAuctionCost(String playerId, Map<String, AAV_Player> mapPlayersAAV, Decimal totalAuctionBudget){
+        if(totalAuctionBudget == null || !mapPlayersAAV.containsKey(playerId) || mapPlayersAAV.get(playerId).averageValue == null){
+            return 0;
+        }
+        Decimal averageValue = Decimal.valueOf(mapPlayersAAV.get(playerId).averageValue);
+        return (averageValue / 1000 * totalAuctionBudget).setScale(2);
+    }
+
+    private static Boolean playerChanged(Player player, Map<String, Player__c> nflPlayers, Map<String, ADP_Player> mapPlayersADP, Map<String, Rank_Player> mapPlayersRank, Map<String, AAV_Player> mapPlayersAAV, Decimal totalAuctionBudget, Map<String, NFL_Team__c> mapTeams){
         //Checks ADP fields
         if(mapPlayersADP.containsKey(player.id)){
             Decimal retrievedADPRank = Decimal.valueOf(mapPlayersADP.get(player.id).rank);
@@ -132,6 +159,11 @@ public with sharing class MFLManagePlayers {
             if(retrievedADPAverage != storedADPAverage || retrievedADPRank != storedADPRank){
                 return true;
             }
+        }
+        //Checks predicted auction cost
+        Decimal retrievedAuctionCost = getPredictedAuctionCost(player.id, mapPlayersAAV, totalAuctionBudget);
+        if(retrievedAuctionCost != nflPlayers.get(player.id).Predicted_Auction_Cost__c){
+            return true;
         }
         //Checks Rank field
         if(mapPlayersRank.containsKey(player.id)){
@@ -188,10 +220,11 @@ public with sharing class MFLManagePlayers {
                                         NFL_Team__c, 
                                         NFL_Team__r.Name, Position__c, 
                                         MFL_Status__c, 
-                                        ADP_Average__c, 
-                                        ADP_Rank__c, 
-                                        Experts_Rank__c 
-                                    FROM Player__c 
+                                        ADP_Average__c,
+                                        ADP_Rank__c,
+                                        Experts_Rank__c,
+                                        Predicted_Auction_Cost__c
+                                    FROM Player__c
                                     WITH USER_MODE 
                                     ORDER BY ADP_Rank__c];
 
@@ -232,6 +265,35 @@ public with sharing class MFLManagePlayers {
             return new List<ADP_Player>();
         }
         return adpResponse.adp.player;  
+    }
+
+    private static List<AAV_Player> getAAV(){
+
+        MFL__c mfl = MFL__c.getInstance();
+
+        String url = mfl.Generic_URL__c;
+        url += '/' + mfl.Year__c;
+        url += '/export?TYPE=aav&PERIOD=AUG1&IS_PPR=1&IS_KEEPER=N&JSON=1';
+
+        HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
+
+        AAVResponse aavResponse = (AAVResponse) JSON.deserialize(calloutResponse.getBody(), AAVResponse.class);
+
+        if(aavResponse.aav.player == null){
+            return new List<AAV_Player>();
+        }
+        return aavResponse.aav.player;
+    }
+
+    private static Decimal getTotalAuctionBudget(){
+
+        Draft_Settings__c draftSettings = LeagueSetup.getDraftSettings();
+        Integer franchiseCount = [SELECT COUNT() FROM Team_Owner__c];
+
+        if(draftSettings.Auction_Budget__c == null || franchiseCount == 0){
+            return null;
+        }
+        return draftSettings.Auction_Budget__c * franchiseCount;
     }
 
     private static List<Rank_Player> getRank(){
