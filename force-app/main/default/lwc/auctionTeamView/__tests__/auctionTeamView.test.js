@@ -114,4 +114,23 @@ describe("c-auction-team-view", () => {
     expect(rows[0].textContent).toContain("£");
     expect(rows[1].textContent).not.toContain("£");
   });
+
+  it("displays the remaining budget with no decimal places and a larger font size", () => {
+    const element = createElement("c-auction-team-view", {
+      is: AuctionTeamView,
+    });
+    element.team = buildTeam([
+      { overallPickNumber: 1, playerPickedName: "A", cssClass: "QB" },
+    ]);
+    document.body.appendChild(element);
+
+    const budgetFields = element.shadowRoot.querySelectorAll(
+      "lightning-formatted-number"
+    );
+    expect(budgetFields.length).toBe(2);
+    budgetFields.forEach((field) => {
+      expect(field.maximumFractionDigits).toBe("0");
+      expect(field.parentElement.classList).toContain("budget-remaining");
+    });
+  });
 });
