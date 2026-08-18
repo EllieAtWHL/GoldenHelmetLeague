@@ -118,15 +118,27 @@ public class MFLManageOwners {
       LeagueResponse.class
     );
 
-    try {
-      return leagueResponse.league.franchises.franchise;
-    } catch (Exception e) {
-      Logger.exception('Error parsing franchises from MFL response', e);
-      Logger.saveLog();
-      throw new AuraHandledException(
-        'Error parsing franchises from MFL response: ' + e.getMessage()
-      );
+    if (leagueResponse?.league?.franchises?.franchise == null) {
+      // MFL returns HTTP 200 even when the API Key/League Id is invalid;
+      // it just omits the "league" data instead of returning an error status.
+      String errorMessage =
+        'MFL did not return any franchise data. This usually means the API Key or League Id in League Setup is invalid or has expired - check League Setup and try again.\nRaw MFL response: ' +
+        calloutResponse.getBody();
+
+      // Logging must never be able to swallow this exception before it
+      // reaches the caller, so it's isolated in its own try/catch (GHL-24).
+      try {
+        Logger.error(errorMessage);
+        Logger.saveLog();
+      } catch (Exception loggingException) {
+      }
+
+      AuraHandledException ex = new AuraHandledException(errorMessage);
+      ex.setMessage(errorMessage);
+      throw ex;
     }
+
+    return leagueResponse.league.franchises.franchise;
   }
 
   private static Map<String, Team_Owner__c> getOwners() {

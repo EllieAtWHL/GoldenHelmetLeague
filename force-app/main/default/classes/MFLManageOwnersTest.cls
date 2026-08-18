@@ -147,15 +147,20 @@ public class MFLManageOwnersTest {
   }
 
   @IsTest
-  static void manageOwners_MalformedResponse_ThrowsException() {
+  static void manageOwners_MalformedResponse_ThrowsExceptionExplainingLikelyApiKeyIssue() {
     Test.setMock(HttpCalloutMock.class, new MalformedLeagueCalloutMock());
 
     Boolean exceptionThrown = false;
     Test.startTest();
     try {
       MFLManageOwners.manageOwners();
-    } catch (Exception e) {
+    } catch (AuraHandledException e) {
       exceptionThrown = true;
+      Assert.isTrue(
+        e.getMessage().contains('API Key or League Id in League Setup'),
+        'Exception message should point at the API Key/League Id as the likely cause, but was: ' +
+        e.getMessage()
+      );
     }
     Test.stopTest();
 
