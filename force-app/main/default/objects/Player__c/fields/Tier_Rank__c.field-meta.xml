@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tier_Rank__c</fullName>
+    <description
+  >Positional tier computed from rank data (ADP_Rank__c, or Experts_Rank__c if Draft_Settings__c.Ranking_Option__c is &apos;Fantasy Sharks&apos;) via gap-detection clustering within each Position__c group. Recomputed by MFLManagePlayers.managePlayers() on every sync. 1 is the best tier.</description>
+    <externalId>false</externalId>
+    <label>Tier (Rank)</label>
+    <precision>3</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>

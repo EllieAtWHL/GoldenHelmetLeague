@@ -78,6 +78,16 @@
     </fieldPermissions>
     <fieldPermissions>
         <editable>true</editable>
+        <field>Player__c.AAV_Min__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Player__c.AAV_Max__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
         <field>Player__c.ADP_Rank__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -92,7 +102,7 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Player__c.Predicted_Auction_Cost__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -134,6 +144,16 @@
     <fieldPermissions>
         <editable>true</editable>
         <field>Player__c.Team_Owner__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Player__c.Tier_Auction__c</field>
+        <readable>true</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>true</editable>
+        <field>Player__c.Tier_Rank__c</field>
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
