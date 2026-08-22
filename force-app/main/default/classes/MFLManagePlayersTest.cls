@@ -100,16 +100,20 @@ public with sharing class MFLManagePlayersTest {
   }
 
   @IsTest
-  static void managePlayers_NewPlayer_ScalesPredictedAuctionCostToLeagueBudget() {
+  static void managePlayers_NewPlayer_ScalesPredictedAuctionCostToPerTeamBudget() {
     Test.setMock(HttpCalloutMock.class, new MFLCalloutMock());
 
     Test.startTest();
     MFLManagePlayers.managePlayers();
     Test.stopTest();
 
-    //averageValue 50 (per $1000 pool) * total league budget (200 * 2 franchises = 400) / 1000 = 20
+    // averageValue 50 (per $1000 notional per-team budget) * this league's
+    // per-team budget (200) / 1000 = 10. Franchise count must NOT factor in
+    // here - a player's cost is bounded by one team's budget, not the
+    // combined pool of every team in the league.
     Player__c player = [
       SELECT
+        MFL_AAV__c,
         Predicted_Auction_Cost__c,
         ADP_Average__c,
         ADP_Rank__c,
@@ -117,14 +121,15 @@ public with sharing class MFLManagePlayersTest {
       FROM Player__c
       WHERE MFL_Id__c = '1000'
     ];
-    Assert.areEqual(20, player.Predicted_Auction_Cost__c);
+    Assert.areEqual(50, player.MFL_AAV__c);
+    Assert.areEqual(10, player.Predicted_Auction_Cost__c);
     Assert.areEqual(4.5, player.ADP_Average__c);
     Assert.areEqual(5, player.ADP_Rank__c);
     Assert.areEqual(3, player.Experts_Rank__c);
   }
 
   @IsTest
-  static void managePlayers_ExistingPlayerWithStaleCost_UpdatesPredictedAuctionCost() {
+  static void managePlayers_ExistingPlayerWithStaleAAV_UpdatesAAVAndPredictedCost() {
     Player__c existing = new Player__c(
       MFL_Id__c = '1000',
       MFL_Name__c = 'Test Player',
@@ -133,7 +138,7 @@ public with sharing class MFLManagePlayersTest {
       ADP_Rank__c = 5,
       ADP_Average__c = 4.5,
       Experts_Rank__c = 3,
-      Predicted_Auction_Cost__c = 10
+      MFL_AAV__c = 25
     );
     insert existing;
 
@@ -144,11 +149,12 @@ public with sharing class MFLManagePlayersTest {
     Test.stopTest();
 
     Player__c updated = [
-      SELECT Predicted_Auction_Cost__c
+      SELECT MFL_AAV__c, Predicted_Auction_Cost__c
       FROM Player__c
       WHERE Id = :existing.Id
     ];
-    Assert.areEqual(20, updated.Predicted_Auction_Cost__c);
+    Assert.areEqual(50, updated.MFL_AAV__c);
+    Assert.areEqual(10, updated.Predicted_Auction_Cost__c);
   }
 
   @IsTest
@@ -156,24 +162,6 @@ public with sharing class MFLManagePlayersTest {
     Draft_Settings__c draftSettings = Draft_Settings__c.getOrgDefaults();
     draftSettings.Auction_Budget__c = null;
     update draftSettings;
-
-    Test.setMock(HttpCalloutMock.class, new MFLCalloutMock());
-
-    Test.startTest();
-    MFLManagePlayers.managePlayers();
-    Test.stopTest();
-
-    Player__c player = [
-      SELECT Predicted_Auction_Cost__c
-      FROM Player__c
-      WHERE MFL_Id__c = '1000'
-    ];
-    Assert.areEqual(0, player.Predicted_Auction_Cost__c);
-  }
-
-  @IsTest
-  static void managePlayers_NoFranchisesSetUp_PredictedAuctionCostDefaultsToZero() {
-    delete [SELECT Id FROM Team_Owner__c];
 
     Test.setMock(HttpCalloutMock.class, new MFLCalloutMock());
 
@@ -198,10 +186,11 @@ public with sharing class MFLManagePlayersTest {
     Test.stopTest();
 
     Player__c player = [
-      SELECT Predicted_Auction_Cost__c
+      SELECT MFL_AAV__c, Predicted_Auction_Cost__c
       FROM Player__c
       WHERE MFL_Id__c = '1000'
     ];
+    Assert.isNull(player.MFL_AAV__c);
     Assert.areEqual(0, player.Predicted_Auction_Cost__c);
   }
 
