@@ -21,7 +21,16 @@ public with sharing class MFLManageByeWeeks {
   public static void manageByeWeeks() {
     Logger.setScenario('Managing NFL Bye Weeks');
 
-    List<Team> mflNFLTeams = getByeWeeks();
+    List<Team> mflNFLTeams;
+    try {
+      mflNFLTeams = getByeWeeks();
+    } catch (Exception e) {
+      throw AuraExceptionHelper.logAndBuild(
+        'Error retrieving bye weeks from MFL',
+        e
+      );
+    }
+
     Map<String, NFL_Team__c> nflTeams = getNFLTeams();
     List<NFL_Team__c> teamsToUpsert = new List<NFL_Team__c>();
 

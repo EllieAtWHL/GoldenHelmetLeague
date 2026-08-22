@@ -36,6 +36,18 @@ public class MFLManageByeWeeksTest {
     }
   }
 
+  private class MFLErrorEnvelopeCalloutMock implements HttpCalloutMock {
+    public HttpResponse respond(HttpRequest req) {
+      HttpResponse res = new HttpResponse();
+      res.setStatusCode(200);
+      res.setHeader('Content-Type', 'application/json');
+      res.setBody(
+        '{"encoding":"utf-8","version":"1.0","error":{"$t":"Invalid league ID 24312"}}'
+      );
+      return res;
+    }
+  }
+
   @TestSetup
   static void makeData() {
     MFL__c mfl = new MFL__c();
@@ -110,21 +122,26 @@ public class MFLManageByeWeeksTest {
   }
 
   @IsTest
-  static void manageByeWeeks_CalloutFails_ThrowsCalloutException() {
+  static void manageByeWeeks_CalloutFails_ThrowsAuraHandledExceptionWithMFLErrorBody() {
     Test.setMock(HttpCalloutMock.class, new ErrorCalloutMock());
 
     Boolean exceptionThrown = false;
     Test.startTest();
     try {
       MFLManageByeWeeks.manageByeWeeks();
-    } catch (CalloutException e) {
+    } catch (AuraHandledException e) {
       exceptionThrown = true;
+      Assert.isTrue(
+        e.getMessage().contains('Internal Server Error'),
+        'Expected the real MFL error body to reach the client, but was: ' +
+        e.getMessage()
+      );
     }
     Test.stopTest();
 
     Assert.isTrue(
       exceptionThrown,
-      'A CalloutException should have been thrown when the callout fails'
+      'An AuraHandledException should have been thrown when the callout fails'
     );
   }
 
@@ -144,6 +161,30 @@ public class MFLManageByeWeeksTest {
     Assert.isTrue(
       exceptionThrown,
       'An exception should have been thrown when the upsert fails'
+    );
+  }
+
+  @IsTest
+  static void manageByeWeeks_MFLReturnsErrorEnvelope_ThrowsExceptionWithMFLsExactMessage() {
+    Test.setMock(HttpCalloutMock.class, new MFLErrorEnvelopeCalloutMock());
+
+    Boolean exceptionThrown = false;
+    Test.startTest();
+    try {
+      MFLManageByeWeeks.manageByeWeeks();
+    } catch (AuraHandledException e) {
+      exceptionThrown = true;
+      Assert.areEqual(
+        'Invalid league ID 24312',
+        e.getMessage(),
+        'MFL\'s own error text should reach the client verbatim, not a guess'
+      );
+    }
+    Test.stopTest();
+
+    Assert.isTrue(
+      exceptionThrown,
+      'An exception should have been thrown when MFL returns an error envelope'
     );
   }
 

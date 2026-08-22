@@ -44,7 +44,45 @@ public with sharing class MFLRetrieveData {
       Logger.saveLog();
       throw new CalloutException(res.getBody());
     }
+
+    throwIfMFLErrorResponse(res.getBody());
+
     return res;
+  }
+
+  /**
+   * MFL returns HTTP 200 even for application-level errors (invalid League
+   * Id, expired API Key, etc.) - the error only shows up in the response
+   * body, shaped like {"error":{"$t":"the actual message"}}. Surface that
+   * exact text as an MFLApiException rather than letting callers guess at
+   * the cause from a typed JSON.deserialize failing downstream.
+   *
+   * Deliberately does not log here - callers already catch Exception and
+   * log via AuraExceptionHelper, and logging right before a throw has been
+   * shown to sometimes swallow that throw (see AuraExceptionHelper's
+   * ApexDoc / GHL-24), so this stays a plain, un-logged throw.
+   */
+  private static void throwIfMFLErrorResponse(String body) {
+    Object parsed;
+    try {
+      parsed = JSON.deserializeUntyped(body);
+    } catch (Exception e) {
+      return; // Not generic JSON - let the caller's own typed deserialize surface any issue.
+    }
+
+    if (!(parsed instanceof Map<String, Object>)) {
+      return;
+    }
+
+    Object errorNode = ((Map<String, Object>) parsed).get('error');
+    if (!(errorNode instanceof Map<String, Object>)) {
+      return;
+    }
+
+    Object errorText = ((Map<String, Object>) errorNode).get('$t');
+    if (errorText instanceof String) {
+      throw new MFLApiException((String) errorText);
+    }
   }
 
   public static HttpResponse mflPostCallout(String url, String draftResults) {

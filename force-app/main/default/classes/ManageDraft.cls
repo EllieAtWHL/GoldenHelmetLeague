@@ -327,9 +327,8 @@ public class ManageDraft {
     url += '&APIKEY=' + mfl.API_Key__c;
     url += '&JSON=1';
 
-    HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
-
     try {
+      HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
       MFLDraft mflDraft = (MFLDraft) JSON.deserialize(
         calloutResponse.getBody(),
         MFLDraft.class
@@ -337,8 +336,7 @@ public class ManageDraft {
       return mflDraft.draftResults.draftUnit.round1DraftOrder;
     } catch (Exception e) {
       throw AuraExceptionHelper.logAndBuild(
-        'Error parsing draft order from MFL response',
-        'Error parsing draft order from MFL response: ' + e.getMessage(),
+        'Error retrieving draft order from MFL',
         e
       );
     }
