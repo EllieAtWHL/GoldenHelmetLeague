@@ -3,13 +3,18 @@ import { refreshApex } from "@salesforce/apex";
 import { subscribe, unsubscribe } from "lightning/empApi";
 import MyDraftBoard from "c/myDraftBoard";
 import getDraftSettings from "@salesforce/apex/LeagueSetup.getDraftSettings";
-import getUndraftedPlayers from "@salesforce/apex/ManageMyDraftBoard.getUndraftedPlayers";
+import getAllPlayers from "@salesforce/apex/ManageMyDraftBoard.getAllPlayers";
 import getMyDraftedPlayers from "@salesforce/apex/ManageMyDraftBoard.getMyDraftedPlayers";
 import updatePlayerNotes from "@salesforce/apex/ManageMyDraftBoard.updatePlayerNotes";
+import getTeams from "@salesforce/apex/MFLManageOwners.getTeams";
 
 const flushPromises = () => Promise.resolve().then(() => Promise.resolve());
 
-const UNDRAFTED_PLAYERS = [
+function picksOf(...records) {
+  return { records };
+}
+
+const ALL_PLAYERS = [
   {
     Id: "p1",
     MFL_Name__c: "Alpha, Anna",
@@ -22,6 +27,8 @@ const UNDRAFTED_PLAYERS = [
     Tier_Rank__c: 1,
     Tier_Auction__c: 1,
     My_notes__c: "",
+    Team_Owner__c: null,
+    Picks__r: picksOf(),
   },
   {
     Id: "p2",
@@ -29,12 +36,14 @@ const UNDRAFTED_PLAYERS = [
     Position__c: "QB",
     Team__c: "KC",
     Photo_URL_Formula__c: "",
-    ADP_Rank__c: 20,
-    Experts_Rank__c: 22,
-    Predicted_Auction_Cost__c: 5,
-    Tier_Rank__c: 2,
-    Tier_Auction__c: 2,
+    ADP_Rank__c: 8,
+    Experts_Rank__c: 9,
+    Predicted_Auction_Cost__c: 25,
+    Tier_Rank__c: 1,
+    Tier_Auction__c: 1,
     My_notes__c: "",
+    Team_Owner__c: null,
+    Picks__r: picksOf(),
   },
   {
     Id: "p3",
@@ -48,6 +57,28 @@ const UNDRAFTED_PLAYERS = [
     Tier_Rank__c: null,
     Tier_Auction__c: null,
     My_notes__c: "",
+    Team_Owner__c: null,
+    Picks__r: picksOf(),
+    MFL_Status__c: "R",
+  },
+  {
+    Id: "p4",
+    MFL_Name__c: "Delta, Dana",
+    Position__c: "WR",
+    Team__c: "MIA",
+    Photo_URL_Formula__c: "",
+    ADP_Rank__c: 12,
+    Experts_Rank__c: 11,
+    Predicted_Auction_Cost__c: 18,
+    Tier_Rank__c: 1,
+    Tier_Auction__c: 1,
+    My_notes__c: "",
+    Team_Owner__c: "team1",
+    Picks__r: picksOf({
+      Auction_Cost__c: 22,
+      Round__c: 3,
+      Round_Pick_Number__c: 5,
+    }),
   },
 ];
 
@@ -59,6 +90,26 @@ const MY_TEAM_PLAYERS = [
     Team__c: "MIA",
     Photo_URL_Formula__c: "",
     My_notes__c: "",
+    Picks__r: picksOf({
+      Auction_Cost__c: 22,
+      Round__c: 3,
+      Round_Pick_Number__c: 5,
+    }),
+  },
+];
+
+const TEAMS = [
+  {
+    Id: "team1",
+    Team_Name__c: "My Team",
+    Remaining_Budget__c: 178,
+    Is_My_Team__c: true,
+  },
+  {
+    Id: "team2",
+    Team_Name__c: "Rival Team",
+    Remaining_Budget__c: 150,
+    Is_My_Team__c: false,
   },
 ];
 
@@ -89,12 +140,16 @@ describe("c-my-draft-board", () => {
     jest.clearAllMocks();
   });
 
-  async function createMyDraftBoard(draftSettings = SNAKE_SETTINGS) {
+  async function createMyDraftBoard(
+    draftSettings = SNAKE_SETTINGS,
+    allPlayers = ALL_PLAYERS
+  ) {
     const element = createElement("c-my-draft-board", { is: MyDraftBoard });
     document.body.appendChild(element);
     getDraftSettings.emit(draftSettings);
-    getUndraftedPlayers.emit([...UNDRAFTED_PLAYERS]);
+    getAllPlayers.emit([...allPlayers]);
     getMyDraftedPlayers.emit([...MY_TEAM_PLAYERS]);
+    getTeams.emit([...TEAMS]);
     await flushPromises();
     return element;
   }
@@ -123,7 +178,7 @@ describe("c-my-draft-board", () => {
     expect(unsubscribe).toHaveBeenCalledTimes(2);
   });
 
-  it("groups undrafted players by position and tier, labelling value by rank for a snake draft", async () => {
+  it("groups players by position and tier, labelling value by rank for a snake draft", async () => {
     const element = await createMyDraftBoard(SNAKE_SETTINGS);
 
     const cards = cardsFor(element);
@@ -148,7 +203,44 @@ describe("c-my-draft-board", () => {
     expect(alpha.valueLabel).toBe("$40");
   });
 
-  it("filters the available players list by search term", async () => {
+  it("sorts players within a tier by lowest rank first for a snake draft", async () => {
+    const element = await createMyDraftBoard(SNAKE_SETTINGS);
+
+    const qbCards = cardsFor(element).filter(
+      (card) => card.player.Position__c === "QB"
+    );
+    expect(qbCards.map((card) => card.player.Id)).toEqual(["p1", "p2"]);
+  });
+
+  it("sorts players within a tier by highest auction value first for an auction draft", async () => {
+    const element = await createMyDraftBoard(AUCTION_SETTINGS);
+
+    const qbCards = cardsFor(element).filter(
+      (card) => card.player.Position__c === "QB"
+    );
+    expect(qbCards.map((card) => card.player.Id)).toEqual(["p1", "p2"]);
+    expect(qbCards.map((card) => card.valueLabel)).toEqual(["$40", "$25"]);
+  });
+
+  it("shows a drafted player shaded, with their actual sold price instead of a predicted value", async () => {
+    const element = await createMyDraftBoard(AUCTION_SETTINGS);
+
+    const delta = cardsFor(element).find((card) => card.player.Id === "p4");
+
+    expect(delta.isDrafted).toBe(true);
+    expect(delta.valueLabel).toBe("Sold $22");
+  });
+
+  it("shows a drafted player's round/pick instead of rank for a snake draft", async () => {
+    const element = await createMyDraftBoard(SNAKE_SETTINGS);
+
+    const delta = cardsFor(element).find((card) => card.player.Id === "p4");
+
+    expect(delta.isDrafted).toBe(true);
+    expect(delta.valueLabel).toBe("Drafted Rd 3.5");
+  });
+
+  it("filters the player list by search term", async () => {
     const element = await createMyDraftBoard();
 
     const searchInput = element.shadowRoot.querySelector("lightning-input");
@@ -161,13 +253,13 @@ describe("c-my-draft-board", () => {
     expect(cards.some((card) => card.player.Id === "p2")).toBe(true);
   });
 
-  it("refreshes both player wires when a DraftUpdated__e message arrives", async () => {
+  it("refreshes players and teams when a DraftUpdated__e message arrives", async () => {
     await createMyDraftBoard();
 
     draftUpdatedCallback({});
     await flushPromises();
 
-    expect(refreshApex).toHaveBeenCalledTimes(2);
+    expect(refreshApex).toHaveBeenCalledTimes(3);
   });
 
   it("opens the nomination overlay for the player named in a Draft_Message__e message", async () => {
@@ -182,6 +274,15 @@ describe("c-my-draft-board", () => {
     expect(overlay).not.toBeNull();
     const card = overlay.querySelector("c-my-draft-board-player-card");
     expect(card.player.MFL_Name__c).toBe("Beta, Bob");
+  });
+
+  it("does not show a nomination overlay for a player who is already drafted", async () => {
+    const element = await createMyDraftBoard();
+
+    draftMessageCallback({ data: { payload: { Player_Id__c: "p4" } } });
+    await flushPromises();
+
+    expect(element.shadowRoot.querySelector(".nomination-overlay")).toBeNull();
   });
 
   it("closes the nomination overlay when the close button is clicked", async () => {
@@ -213,5 +314,28 @@ describe("c-my-draft-board", () => {
       notes: "Watch injury report",
     });
     expect(refreshApex).toHaveBeenCalledTimes(2);
+  });
+
+  it("shows the budget summary with remaining budget and spend by position for an auction draft", async () => {
+    const element = await createMyDraftBoard(AUCTION_SETTINGS);
+
+    const summary = element.shadowRoot.querySelector(".budget-summary");
+    expect(summary).not.toBeNull();
+
+    const budgetNumber = element.shadowRoot.querySelector(
+      "lightning-formatted-number"
+    );
+    expect(budgetNumber.value).toBe(178);
+
+    const chips = Array.from(
+      element.shadowRoot.querySelectorAll(".spend-chip")
+    ).map((chip) => chip.textContent.trim());
+    expect(chips).toEqual(["WR: $22"]);
+  });
+
+  it("hides the budget summary for a snake draft", async () => {
+    const element = await createMyDraftBoard(SNAKE_SETTINGS);
+
+    expect(element.shadowRoot.querySelector(".budget-summary")).toBeNull();
   });
 });

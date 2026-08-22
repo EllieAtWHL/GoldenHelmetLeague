@@ -7,7 +7,14 @@
         alt={player.MFL_Name__c}
       />
       <div class="slds-p-left_x-small slds-grow">
-        <div class="name">{player.MFL_Name__c}</div>
+        <div class="name">
+          {player.MFL_Name__c}
+          <lightning-badge
+            lwc:if={isRookie}
+            label="Rookie"
+            class="rookie-badge"
+          ></lightning-badge>
+        </div>
         <div class="meta">{player.Team__c} - {player.Position__c}</div>
       </div>
       <div lwc:if={hasValueLabel} class="value-label">{valueLabel}</div>

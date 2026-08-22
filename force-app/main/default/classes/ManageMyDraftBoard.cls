@@ -5,8 +5,8 @@
  */
 public with sharing class ManageMyDraftBoard {
   @AuraEnabled(cacheable=true)
-  public static List<Player__c> getUndraftedPlayers() {
-    Logger.setScenario('Retrieving Undrafted Players for My Draft Board');
+  public static List<Player__c> getAllPlayers() {
+    Logger.setScenario('Retrieving All Players for My Draft Board');
     try {
       return [
         SELECT
@@ -21,17 +21,15 @@ public with sharing class ManageMyDraftBoard {
           Predicted_Auction_Cost__c,
           Tier_Rank__c,
           Tier_Auction__c,
-          My_notes__c
+          My_notes__c,
+          Team_Owner__c,
+          (SELECT Auction_Cost__c, Round__c, Round_Pick_Number__c FROM Picks__r)
         FROM Player__c
-        WHERE Team_Owner__c = NULL
         WITH USER_MODE
         ORDER BY Position__c, Tier_Rank__c NULLS LAST, ADP_Rank__c NULLS LAST
       ];
     } catch (Exception e) {
-      throw AuraExceptionHelper.logAndBuild(
-        'Error retrieving undrafted players',
-        e
-      );
+      throw AuraExceptionHelper.logAndBuild('Error retrieving players', e);
     }
   }
 
@@ -47,7 +45,8 @@ public with sharing class ManageMyDraftBoard {
           Position__c,
           Team__c,
           MFL_Status__c,
-          My_notes__c
+          My_notes__c,
+          (SELECT Auction_Cost__c, Round__c, Round_Pick_Number__c FROM Picks__r)
         FROM Player__c
         WHERE Team_Owner__r.Is_My_Team__c = TRUE
         WITH USER_MODE

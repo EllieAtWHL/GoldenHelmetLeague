@@ -3,16 +3,22 @@ import { LightningElement, api } from "lwc";
 export default class MyDraftBoardPlayerCard extends LightningElement {
   @api player;
   @api valueLabel;
+  @api isDrafted;
 
   isEditing = false;
   draftNotes = "";
 
   get positionClass() {
-    return `card ${this.player?.Position__c}`;
+    const draftedClass = this.isDrafted ? " drafted" : "";
+    return `card ${this.player?.Position__c}${draftedClass}`;
   }
 
   get hasValueLabel() {
     return !!this.valueLabel;
+  }
+
+  get isRookie() {
+    return this.player?.MFL_Status__c === "R";
   }
 
   handleEdit() {

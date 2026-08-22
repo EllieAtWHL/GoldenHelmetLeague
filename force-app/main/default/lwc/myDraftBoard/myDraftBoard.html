@@ -1,7 +1,27 @@
 <template>
   <lightning-card title="My Draft Board">
+    <template lwc:if={showBudgetSummary}>
+      <div class="slds-p-around_small budget-summary">
+        <div class="budget-remaining">
+          Budget Remaining:
+          <lightning-formatted-number
+            value={budgetRemaining}
+            format-style="currency"
+            maximum-fraction-digits="0"
+          ></lightning-formatted-number>
+        </div>
+        <div class="slds-p-top_x-small spend-by-position">
+          <template for:each={spendByPosition} for:item="row">
+            <span key={row.key} class="spend-chip">
+              {row.position}: ${row.spent}
+            </span>
+          </template>
+        </div>
+      </div>
+    </template>
+
     <lightning-tabset variant="scoped">
-      <lightning-tab label="Available Players">
+      <lightning-tab label="All Players">
         <div class="slds-p-around_small controls">
           <lightning-input
             type="search"
@@ -24,7 +44,7 @@
           </div>
         </div>
 
-        <template for:each={groupedUndrafted} for:item="group">
+        <template for:each={groupedAllPlayers} for:item="group">
           <div key={group.position} class="position-group">
             <h2 class="slds-text-heading_small position-heading">
               {group.position}
@@ -44,6 +64,7 @@
                       key={player.Id}
                       player={player}
                       value-label={player.valueLabel}
+                      is-drafted={player.isDrafted}
                       onnotessave={handleNotesSave}
                     ></c-my-draft-board-player-card>
                   </template>

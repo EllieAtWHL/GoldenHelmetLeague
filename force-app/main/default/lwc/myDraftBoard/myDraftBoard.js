@@ -3,9 +3,10 @@ import { refreshApex } from "@salesforce/apex";
 import { subscribe, unsubscribe, onError } from "lightning/empApi";
 import { showToast } from "c/toastUtility";
 import getDraftSettings from "@salesforce/apex/LeagueSetup.getDraftSettings";
-import getUndraftedPlayers from "@salesforce/apex/ManageMyDraftBoard.getUndraftedPlayers";
+import getAllPlayers from "@salesforce/apex/ManageMyDraftBoard.getAllPlayers";
 import getMyDraftedPlayers from "@salesforce/apex/ManageMyDraftBoard.getMyDraftedPlayers";
 import updatePlayerNotes from "@salesforce/apex/ManageMyDraftBoard.updatePlayerNotes";
+import getTeams from "@salesforce/apex/MFLManageOwners.getTeams";
 
 const POSITIONS = ["QB", "RB", "WR", "TE", "Def", "PK"];
 const DRAFT_UPDATED_CHANNEL = "/event/DraftUpdated__e";
@@ -13,11 +14,13 @@ const DRAFT_MESSAGE_CHANNEL = "/event/Draft_Message__e";
 
 export default class MyDraftBoard extends LightningElement {
   draftSettings;
-  undraftedPlayers;
+  allPlayers;
   myDraftedPlayers;
+  teams;
 
-  undraftedResult;
+  allPlayersResult;
   myDraftedResult;
+  teamsResult;
 
   searchTerm = "";
   positionFilter = "ALL";
@@ -35,11 +38,11 @@ export default class MyDraftBoard extends LightningElement {
     }
   }
 
-  @wire(getUndraftedPlayers)
-  wiredUndrafted(result) {
-    this.undraftedResult = result;
+  @wire(getAllPlayers)
+  wiredAllPlayers(result) {
+    this.allPlayersResult = result;
     if (result.data) {
-      this.undraftedPlayers = result.data;
+      this.allPlayers = result.data;
     }
   }
 
@@ -48,6 +51,14 @@ export default class MyDraftBoard extends LightningElement {
     this.myDraftedResult = result;
     if (result.data) {
       this.myDraftedPlayers = result.data;
+    }
+  }
+
+  @wire(getTeams)
+  wiredTeams(result) {
+    this.teamsResult = result;
+    if (result.data) {
+      this.teams = result.data;
     }
   }
 
@@ -75,8 +86,11 @@ export default class MyDraftBoard extends LightningElement {
   }
 
   handleDraftUpdated = () => {
-    refreshApex(this.undraftedResult).then(() => {
-      return refreshApex(this.myDraftedResult);
+    refreshApex(this.allPlayersResult).then(() => {
+      return Promise.all([
+        refreshApex(this.myDraftedResult),
+        refreshApex(this.teamsResult),
+      ]);
     });
   };
 
@@ -105,7 +119,7 @@ export default class MyDraftBoard extends LightningElement {
     updatePlayerNotes({ playerId, notes })
       .then(() => {
         return Promise.all([
-          refreshApex(this.undraftedResult),
+          refreshApex(this.allPlayersResult),
           refreshApex(this.myDraftedResult),
         ]);
       })
@@ -145,12 +159,12 @@ export default class MyDraftBoard extends LightningElement {
     }));
   }
 
-  get filteredUndraftedPlayers() {
-    if (!this.undraftedPlayers) {
+  get filteredAllPlayers() {
+    if (!this.allPlayers) {
       return [];
     }
     const term = this.searchTerm.toLowerCase();
-    return this.undraftedPlayers.filter((player) => {
+    return this.allPlayers.filter((player) => {
       if (
         this.positionFilter !== "ALL" &&
         player.Position__c !== this.positionFilter
@@ -164,9 +178,9 @@ export default class MyDraftBoard extends LightningElement {
     });
   }
 
-  get groupedUndrafted() {
+  get groupedAllPlayers() {
     const byPosition = new Map();
-    this.filteredUndraftedPlayers.forEach((player) => {
+    this.filteredAllPlayers.forEach((player) => {
       if (!byPosition.has(player.Position__c)) {
         byPosition.set(player.Position__c, []);
       }
@@ -207,13 +221,18 @@ export default class MyDraftBoard extends LightningElement {
       tierMap.get(tierKey).push(player);
     });
 
+    // Rank fields: lower is better, so ascending puts the best player first.
+    // Predicted_Auction_Cost__c: higher is better, so flip to descending.
+    const sortDirection = this.isSnake ? 1 : -1;
+
     const sortedTiers = Array.from(tierMap.keys()).sort((a, b) => a - b);
     const tiers = sortedTiers.map((tier) => ({
       key: `tier-${tier}`,
       label: `Tier ${tier}`,
       players: this.withValueLabels(
         [...tierMap.get(tier)].sort(
-          (a, b) => (a[valueField] ?? 0) - (b[valueField] ?? 0)
+          (a, b) =>
+            sortDirection * ((a[valueField] ?? 0) - (b[valueField] ?? 0))
         )
       ),
     }));
@@ -233,12 +252,27 @@ export default class MyDraftBoard extends LightningElement {
     const valueField = this.valueField;
     const isSnake = this.isSnake;
     return players.map((player) => {
-      const rawValue = player[valueField];
+      const isDrafted = !!player.Team_Owner__c;
+      const pick = player.Picks__r?.records?.[0];
       let valueLabel;
-      if (rawValue) {
-        valueLabel = isSnake ? `Rank ${rawValue}` : `$${rawValue}`;
+      if (isDrafted) {
+        if (isSnake) {
+          valueLabel = pick
+            ? `Drafted Rd ${pick.Round__c}.${pick.Round_Pick_Number__c}`
+            : "Drafted";
+        } else {
+          valueLabel =
+            pick?.Auction_Cost__c != null
+              ? `Sold $${pick.Auction_Cost__c}`
+              : "Drafted";
+        }
+      } else {
+        const rawValue = player[valueField];
+        if (rawValue) {
+          valueLabel = isSnake ? `Rank ${rawValue}` : `$${rawValue}`;
+        }
       }
-      return { ...player, valueLabel };
+      return { ...player, valueLabel, isDrafted };
     });
   }
 
@@ -263,16 +297,50 @@ export default class MyDraftBoard extends LightningElement {
   }
 
   get nominatedPlayer() {
-    if (!this.nominatedPlayerId || !this.undraftedPlayers) {
+    if (!this.nominatedPlayerId || !this.allPlayers) {
       return undefined;
     }
-    const match = this.undraftedPlayers.find(
+    const match = this.allPlayers.find(
       (player) => player.Id === this.nominatedPlayerId
     );
-    return match ? this.withValueLabels([match])[0] : undefined;
+    if (!match || match.Team_Owner__c) {
+      return undefined;
+    }
+    return this.withValueLabels([match])[0];
   }
 
   get showNominationModal() {
     return !!this.nominatedPlayer;
+  }
+
+  get myTeam() {
+    return this.teams?.find((team) => team.Is_My_Team__c);
+  }
+
+  get showBudgetSummary() {
+    return !this.isSnake && !!this.myTeam;
+  }
+
+  get budgetRemaining() {
+    return this.myTeam?.Remaining_Budget__c;
+  }
+
+  get spendByPosition() {
+    const totals = new Map();
+    (this.myDraftedPlayers || []).forEach((player) => {
+      const pick = player.Picks__r?.records?.[0];
+      const spent = pick?.Auction_Cost__c || 0;
+      totals.set(
+        player.Position__c,
+        (totals.get(player.Position__c) || 0) + spent
+      );
+    });
+    return POSITIONS.filter((position) => totals.has(position)).map(
+      (position) => ({
+        position,
+        key: position,
+        spent: totals.get(position),
+      })
+    );
   }
 }

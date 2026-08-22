@@ -1,7 +1,7 @@
 @isTest
 public class ManageMyDraftBoardTest {
   @isTest
-  static void getUndraftedPlayers_ReturnsOnlyPlayersWithNoTeamOwner() {
+  static void getAllPlayers_ReturnsBothDraftedAndUndraftedPlayers() {
     Team_Owner__c team = TestDataFactory.createFranchises(1)[0];
     insert team;
 
@@ -9,12 +9,24 @@ public class ManageMyDraftBoardTest {
     players[0].Team_Owner__c = team.Id;
     insert players;
 
+    Pick__c pick = TestDataFactory.createPicks(players[0].Id, team.Id, 1)[0];
+    pick.Auction_Cost__c = 45;
+    insert pick;
+
     Test.startTest();
-    List<Player__c> result = ManageMyDraftBoard.getUndraftedPlayers();
+    List<Player__c> result = ManageMyDraftBoard.getAllPlayers();
     Test.stopTest();
 
-    Assert.areEqual(1, result.size());
-    Assert.areEqual(players[1].Id, result[0].Id);
+    Assert.areEqual(2, result.size());
+    for (Player__c player : result) {
+      if (player.Id == players[0].Id) {
+        Assert.areEqual(team.Id, player.Team_Owner__c);
+        Assert.areEqual(1, player.Picks__r.size());
+        Assert.areEqual(45, player.Picks__r[0].Auction_Cost__c);
+      } else {
+        Assert.areEqual(null, player.Team_Owner__c);
+      }
+    }
   }
 
   @isTest

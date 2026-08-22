@@ -161,7 +161,8 @@ public class MFLManageOwners {
           Icon_URL__c,
           Franchise_Id__c,
           Starting_Budget__c,
-          Remaining_Budget__c
+          Remaining_Budget__c,
+          Is_My_Team__c
         FROM Team_Owner__c
         ORDER BY Pick_Number__c
       ];

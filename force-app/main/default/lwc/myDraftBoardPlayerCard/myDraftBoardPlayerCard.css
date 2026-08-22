@@ -7,6 +7,11 @@
   font-family: "Trebuchet MS", sans-serif;
 }
 
+.card.drafted {
+  opacity: 0.45;
+  filter: grayscale(70%);
+}
+
 img.photo {
   height: 40px;
   width: auto;
@@ -15,6 +20,13 @@ img.photo {
 
 .name {
   font-weight: bold;
+}
+
+.rookie-badge {
+  margin-left: 6px;
+  vertical-align: middle;
+  background-color: #ffcc01;
+  color: #222222;
 }
 
 .meta {

@@ -51,6 +51,34 @@ describe("c-my-draft-board-player-card", () => {
     expect(element.shadowRoot.textContent).not.toContain("Rank 14");
   });
 
+  it("shades the card and adds a drafted class when isDrafted is true", () => {
+    const element = createCard({ isDrafted: true });
+
+    const card = element.shadowRoot.querySelector("div");
+    expect(card.className).toBe("card WR drafted");
+  });
+
+  it("does not add a drafted class when isDrafted is false", () => {
+    const element = createCard({ isDrafted: false });
+
+    const card = element.shadowRoot.querySelector("div");
+    expect(card.className).toBe("card WR");
+  });
+
+  it("shows a Rookie badge when MFL_Status__c is R", () => {
+    const element = createCard({
+      player: { ...PLAYER, MFL_Status__c: "R" },
+    });
+
+    expect(element.shadowRoot.querySelector("lightning-badge")).not.toBeNull();
+  });
+
+  it("does not show a Rookie badge for a non-rookie", () => {
+    const element = createCard();
+
+    expect(element.shadowRoot.querySelector("lightning-badge")).toBeNull();
+  });
+
   it("dispatches notessave with the edited text when Save is clicked", async () => {
     const element = createCard();
     const notesSaveHandler = jest.fn();
