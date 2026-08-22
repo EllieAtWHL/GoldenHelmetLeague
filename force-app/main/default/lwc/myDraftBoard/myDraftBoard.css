@@ -1,0 +1,48 @@
+@import "c/customCSS";
+
+.controls {
+  background-color: #222222;
+}
+
+.position-heading {
+  color: #ffcc01;
+  font-family: "Trebuchet MS", sans-serif;
+  padding: 4px 8px;
+}
+
+.position-group {
+  margin-bottom: 12px;
+}
+
+.position-pills {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.nomination-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9000;
+}
+
+.nomination-card {
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 24px;
+  min-width: 320px;
+  max-width: 90vw;
+}
+
+.close-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}

@@ -1,0 +1,32 @@
+@import "c/customCSS";
+
+.card {
+  border-radius: 5px;
+  color: #222222;
+  margin: 4px 0;
+  font-family: "Trebuchet MS", sans-serif;
+}
+
+img.photo {
+  height: 40px;
+  width: auto;
+  border-radius: 4px;
+}
+
+.name {
+  font-weight: bold;
+}
+
+.meta {
+  font-size: 12px;
+}
+
+.value-label {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.notes-preview {
+  min-height: 1.2em;
+  white-space: pre-wrap;
+}

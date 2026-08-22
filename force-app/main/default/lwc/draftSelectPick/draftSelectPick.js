@@ -111,7 +111,11 @@ export default class DraftSelectPick extends LightningElement {
           ? shortenedName
           : this.playerSelectedName
       } - ${player.Team__c}`;
-      const detail = { message: message, class: player.Position__c };
+      const detail = {
+        message: message,
+        class: player.Position__c,
+        playerId: player.Id,
+      };
       const playerSelectedEvent = new CustomEvent("playerselected", {
         detail: detail,
       });

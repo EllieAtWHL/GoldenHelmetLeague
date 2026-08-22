@@ -52,7 +52,7 @@ export default class DraftCommisioner extends LightningElement {
     if (result.data) {
       this.draft = this.createDraft(result.data);
       if (this.draftStarted && this.currentPick) {
-        sendMessage({ message: this.message, cssClass: null });
+        sendMessage({ message: this.message, cssClass: null, playerId: null });
       }
       this.loading = false;
     }
@@ -169,12 +169,16 @@ export default class DraftCommisioner extends LightningElement {
 
   startDraft() {
     this.draftStarted = true;
-    sendMessage({ message: this.message, cssClass: null });
+    sendMessage({ message: this.message, cssClass: null, playerId: null });
   }
 
   startPick() {
     if (this.isSnake) {
-      sendMessage({ message: "THE PICK IS IN", cssClass: null });
+      sendMessage({
+        message: "THE PICK IS IN",
+        cssClass: null,
+        playerId: null,
+      });
     }
     this.showSelectionScreen = true;
   }
@@ -186,7 +190,11 @@ export default class DraftCommisioner extends LightningElement {
   handlePlayerSelected(event) {
     let nextMessage = this.nextPick.pickTeam;
     let message = `${event.detail.message}</br>Next up: ${nextMessage}`;
-    sendMessage({ message: message, cssClass: event.detail.class });
+    sendMessage({
+      message: message,
+      cssClass: event.detail.class,
+      playerId: event.detail.playerId,
+    });
   }
 
   handlePickMade() {

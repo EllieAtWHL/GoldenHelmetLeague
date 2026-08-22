@@ -1,0 +1,46 @@
+<template>
+  <div class={positionClass}>
+    <div class="slds-grid slds-grid_vertical-align-center slds-p-around_x-small">
+      <img
+        class="photo"
+        src={player.Photo_URL_Formula__c}
+        alt={player.MFL_Name__c}
+      />
+      <div class="slds-p-left_x-small slds-grow">
+        <div class="name">{player.MFL_Name__c}</div>
+        <div class="meta">{player.Team__c} - {player.Position__c}</div>
+      </div>
+      <div lwc:if={hasValueLabel} class="value-label">{valueLabel}</div>
+    </div>
+
+    <div class="slds-p-horizontal_x-small slds-p-bottom_x-small notes-area">
+      <template lwc:if={isEditing}>
+        <lightning-textarea
+          label="My notes"
+          value={draftNotes}
+          onchange={handleNotesChange}
+        ></lightning-textarea>
+        <div class="slds-p-top_xx-small slds-grid slds-grid_align-end">
+          <lightning-button
+            label="Cancel"
+            onclick={handleCancel}
+          ></lightning-button>
+          <lightning-button
+            class="slds-p-left_x-small"
+            variant="brand"
+            label="Save"
+            onclick={handleSave}
+          ></lightning-button>
+        </div>
+      </template>
+      <template lwc:else>
+        <p class="notes-preview">{player.My_notes__c}</p>
+        <lightning-button
+          variant="neutral"
+          label="Edit notes"
+          onclick={handleEdit}
+        ></lightning-button>
+      </template>
+    </div>
+  </div>
+</template>
