@@ -20,7 +20,7 @@ public without sharing class CometdController {
     } catch (Exception e) {
       throw AuraExceptionHelper.logAndBuild(
         'Error retrieving stored sessionId',
-        'Error retrieving stored sessionId: ' + e.getMessage(),
+        e.getMessage(),
         e
       );
     }
