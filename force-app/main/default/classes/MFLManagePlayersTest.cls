@@ -177,6 +177,61 @@ public with sharing class MFLManagePlayersTest {
   }
 
   @IsTest
+  static void managePlayers_UndraftedPlayerNoLongerInMFLResponse_DeletesPlayer() {
+    Player__c staleplayer = new Player__c(
+      MFL_Id__c = '9999',
+      MFL_Name__c = 'Retired Player',
+      Position__c = 'QB'
+    );
+    insert staleplayer;
+
+    Test.setMock(HttpCalloutMock.class, new MFLCalloutMock());
+
+    Test.startTest();
+    MFLManagePlayers.managePlayers();
+    Test.stopTest();
+
+    List<Player__c> remaining = [
+      SELECT Id
+      FROM Player__c
+      WHERE Id = :staleplayer.Id
+    ];
+    Assert.isTrue(
+      remaining.isEmpty(),
+      'A player no longer returned by MFL should have been deleted'
+    );
+  }
+
+  @IsTest
+  static void managePlayers_DraftedPlayerNoLongerInMFLResponse_IsNotDeleted() {
+    Team_Owner__c team = [SELECT Id FROM Team_Owner__c LIMIT 1];
+    Player__c draftedPlayer = new Player__c(
+      MFL_Id__c = '9999',
+      MFL_Name__c = 'Drafted Player',
+      Position__c = 'QB',
+      Team_Owner__c = team.Id
+    );
+    insert draftedPlayer;
+
+    Test.setMock(HttpCalloutMock.class, new MFLCalloutMock());
+
+    Test.startTest();
+    MFLManagePlayers.managePlayers();
+    Test.stopTest();
+
+    List<Player__c> remaining = [
+      SELECT Id
+      FROM Player__c
+      WHERE Id = :draftedPlayer.Id
+    ];
+    Assert.areEqual(
+      1,
+      remaining.size(),
+      'A drafted player should never be deleted, even if MFL no longer returns them'
+    );
+  }
+
+  @IsTest
   static void searchPlayers_NoSearchTerm_ReturnsTopAvailablePlayers() {
     Player__c player = new Player__c(
       MFL_Id__c = '1000',

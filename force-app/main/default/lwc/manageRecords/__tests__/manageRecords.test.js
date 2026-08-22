@@ -26,7 +26,6 @@ import syncNFLTeams from "@salesforce/apex/MFLManageByeWeeks.manageByeWeeks";
 import syncNFLPlayers from "@salesforce/apex/MFLManagePlayers.managePlayers";
 import syncMFLFranchises from "@salesforce/apex/MFLManageOwners.manageOwners";
 import resetDraft from "@salesforce/apex/LeagueSetup.resetDraft";
-import cleanPlayers from "@salesforce/apex/MFLManagePlayers.deleteUnavailablePlayers";
 
 const flushPromises = () => Promise.resolve().then(() => Promise.resolve());
 
@@ -87,7 +86,6 @@ describe("c-manage-records", () => {
 
   it.each([
     ["Reset", resetDraft, "Reset Successful", "Reset unsuccessful"],
-    ["Clean Players", cleanPlayers, "Clean Successful", "Clean unsuccessful"],
     ["Sync Teams", syncNFLTeams, "Sync successful", "Sync unsuccessful"],
     ["Sync Players", syncNFLPlayers, "Sync successful", "Sync unsuccessful"],
     [

@@ -132,6 +132,49 @@ public with sharing class MFLManagePlayers {
       }
     }
     upsert playersToUpsert;
+
+    deletePlayersNoLongerInMFL(mflNFLPlayers, nflPlayers);
+  }
+
+  /**
+   * Removes Player__c records that MFL no longer returns at all, so
+   * retired/removed players can't still be offered in the draft. Never
+   * deletes a player who's already been drafted (Team_Owner__c populated) -
+   * Pick__c.Player__c is a Master-Detail relationship, so deleting a
+   * drafted player would cascade-delete their pick.
+   */
+  @TestVisible
+  private static void deletePlayersNoLongerInMFL(
+    List<Player> mflNFLPlayers,
+    Map<String, Player__c> nflPlayers
+  ) {
+    Set<String> mflPlayerIds = new Set<String>();
+    for (Player player : mflNFLPlayers) {
+      mflPlayerIds.add(player.id);
+    }
+
+    List<Player__c> playersToDelete = new List<Player__c>();
+    for (Player__c existingPlayer : nflPlayers.values()) {
+      if (
+        !mflPlayerIds.contains(existingPlayer.MFL_Id__c) &&
+        existingPlayer.Team_Owner__c == null
+      ) {
+        playersToDelete.add(existingPlayer);
+      }
+    }
+
+    if (playersToDelete.isEmpty()) {
+      return;
+    }
+
+    try {
+      delete playersToDelete;
+    } catch (Exception e) {
+      throw AuraExceptionHelper.logAndBuild(
+        'Error deleting players no longer returned by MFL',
+        e
+      );
+    }
   }
 
   private static Player__c createPlayer(
@@ -309,7 +352,8 @@ public with sharing class MFLManagePlayers {
         ADP_Average__c,
         ADP_Rank__c,
         Experts_Rank__c,
-        Predicted_Auction_Cost__c
+        Predicted_Auction_Cost__c,
+        Team_Owner__c
       FROM Player__c
       WITH USER_MODE
       ORDER BY ADP_Rank__c
@@ -449,18 +493,5 @@ public with sharing class MFLManagePlayers {
       List<Player__c> playerList = ((List<Player__c>) soslResult[0]);
       return playerList;
     }
-  }
-
-  @AuraEnabled
-  public static void deleteUnavailablePlayers() {
-    DateTime oneYearAgo = Datetime.now().addYears(-1);
-    System.debug(oneYearAgo);
-
-    List<Player__c> unavailablePlayers = [
-      SELECT Id
-      FROM Player__c
-      WHERE LastModifiedDate < :oneYearAgo
-    ];
-    delete unavailablePlayers;
   }
 }
