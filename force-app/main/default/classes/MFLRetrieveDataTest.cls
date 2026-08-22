@@ -26,6 +26,18 @@ public class MFLRetrieveDataTest {
     }
   }
 
+  private class MFLErrorEnvelopeCalloutMock implements HttpCalloutMock {
+    public HttpResponse respond(HttpRequest req) {
+      HttpResponse res = new HttpResponse();
+      res.setStatusCode(200);
+      res.setHeader('Content-Type', 'application/json');
+      res.setBody(
+        '{"encoding":"utf-8","version":"1.0","error":{"$t":"Invalid league ID 24312"}}'
+      );
+      return res;
+    }
+  }
+
   @TestSetup
   static void makeData() {
     MFL__c mfl = new MFL__c();
@@ -74,6 +86,43 @@ public class MFLRetrieveDataTest {
 
     Assert.areEqual(200, res.getStatusCode());
     Assert.areEqual('{"status":"ok"}', res.getBody());
+  }
+
+  @IsTest
+  static void mflGetCallout_ErrorEnvelopeWith200Status_ThrowsMFLApiExceptionWithMFLsOwnMessage() {
+    Test.setMock(HttpCalloutMock.class, new MFLErrorEnvelopeCalloutMock());
+
+    Boolean exceptionThrown = false;
+    Test.startTest();
+    try {
+      MFLRetrieveData.mflGetCallout('https://api.example.com');
+    } catch (MFLRetrieveData.MFLApiException e) {
+      exceptionThrown = true;
+      Assert.areEqual(
+        'Invalid league ID 24312',
+        e.getMessage(),
+        'MFL\'s own error text should be used as the exception message verbatim'
+      );
+    }
+    Test.stopTest();
+
+    Assert.isTrue(
+      exceptionThrown,
+      'An MFLApiException should have been thrown for a 200 response containing an error envelope'
+    );
+  }
+
+  @IsTest
+  static void mflGetCallout_SuccessBodyWithNoErrorKey_DoesNotThrow() {
+    // Guards against the error-envelope detection misfiring on a normal
+    // response that simply doesn't happen to contain an "error" key.
+    Test.setMock(HttpCalloutMock.class, new SuccessCalloutMock());
+
+    Test.startTest();
+    HttpResponse res = MFLRetrieveData.mflGetCallout('https://api.example.com');
+    Test.stopTest();
+
+    Assert.areEqual(200, res.getStatusCode());
   }
 
   @IsTest

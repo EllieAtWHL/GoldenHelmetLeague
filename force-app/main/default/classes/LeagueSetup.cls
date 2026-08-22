@@ -5,9 +5,7 @@ public with sharing class LeagueSetup {
     try {
       return MFL__c.getOrgDefaults();
     } catch (Exception e) {
-      Logger.exception('Error retrieving MFL settings', e);
-      Logger.saveLog();
-      throw new AuraHandledException(e.getMessage());
+      throw AuraExceptionHelper.logAndBuild('Error retrieving MFL settings', e);
     }
   }
 
@@ -17,9 +15,7 @@ public with sharing class LeagueSetup {
     try {
       upsert settings;
     } catch (Exception e) {
-      Logger.exception('Error saving MFL settings', e);
-      Logger.saveLog();
-      throw new AuraHandledException(e.getMessage());
+      throw AuraExceptionHelper.logAndBuild('Error saving MFL settings', e);
     }
   }
 
@@ -29,9 +25,10 @@ public with sharing class LeagueSetup {
     try {
       return Draft_Settings__c.getOrgDefaults();
     } catch (Exception e) {
-      Logger.exception('Error retrieving draft settings', e);
-      Logger.saveLog();
-      throw new AuraHandledException(e.getMessage());
+      throw AuraExceptionHelper.logAndBuild(
+        'Error retrieving draft settings',
+        e
+      );
     }
   }
 
@@ -41,9 +38,7 @@ public with sharing class LeagueSetup {
     try {
       upsert settings;
     } catch (Exception e) {
-      Logger.exception('Error saving draft settings', e);
-      Logger.saveLog();
-      throw new AuraHandledException(e.getMessage());
+      throw AuraExceptionHelper.logAndBuild('Error saving draft settings', e);
     }
   }
 
@@ -59,9 +54,7 @@ public with sharing class LeagueSetup {
       DraftUpdated__e event = new DraftUpdated__e();
       EventBus.publish(event);
     } catch (Exception e) {
-      Logger.exception('Error resetting draft', e);
-      Logger.saveLog();
-      throw new AuraHandledException(e.getMessage());
+      throw AuraExceptionHelper.logAndBuild('Error resetting draft', e);
     }
   }
 

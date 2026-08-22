@@ -18,10 +18,9 @@ public without sharing class CometdController {
     try {
       return Self__c.getOrgDefaults().Session_Id__c;
     } catch (Exception e) {
-      Logger.exception('Error retrieving stored sessionId', e);
-      Logger.saveLog();
-      throw new AuraHandledException(
-        'Error retrieving stored sessionId: ' + e.getMessage()
+      throw AuraExceptionHelper.logAndBuild(
+        'Error retrieving stored sessionId',
+        e
       );
     }
   }
@@ -36,9 +35,10 @@ public without sharing class CometdController {
       updatedSettings.Session_Id__c = getSessionId();
       upsert updatedSettings;
     } catch (Exception e) {
-      Logger.exception('Error setting stored sessionId', e);
-      Logger.saveLog();
-      throw new AuraHandledException(e.getMessage());
+      throw AuraExceptionHelper.logAndBuild(
+        'Error setting stored sessionId',
+        e
+      );
     }
   }
 }

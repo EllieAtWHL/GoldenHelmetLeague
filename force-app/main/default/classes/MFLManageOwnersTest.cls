@@ -34,6 +34,18 @@ public class MFLManageOwnersTest {
     }
   }
 
+  private class MFLErrorEnvelopeCalloutMock implements HttpCalloutMock {
+    public HttpResponse respond(HttpRequest req) {
+      HttpResponse res = new HttpResponse();
+      res.setStatusCode(200);
+      res.setHeader('Content-Type', 'application/json');
+      res.setBody(
+        '{"encoding":"utf-8","version":"1.0","error":{"$t":"Invalid league ID 24312"}}'
+      );
+      return res;
+    }
+  }
+
   @TestSetup
   static void makeData() {
     MFL__c mfl = new MFL__c();
@@ -147,7 +159,10 @@ public class MFLManageOwnersTest {
   }
 
   @IsTest
-  static void manageOwners_MalformedResponse_ThrowsExceptionExplainingLikelyApiKeyIssue() {
+  static void manageOwners_MalformedResponseWithNoExplicitMFLError_ThrowsException() {
+    // No "error" envelope in this response, so mflGetCallout() won't throw -
+    // this characterizes the fallback case where franchise data is still
+    // missing and the dereference in getFranchises() fails naturally.
     Test.setMock(HttpCalloutMock.class, new MalformedLeagueCalloutMock());
 
     Boolean exceptionThrown = false;
@@ -156,17 +171,36 @@ public class MFLManageOwnersTest {
       MFLManageOwners.manageOwners();
     } catch (AuraHandledException e) {
       exceptionThrown = true;
-      Assert.isTrue(
-        e.getMessage().contains('API Key or League Id in League Setup'),
-        'Exception message should point at the API Key/League Id as the likely cause, but was: ' +
-        e.getMessage()
-      );
     }
     Test.stopTest();
 
     Assert.isTrue(
       exceptionThrown,
       'An exception should have been thrown for a malformed response'
+    );
+  }
+
+  @IsTest
+  static void manageOwners_MFLReturnsErrorEnvelope_ThrowsExceptionWithMFLsExactMessage() {
+    Test.setMock(HttpCalloutMock.class, new MFLErrorEnvelopeCalloutMock());
+
+    Boolean exceptionThrown = false;
+    Test.startTest();
+    try {
+      MFLManageOwners.manageOwners();
+    } catch (AuraHandledException e) {
+      exceptionThrown = true;
+      Assert.areEqual(
+        'Invalid league ID 24312',
+        e.getMessage(),
+        'MFL\'s own error text should reach the client verbatim, not a guess'
+      );
+    }
+    Test.stopTest();
+
+    Assert.isTrue(
+      exceptionThrown,
+      'An exception should have been thrown when MFL returns an error envelope'
     );
   }
 

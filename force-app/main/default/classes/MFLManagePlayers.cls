@@ -80,7 +80,6 @@ public with sharing class MFLManagePlayers {
     for (AAV_Player aavPlayer : playersAAV) {
       mapPlayersAAV.put(aavPlayer.id, aavPlayer);
     }
-    Decimal totalAuctionBudget = getTotalAuctionBudget();
 
     Map<String, NFL_Team__c> mapTeams = MFLManageByeWeeks.getNFLTeams();
     Set<String> positions = getPositions();
@@ -101,7 +100,6 @@ public with sharing class MFLManagePlayers {
             mapPlayersADP,
             mapPlayersRank,
             mapPlayersAAV,
-            totalAuctionBudget,
             mapTeams
           ) == true
         ) {
@@ -111,7 +109,6 @@ public with sharing class MFLManagePlayers {
             mapPlayersADP,
             mapPlayersRank,
             mapPlayersAAV,
-            totalAuctionBudget,
             mapTeams,
             freeAgentTeamId
           );
@@ -124,7 +121,6 @@ public with sharing class MFLManagePlayers {
           mapPlayersADP,
           mapPlayersRank,
           mapPlayersAAV,
-          totalAuctionBudget,
           mapTeams,
           freeAgentTeamId
         );
@@ -132,6 +128,64 @@ public with sharing class MFLManagePlayers {
       }
     }
     upsert playersToUpsert;
+
+    deletePlayersNoLongerDraftable(mflNFLPlayers, nflPlayers, positions);
+  }
+
+  /**
+   * Removes Player__c records that can no longer legitimately be drafted:
+   * either MFL no longer returns the player at all (retired, removed,
+   * etc.), or MFL now reports them under a position outside this league's
+   * Position__c picklist (MFL's players export includes every NFL player,
+   * including e.g. individual defensive positions like LB/CB that this
+   * league doesn't track). Both cases mean the sync's main loop would
+   * silently skip the player forever, leaving a stale record behind.
+   *
+   * Never deletes a player who's already been drafted (Team_Owner__c
+   * populated) - Pick__c.Player__c is a Master-Detail relationship, so
+   * deleting a drafted player would cascade-delete their pick.
+   */
+  @TestVisible
+  private static void deletePlayersNoLongerDraftable(
+    List<Player> mflNFLPlayers,
+    Map<String, Player__c> nflPlayers,
+    Set<String> positions
+  ) {
+    Map<String, String> mflPlayerPositions = new Map<String, String>();
+    for (Player player : mflNFLPlayers) {
+      mflPlayerPositions.put(player.id, player.position);
+    }
+
+    List<Player__c> playersToDelete = new List<Player__c>();
+    for (Player__c existingPlayer : nflPlayers.values()) {
+      if (existingPlayer.Team_Owner__c != null) {
+        continue;
+      }
+
+      Boolean stillInMFL = mflPlayerPositions.containsKey(
+        existingPlayer.MFL_Id__c
+      );
+      Boolean positionStillTracked =
+        stillInMFL &&
+        positions.contains(mflPlayerPositions.get(existingPlayer.MFL_Id__c));
+
+      if (!positionStillTracked) {
+        playersToDelete.add(existingPlayer);
+      }
+    }
+
+    if (playersToDelete.isEmpty()) {
+      return;
+    }
+
+    try {
+      delete playersToDelete;
+    } catch (Exception e) {
+      throw AuraExceptionHelper.logAndBuild(
+        'Error deleting players no longer draftable',
+        e
+      );
+    }
   }
 
   private static Player__c createPlayer(
@@ -140,7 +194,6 @@ public with sharing class MFLManagePlayers {
     Map<String, ADP_Player> mapPlayersADP,
     Map<String, Rank_Player> mapPlayersRank,
     Map<String, AAV_Player> mapPlayersAAV,
-    Decimal totalAuctionBudget,
     Map<String, NFL_Team__c> mapTeams,
     Id freeAgentTeamId
   ) {
@@ -160,11 +213,7 @@ public with sharing class MFLManagePlayers {
     } else {
       rank = 9999;
     }
-    Decimal predictedAuctionCost = getPredictedAuctionCost(
-      player.id,
-      mapPlayersAAV,
-      totalAuctionBudget
-    );
+    Decimal rawAAV = getRawAAV(player.id, mapPlayersAAV);
     if (mapTeams.containsKey(player.team)) {
       teamId = mapTeams.get(player.team).Id;
     } else {
@@ -182,29 +231,35 @@ public with sharing class MFLManagePlayers {
       ADP_Rank__c = adpRank,
       ADP_Average__c = adpAverage,
       Experts_Rank__c = rank,
-      Predicted_Auction_Cost__c = predictedAuctionCost,
+      MFL_AAV__c = rawAAV,
       NFL_Team__c = teamId
     );
 
     return newPlayer;
   }
 
-  private static Decimal getPredictedAuctionCost(
+  /**
+   * MFL's raw Average Auction Value, unweighted for this league. It's
+   * expressed as a normalized share of a notional $1000 per-team auction
+   * budget, e.g. 82 means "typically ~8.2% of one team's budget". Defaults
+   * to 0 when MFL doesn't return a value for this player, rather than
+   * null. Player__c.Predicted_Auction_Cost__c is a formula field that
+   * scales this to this league's actual per-team budget
+   * (Draft_Settings__c.Auction_Budget__c) live, so Apex only needs to
+   * keep this raw value in sync - the adjusted figure recalculates
+   * automatically, even if the league's budget changes later.
+   */
+  private static Decimal getRawAAV(
     String playerId,
-    Map<String, AAV_Player> mapPlayersAAV,
-    Decimal totalAuctionBudget
+    Map<String, AAV_Player> mapPlayersAAV
   ) {
     if (
-      totalAuctionBudget == null ||
       !mapPlayersAAV.containsKey(playerId) ||
       mapPlayersAAV.get(playerId).averageValue == null
     ) {
       return 0;
     }
-    Decimal averageValue = Decimal.valueOf(
-      mapPlayersAAV.get(playerId).averageValue
-    );
-    return (averageValue / 1000 * totalAuctionBudget).setScale(2);
+    return Decimal.valueOf(mapPlayersAAV.get(playerId).averageValue);
   }
 
   private static Boolean playerChanged(
@@ -213,7 +268,6 @@ public with sharing class MFLManagePlayers {
     Map<String, ADP_Player> mapPlayersADP,
     Map<String, Rank_Player> mapPlayersRank,
     Map<String, AAV_Player> mapPlayersAAV,
-    Decimal totalAuctionBudget,
     Map<String, NFL_Team__c> mapTeams
   ) {
     //Checks ADP fields
@@ -234,16 +288,9 @@ public with sharing class MFLManagePlayers {
         return true;
       }
     }
-    //Checks predicted auction cost
-    Decimal retrievedAuctionCost = getPredictedAuctionCost(
-      player.id,
-      mapPlayersAAV,
-      totalAuctionBudget
-    );
-    if (
-      retrievedAuctionCost !=
-      nflPlayers.get(player.id).Predicted_Auction_Cost__c
-    ) {
+    //Checks raw AAV
+    Decimal retrievedAAV = getRawAAV(player.id, mapPlayersAAV);
+    if (retrievedAAV != nflPlayers.get(player.id).MFL_AAV__c) {
       return true;
     }
     //Checks Rank field
@@ -309,7 +356,8 @@ public with sharing class MFLManagePlayers {
         ADP_Average__c,
         ADP_Rank__c,
         Experts_Rank__c,
-        Predicted_Auction_Cost__c
+        MFL_AAV__c,
+        Team_Owner__c
       FROM Player__c
       WITH USER_MODE
       ORDER BY ADP_Rank__c
@@ -361,7 +409,7 @@ public with sharing class MFLManagePlayers {
 
     String url = mfl.Generic_URL__c;
     url += '/' + mfl.Year__c;
-    url += '/export?TYPE=aav&PERIOD=AUG1&IS_PPR=1&IS_KEEPER=N&JSON=1';
+    url += '/export?TYPE=aav&PERIOD=RECENT&IS_PPR=1&IS_KEEPER=N&JSON=1';
 
     HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
 
@@ -374,16 +422,6 @@ public with sharing class MFLManagePlayers {
       return new List<AAV_Player>();
     }
     return aavResponse.aav.player;
-  }
-
-  private static Decimal getTotalAuctionBudget() {
-    Draft_Settings__c draftSettings = LeagueSetup.getDraftSettings();
-    Integer franchiseCount = [SELECT COUNT() FROM Team_Owner__c];
-
-    if (draftSettings.Auction_Budget__c == null || franchiseCount == 0) {
-      return null;
-    }
-    return draftSettings.Auction_Budget__c * franchiseCount;
   }
 
   private static List<Rank_Player> getRank() {
@@ -449,18 +487,5 @@ public with sharing class MFLManagePlayers {
       List<Player__c> playerList = ((List<Player__c>) soslResult[0]);
       return playerList;
     }
-  }
-
-  @AuraEnabled
-  public static void deleteUnavailablePlayers() {
-    DateTime oneYearAgo = Datetime.now().addYears(-1);
-    System.debug(oneYearAgo);
-
-    List<Player__c> unavailablePlayers = [
-      SELECT Id
-      FROM Player__c
-      WHERE LastModifiedDate < :oneYearAgo
-    ];
-    delete unavailablePlayers;
   }
 }

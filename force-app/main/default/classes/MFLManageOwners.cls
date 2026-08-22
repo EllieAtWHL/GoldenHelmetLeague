@@ -111,34 +111,24 @@ public class MFLManageOwners {
     url += '&APIKEY=' + mfl.API_Key__c;
     url += '&JSON=1';
 
-    HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
+    try {
+      HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
 
-    LeagueResponse leagueResponse = (LeagueResponse) JSON.deserialize(
-      calloutResponse.getBody(),
-      LeagueResponse.class
-    );
+      LeagueResponse leagueResponse = (LeagueResponse) JSON.deserialize(
+        calloutResponse.getBody(),
+        LeagueResponse.class
+      );
 
-    if (leagueResponse?.league?.franchises?.franchise == null) {
-      // MFL returns HTTP 200 even when the API Key/League Id is invalid;
-      // it just omits the "league" data instead of returning an error status.
-      String errorMessage =
-        'MFL did not return any franchise data. This usually means the API Key or League Id in League Setup is invalid or has expired - check League Setup and try again.\nRaw MFL response: ' +
-        calloutResponse.getBody();
-
-      // Logging must never be able to swallow this exception before it
-      // reaches the caller, so it's isolated in its own try/catch (GHL-24).
-      try {
-        Logger.error(errorMessage);
-        Logger.saveLog();
-      } catch (Exception loggingException) {
-      }
-
-      AuraHandledException ex = new AuraHandledException(errorMessage);
-      ex.setMessage(errorMessage);
-      throw ex;
+      // No explicit MFL error envelope means mflGetCallout() would already
+      // have thrown MFLApiException - if franchise data is still missing
+      // here, this dereference throws naturally and is caught below.
+      return leagueResponse.league.franchises.franchise;
+    } catch (Exception e) {
+      throw AuraExceptionHelper.logAndBuild(
+        'Error retrieving franchises from MFL',
+        e
+      );
     }
-
-    return leagueResponse.league.franchises.franchise;
   }
 
   private static Map<String, Team_Owner__c> getOwners() {
@@ -176,9 +166,7 @@ public class MFLManageOwners {
         ORDER BY Pick_Number__c
       ];
     } catch (Exception e) {
-      Logger.exception('Error getting team owners', e);
-      Logger.saveLog();
-      throw new AuraHandledException(e.getMessage());
+      throw AuraExceptionHelper.logAndBuild('Error getting team owners', e);
     }
   }
 }
