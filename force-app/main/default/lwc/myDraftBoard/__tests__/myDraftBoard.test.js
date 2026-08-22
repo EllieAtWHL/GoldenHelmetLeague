@@ -240,6 +240,28 @@ describe("c-my-draft-board", () => {
     expect(delta.valueLabel).toBe("Drafted Rd 3.5");
   });
 
+  it("also reads the sold price when Picks__r comes back as a flat array rather than a records wrapper", async () => {
+    const flatPicksPlayers = ALL_PLAYERS.map((player) => {
+      if (player.Id !== "p4") {
+        return player;
+      }
+      return {
+        ...player,
+        Picks__r: [
+          { Auction_Cost__c: 22, Round__c: 3, Round_Pick_Number__c: 5 },
+        ],
+      };
+    });
+    const element = await createMyDraftBoard(
+      AUCTION_SETTINGS,
+      flatPicksPlayers
+    );
+
+    const delta = cardsFor(element).find((card) => card.player.Id === "p4");
+
+    expect(delta.valueLabel).toBe("Sold $22");
+  });
+
   it("filters the player list by search term", async () => {
     const element = await createMyDraftBoard();
 

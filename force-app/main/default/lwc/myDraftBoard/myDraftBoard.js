@@ -248,12 +248,23 @@ export default class MyDraftBoard extends LightningElement {
     return tiers;
   }
 
+  // Apex serializes a subquery as { totalSize, done, records: [...] }, but
+  // handle a flat array too in case that ever changes - cheap to be safe here.
+  // eslint-disable-next-line class-methods-use-this
+  firstPick(player) {
+    const picks = player.Picks__r;
+    if (Array.isArray(picks)) {
+      return picks[0];
+    }
+    return picks?.records?.[0];
+  }
+
   withValueLabels(players) {
     const valueField = this.valueField;
     const isSnake = this.isSnake;
     return players.map((player) => {
       const isDrafted = !!player.Team_Owner__c;
-      const pick = player.Picks__r?.records?.[0];
+      const pick = this.firstPick(player);
       let valueLabel;
       if (isDrafted) {
         if (isSnake) {
@@ -328,7 +339,7 @@ export default class MyDraftBoard extends LightningElement {
   get spendByPosition() {
     const totals = new Map();
     (this.myDraftedPlayers || []).forEach((player) => {
-      const pick = player.Picks__r?.records?.[0];
+      const pick = this.firstPick(player);
       const spent = pick?.Auction_Cost__c || 0;
       totals.set(
         player.Position__c,
