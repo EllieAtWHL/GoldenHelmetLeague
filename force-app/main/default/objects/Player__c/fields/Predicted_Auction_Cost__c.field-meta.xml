@@ -3,14 +3,13 @@
     <fullName>Predicted_Auction_Cost__c</fullName>
     <label>Predicted Auction Cost</label>
     <description
-  >MFL_AAV__c scaled to this league&apos;s per-team auction budget (Draft_Settings__c.Auction_Budget__c). Always live - recalculates automatically if either input changes, no resync required.</description>
-    <formula
-  >IF(OR(ISBLANK(MFL_AAV__c), ISBLANK($Setup.Draft_Settings__c.Auction_Budget__c)), 0, MFL_AAV__c / 1000 * $Setup.Draft_Settings__c.Auction_Budget__c)</formula>
-    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
-    <precision>16</precision>
+  >MFL_AAV__c shrunk toward what similarly-ranked players go for (in proportion to how wide, and therefore how unreliable, its AAV_Min__c/AAV_Max__c spread is - see MFLManagePlayers.confidenceAdjustedAuctionValues()), then scaled to this league&apos;s real combined auction pool: number of teams times Draft_Settings__c.Auction_Budget__c, NOT the per-team budget alone (MFL&apos;s $1000 baseline is the whole league&apos;s pool, per MFL&apos;s own API docs - see MFLManagePlayers.predictedAuctionCost()). Computed by MFLManagePlayers.computeTiers() on every sync - no longer a live formula, since the confidence adjustment needs the whole position group, not just this record. Only as fresh as the last sync, same as Tier_Auction__c.</description>
+    <externalId>false</externalId>
+    <precision>7</precision>
     <required>false</required>
     <scale>2</scale>
     <trackHistory>false</trackHistory>
     <trackTrending>false</trackTrending>
     <type>Currency</type>
+    <unique>false</unique>
 </CustomField>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Tier_Auction__c</fullName>
+    <description
+  >Positional tier computed via gap-detection clustering within each Position__c group, on a confidence-adjusted version of MFL_AAV__c that shrinks a noisy/wide-spread price toward what similarly-ranked players go for (see MFLManagePlayers.confidenceAdjustedAuctionValues()) rather than raw MFL_AAV__c directly. Recomputed by MFLManagePlayers.managePlayers() on every sync. 1 is the best (highest-value) tier.</description>
+    <externalId>false</externalId>
+    <label>Tier (Auction)</label>
+    <precision>3</precision>
+    <required>false</required>
+    <scale>0</scale>
+    <trackHistory>false</trackHistory>
+    <trackTrending>false</trackTrending>
+    <type>Number</type>
+    <unique>false</unique>
+</CustomField>
