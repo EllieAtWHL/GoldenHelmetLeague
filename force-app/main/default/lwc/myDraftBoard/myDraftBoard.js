@@ -274,13 +274,13 @@ export default class MyDraftBoard extends LightningElement {
         } else {
           valueLabel =
             pick?.Auction_Cost__c != null
-              ? `Sold $${pick.Auction_Cost__c}`
+              ? `Sold £${pick.Auction_Cost__c}`
               : "Drafted";
         }
       } else {
         const rawValue = player[valueField];
         if (rawValue) {
-          valueLabel = isSnake ? `Rank ${rawValue}` : `$${rawValue}`;
+          valueLabel = isSnake ? `Rank ${rawValue}` : `£${rawValue}`;
         }
       }
       return { ...player, valueLabel, isDrafted };
