@@ -133,32 +133,47 @@ public with sharing class MFLManagePlayers {
     }
     upsert playersToUpsert;
 
-    deletePlayersNoLongerInMFL(mflNFLPlayers, nflPlayers);
+    deletePlayersNoLongerDraftable(mflNFLPlayers, nflPlayers, positions);
   }
 
   /**
-   * Removes Player__c records that MFL no longer returns at all, so
-   * retired/removed players can't still be offered in the draft. Never
-   * deletes a player who's already been drafted (Team_Owner__c populated) -
-   * Pick__c.Player__c is a Master-Detail relationship, so deleting a
-   * drafted player would cascade-delete their pick.
+   * Removes Player__c records that can no longer legitimately be drafted:
+   * either MFL no longer returns the player at all (retired, removed,
+   * etc.), or MFL now reports them under a position outside this league's
+   * Position__c picklist (MFL's players export includes every NFL player,
+   * including e.g. individual defensive positions like LB/CB that this
+   * league doesn't track). Both cases mean the sync's main loop would
+   * silently skip the player forever, leaving a stale record behind.
+   *
+   * Never deletes a player who's already been drafted (Team_Owner__c
+   * populated) - Pick__c.Player__c is a Master-Detail relationship, so
+   * deleting a drafted player would cascade-delete their pick.
    */
   @TestVisible
-  private static void deletePlayersNoLongerInMFL(
+  private static void deletePlayersNoLongerDraftable(
     List<Player> mflNFLPlayers,
-    Map<String, Player__c> nflPlayers
+    Map<String, Player__c> nflPlayers,
+    Set<String> positions
   ) {
-    Set<String> mflPlayerIds = new Set<String>();
+    Map<String, String> mflPlayerPositions = new Map<String, String>();
     for (Player player : mflNFLPlayers) {
-      mflPlayerIds.add(player.id);
+      mflPlayerPositions.put(player.id, player.position);
     }
 
     List<Player__c> playersToDelete = new List<Player__c>();
     for (Player__c existingPlayer : nflPlayers.values()) {
-      if (
-        !mflPlayerIds.contains(existingPlayer.MFL_Id__c) &&
-        existingPlayer.Team_Owner__c == null
-      ) {
+      if (existingPlayer.Team_Owner__c != null) {
+        continue;
+      }
+
+      Boolean stillInMFL = mflPlayerPositions.containsKey(
+        existingPlayer.MFL_Id__c
+      );
+      Boolean positionStillTracked =
+        stillInMFL &&
+        positions.contains(mflPlayerPositions.get(existingPlayer.MFL_Id__c));
+
+      if (!positionStillTracked) {
         playersToDelete.add(existingPlayer);
       }
     }
@@ -171,7 +186,7 @@ public with sharing class MFLManagePlayers {
       delete playersToDelete;
     } catch (Exception e) {
       throw AuraExceptionHelper.logAndBuild(
-        'Error deleting players no longer returned by MFL',
+        'Error deleting players no longer draftable',
         e
       );
     }
@@ -405,7 +420,7 @@ public with sharing class MFLManagePlayers {
 
     String url = mfl.Generic_URL__c;
     url += '/' + mfl.Year__c;
-    url += '/export?TYPE=aav&PERIOD=AUG1&IS_PPR=1&IS_KEEPER=N&JSON=1';
+    url += '/export?TYPE=aav&PERIOD=RECENT&IS_PPR=1&IS_KEEPER=N&JSON=1';
 
     HttpResponse calloutResponse = MFLRetrieveData.mflGetCallout(url);
 

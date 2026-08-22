@@ -26,6 +26,35 @@ public with sharing class MFLManagePlayersTest {
     }
   }
 
+  private class MFLCalloutMockUntrackedPosition implements HttpCalloutMock {
+    public HttpResponse respond(HttpRequest req) {
+      HttpResponse res = new HttpResponse();
+      res.setStatusCode(200);
+      res.setHeader('Content-Type', 'application/json');
+
+      String endpoint = req.getEndpoint();
+      if (endpoint.contains('TYPE=players')) {
+        // Same player id as MFLCalloutMock, but tagged with a position (LB)
+        // that isn't in the Position__c picklist - MFL's players export
+        // includes every NFL player, not just fantasy-relevant ones.
+        res.setBody(
+          '{"players":{"player":[{"id":"1000","name":"Test Player","team":"FA","position":"LB","status":"Active"}]}}'
+        );
+      } else if (endpoint.contains('TYPE=playerRanks')) {
+        res.setBody('{"player_ranks":{"player":[{"id":"1000","rank":"3"}]}}');
+      } else if (endpoint.contains('TYPE=adp')) {
+        res.setBody(
+          '{"adp":{"player":[{"id":"1000","rank":"5","averagePick":"4.5"}]}}'
+        );
+      } else if (endpoint.contains('TYPE=aav')) {
+        res.setBody('{"aav":{"player":[{"id":"1000","averageValue":"50"}]}}');
+      } else {
+        res.setBody('{}');
+      }
+      return res;
+    }
+  }
+
   private class MFLCalloutMockNoAAVMatch implements HttpCalloutMock {
     public HttpResponse respond(HttpRequest req) {
       HttpResponse res = new HttpResponse();
@@ -228,6 +257,61 @@ public with sharing class MFLManagePlayersTest {
       1,
       remaining.size(),
       'A drafted player should never be deleted, even if MFL no longer returns them'
+    );
+  }
+
+  @IsTest
+  static void managePlayers_UndraftedPlayerPositionNoLongerTrackedByLeague_DeletesPlayer() {
+    Player__c existing = new Player__c(
+      MFL_Id__c = '1000',
+      MFL_Name__c = 'Test Player',
+      Position__c = 'QB'
+    );
+    insert existing;
+
+    Test.setMock(HttpCalloutMock.class, new MFLCalloutMockUntrackedPosition());
+
+    Test.startTest();
+    MFLManagePlayers.managePlayers();
+    Test.stopTest();
+
+    List<Player__c> remaining = [
+      SELECT Id
+      FROM Player__c
+      WHERE Id = :existing.Id
+    ];
+    Assert.isTrue(
+      remaining.isEmpty(),
+      'A player whose MFL position is no longer tracked by this league should be deleted'
+    );
+  }
+
+  @IsTest
+  static void managePlayers_DraftedPlayerPositionNoLongerTrackedByLeague_IsNotDeleted() {
+    Team_Owner__c team = [SELECT Id FROM Team_Owner__c LIMIT 1];
+    Player__c draftedPlayer = new Player__c(
+      MFL_Id__c = '1000',
+      MFL_Name__c = 'Drafted Player',
+      Position__c = 'QB',
+      Team_Owner__c = team.Id
+    );
+    insert draftedPlayer;
+
+    Test.setMock(HttpCalloutMock.class, new MFLCalloutMockUntrackedPosition());
+
+    Test.startTest();
+    MFLManagePlayers.managePlayers();
+    Test.stopTest();
+
+    List<Player__c> remaining = [
+      SELECT Id
+      FROM Player__c
+      WHERE Id = :draftedPlayer.Id
+    ];
+    Assert.areEqual(
+      1,
+      remaining.size(),
+      'A drafted player should never be deleted, even if their MFL position is no longer tracked'
     );
   }
 
