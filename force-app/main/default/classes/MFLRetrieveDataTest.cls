@@ -96,7 +96,7 @@ public class MFLRetrieveDataTest {
     Test.startTest();
     try {
       MFLRetrieveData.mflGetCallout('https://api.example.com');
-    } catch (MFLApiException e) {
+    } catch (MFLRetrieveData.MFLApiException e) {
       exceptionThrown = true;
       Assert.areEqual(
         'Invalid league ID 24312',

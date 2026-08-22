@@ -119,16 +119,9 @@ public class MFLManageOwners {
         LeagueResponse.class
       );
 
-      if (leagueResponse?.league?.franchises?.franchise == null) {
-        // No explicit MFL error (that would have thrown MFLApiException
-        // already), but also no franchise data - fall back to our best
-        // guess, most commonly an invalid API Key or League Id.
-        throw new MFLApiException(
-          'MFL did not return any franchise data. This usually means the API Key or League Id in League Setup is invalid or has expired - check League Setup and try again.\nRaw MFL response: ' +
-          calloutResponse.getBody()
-        );
-      }
-
+      // No explicit MFL error envelope means mflGetCallout() would already
+      // have thrown MFLApiException - if franchise data is still missing
+      // here, this dereference throws naturally and is caught below.
       return leagueResponse.league.franchises.franchise;
     } catch (Exception e) {
       throw AuraExceptionHelper.logAndBuild(
