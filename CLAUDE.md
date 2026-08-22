@@ -16,10 +16,16 @@ Nebula Logger's `Logger.exception()` + `Logger.saveLog()`, called directly
 before a `throw` in the same catch block, has been observed to swallow that
 throw — the raw underlying exception escapes to the client instead of the
 intended `AuraHandledException`, so the friendly message never gets shown.
-Separately, `AuraHandledException`'s constructor message doesn't reliably
-survive being serialized back to an LWC without an explicit `.setMessage()`
-call. See `AuraExceptionHelper.cls` for the full writeup and GHL-24 in Jira
-for the investigation and repro.
+This is **not a documented Nebula Logger bug** — no external source confirms
+it, and it's characterized by a permanent test
+(`AuraExceptionHelperTest.characterizationTest_LoggerExceptionAndSaveLogBeforeThrow_CanSwallowTheThrow`)
+rather than taken on faith; re-run that test if you want to check it still
+reproduces. Separately, `AuraHandledException`'s constructor message isn't
+guaranteed to be what `.getMessage()` returns later, so `AuraExceptionHelper`
+also calls `.setMessage()` explicitly as a defensive habit — this one is
+**not confirmed by Salesforce's own docs** either, just commonly recommended
+in the developer community. See the ApexDoc on `AuraExceptionHelper.cls` for
+the full, honestly-sourced writeup, and GHL-24 in Jira for the investigation.
 
 Use `AuraExceptionHelper.logAndBuild(...)` instead, and let the caller's own
 `throw` statement do the throwing:
