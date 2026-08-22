@@ -210,14 +210,13 @@ public class ManageDraft {
         LIMIT 1
       ];
       if (teamBudget.Remaining_Budget__c - pickMade.Auction_Cost__c < 0) {
-        Logger.warn(
+        throw AuraExceptionHelper.logAndBuild(
           'Winner cannot afford offered price. Remaining Budget: ' +
             teamBudget.Remaining_Budget__c +
             ', Offered Price: ' +
-            pickMade.Auction_Cost__c
+            pickMade.Auction_Cost__c,
+          'Winner cannot afford offered price.'
         );
-        Logger.saveLog();
-        throw new AuraHandledException('Winner cannot afford offered price.');
       }
     }
     try {
@@ -225,23 +224,17 @@ public class ManageDraft {
       Logger.saveLog();
     } catch (Exception e) {
       if (e.getMessage().contains('DUPLICATE_VALUE')) {
-        Logger.warn(
+        throw AuraExceptionHelper.logAndBuild(
           'Duplicate pick detected for overall pick number: ' +
-          pickMade.Overall_Pick_Number__c
-        );
-        Logger.saveLog();
-        throw new AuraHandledException(
+          pickMade.Overall_Pick_Number__c,
           'Duplicate pick detected. This pick has already been made.'
         );
       }
-      Logger.exception(
+      throw AuraExceptionHelper.logAndBuild(
         'Error making pick and updating player and team owner',
-        e
-      );
-      Logger.saveLog();
-      throw new AuraHandledException(
         'Error making pick and updating player and team owner: ' +
-        e.getMessage()
+        e.getMessage(),
+        e
       );
     }
 
@@ -266,16 +259,13 @@ public class ManageDraft {
         LIMIT 1
       ];
     } catch (Exception e) {
-      Logger.exception(
+      throw AuraExceptionHelper.logAndBuild(
         'Error finding pick to undo for pick number: ' + pickNumber,
-        e
-      );
-      Logger.saveLog();
-      throw new AuraHandledException(
         'Error finding pick to undo for pick number ' +
           pickNumber +
           ': ' +
-          e.getMessage()
+          e.getMessage(),
+        e
       );
     }
 
@@ -299,9 +289,11 @@ public class ManageDraft {
         }
       }
     } catch (Exception e) {
-      Logger.exception('Error undoing pick', e);
-      Logger.saveLog();
-      throw new AuraHandledException('Error undoing pick: ' + e.getMessage());
+      throw AuraExceptionHelper.logAndBuild(
+        'Error undoing pick',
+        'Error undoing pick: ' + e.getMessage(),
+        e
+      );
     }
     publishDraftUpdatedPlatformEvent();
   }
@@ -344,10 +336,10 @@ public class ManageDraft {
       );
       return mflDraft.draftResults.draftUnit.round1DraftOrder;
     } catch (Exception e) {
-      Logger.exception('Error parsing draft order from MFL response', e);
-      Logger.saveLog();
-      throw new AuraHandledException(
-        'Error parsing draft order from MFL response: ' + e.getMessage()
+      throw AuraExceptionHelper.logAndBuild(
+        'Error parsing draft order from MFL response',
+        'Error parsing draft order from MFL response: ' + e.getMessage(),
+        e
       );
     }
   }
@@ -369,7 +361,10 @@ public class ManageDraft {
     HttpResponse res = MFLRetrieveData.mflPostCallout(url, draftXML);
 
     if (res.getStatusCode() != 200) {
-      throw new AuraHandledException(res.getStatus());
+      throw AuraExceptionHelper.logAndBuild(
+        'Error submitting draft to MFL: ' + res.getStatus(),
+        res.getStatus()
+      );
     }
   }
 

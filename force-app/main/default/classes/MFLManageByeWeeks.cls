@@ -46,10 +46,10 @@ public with sharing class MFLManageByeWeeks {
     try {
       upsert teamsToUpsert;
     } catch (Exception e) {
-      Logger.exception('Error upserting NFL Teams with Bye Weeks', e);
-      Logger.saveLog();
-      throw new AuraHandledException(
-        'Error upserting NFL Teams with Bye Weeks: ' + e.getMessage()
+      throw AuraExceptionHelper.logAndBuild(
+        'Error upserting NFL Teams with Bye Weeks',
+        'Error upserting NFL Teams with Bye Weeks: ' + e.getMessage(),
+        e
       );
     }
   }
