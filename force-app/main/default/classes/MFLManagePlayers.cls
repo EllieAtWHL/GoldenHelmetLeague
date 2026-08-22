@@ -241,9 +241,10 @@ public with sharing class MFLManagePlayers {
   /**
    * MFL's raw Average Auction Value, unweighted for this league. It's
    * expressed as a normalized share of a notional $1000 per-team auction
-   * budget, e.g. 82 means "typically ~8.2% of one team's budget".
-   * Player__c.Predicted_Auction_Cost__c is a formula field that scales
-   * this to this league's actual per-team budget
+   * budget, e.g. 82 means "typically ~8.2% of one team's budget". Defaults
+   * to 0 when MFL doesn't return a value for this player, rather than
+   * null. Player__c.Predicted_Auction_Cost__c is a formula field that
+   * scales this to this league's actual per-team budget
    * (Draft_Settings__c.Auction_Budget__c) live, so Apex only needs to
    * keep this raw value in sync - the adjusted figure recalculates
    * automatically, even if the league's budget changes later.
@@ -256,7 +257,7 @@ public with sharing class MFLManagePlayers {
       !mapPlayersAAV.containsKey(playerId) ||
       mapPlayersAAV.get(playerId).averageValue == null
     ) {
-      return null;
+      return 0;
     }
     return Decimal.valueOf(mapPlayersAAV.get(playerId).averageValue);
   }

@@ -190,7 +190,7 @@ public with sharing class MFLManagePlayersTest {
       FROM Player__c
       WHERE MFL_Id__c = '1000'
     ];
-    Assert.isNull(player.MFL_AAV__c);
+    Assert.areEqual(0, player.MFL_AAV__c);
     Assert.areEqual(0, player.Predicted_Auction_Cost__c);
   }
 
