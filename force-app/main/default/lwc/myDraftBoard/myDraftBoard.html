@@ -1,5 +1,17 @@
 <template>
   <lightning-card title="My Draft Board">
+    <lightning-spinner
+      lwc:if={isRefreshingNews}
+      alternative-text="Refreshing news"
+    ></lightning-spinner>
+    <lightning-button
+      slot="actions"
+      label="Refresh News"
+      icon-name="utility:sync"
+      disabled={isRefreshingNews}
+      onclick={handleRefreshNews}
+    ></lightning-button>
+
     <template lwc:if={showBudgetSummary}>
       <div class="slds-p-around_small budget-summary">
         <div class="budget-remaining">

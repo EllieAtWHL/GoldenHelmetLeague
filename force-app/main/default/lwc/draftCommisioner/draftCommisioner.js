@@ -6,6 +6,7 @@ import getDraft from "@salesforce/apex/ManageDraft.getDraft";
 import undoPick from "@salesforce/apex/ManageDraft.undoPick";
 import submitDraft from "@salesforce/apex/ManageDraft.submitDraft";
 import sendMessage from "@salesforce/apex/ManageDraft.publishDraftMessagePlatformEvent";
+import refreshPlayerNews from "@salesforce/apex/PlayerNewsService.refreshNewsForPlayer";
 import { publish, MessageContext } from "lightning/messageService";
 import draftMessage from "@salesforce/messageChannel/DraftMessage__c";
 
@@ -194,6 +195,15 @@ export default class DraftCommisioner extends LightningElement {
       message: message,
       cssClass: event.detail.class,
       playerId: event.detail.playerId,
+    });
+
+    // Fire-and-forget: PlayerNewsService.refreshNewsForPlayer never throws
+    // a client-facing error by design, so this catch only guards against
+    // the platform call itself rejecting (e.g. a network drop). Called
+    // after sendMessage so a slow/failing news refresh never delays the
+    // nomination itself.
+    refreshPlayerNews({ playerId: event.detail.playerId }).catch((error) => {
+      console.log("Unable to refresh player news", JSON.stringify(error));
     });
   }
 

@@ -56,6 +56,22 @@ img.photo {
   font-size: 13px;
 }
 
+.injury-badge {
+  margin-left: 8px;
+  vertical-align: middle;
+  font-size: 13px;
+}
+
+.injury-badge.severe {
+  background-color: #c23934;
+  color: #ffffff;
+}
+
+.injury-badge.caution {
+  background-color: #ffb75d;
+  color: #222222;
+}
+
 .meta-col {
   flex: 0 1 140px;
   font-size: 17px;
@@ -77,6 +93,25 @@ img.photo {
   min-height: 1.2em;
   white-space: pre-wrap;
   font-size: 17px;
+  font-style: italic;
+  color: #5c5c5c;
+}
+
+.news-headline {
+  display: block;
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-style: italic;
+  color: #5c5c5c;
+}
+
+.field-label {
+  margin-right: 4px;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #5c5c5c;
 }
 
 .actions-col {

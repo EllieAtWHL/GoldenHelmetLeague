@@ -7,6 +7,7 @@ import getAllPlayers from "@salesforce/apex/ManageMyDraftBoard.getAllPlayers";
 import getMyDraftedPlayers from "@salesforce/apex/ManageMyDraftBoard.getMyDraftedPlayers";
 import updatePlayerNotes from "@salesforce/apex/ManageMyDraftBoard.updatePlayerNotes";
 import getTeams from "@salesforce/apex/MFLManageOwners.getTeams";
+import refreshAllPlayerNews from "@salesforce/apex/PlayerNewsService.refreshAllPlayerNews";
 
 const flushPromises = () => Promise.resolve().then(() => Promise.resolve());
 
@@ -134,15 +135,19 @@ const AUCTION_SETTINGS = { Draft_Type__c: "auction" };
 describe("c-my-draft-board", () => {
   let draftUpdatedCallback;
   let draftMessageCallback;
+  let playerNewsUpdatedCallback;
 
   beforeEach(() => {
     draftUpdatedCallback = undefined;
     draftMessageCallback = undefined;
+    playerNewsUpdatedCallback = undefined;
     subscribe.mockImplementation((channel, replayId, callback) => {
       if (channel === "/event/DraftUpdated__e") {
         draftUpdatedCallback = callback;
       } else if (channel === "/event/Draft_Message__e") {
         draftMessageCallback = callback;
+      } else if (channel === "/event/Player_News_Updated__e") {
+        playerNewsUpdatedCallback = callback;
       }
       return Promise.resolve({});
     });
@@ -175,7 +180,7 @@ describe("c-my-draft-board", () => {
     );
   }
 
-  it("subscribes to DraftUpdated__e and Draft_Message__e on connect, and unsubscribes on disconnect", async () => {
+  it("subscribes to DraftUpdated__e, Draft_Message__e and Player_News_Updated__e on connect, and unsubscribes on disconnect", async () => {
     const element = await createMyDraftBoard();
 
     expect(subscribe).toHaveBeenCalledWith(
@@ -188,9 +193,14 @@ describe("c-my-draft-board", () => {
       -1,
       expect.any(Function)
     );
+    expect(subscribe).toHaveBeenCalledWith(
+      "/event/Player_News_Updated__e",
+      -1,
+      expect.any(Function)
+    );
 
     document.body.removeChild(element);
-    expect(unsubscribe).toHaveBeenCalledTimes(2);
+    expect(unsubscribe).toHaveBeenCalledTimes(3);
   });
 
   it("groups players by position and tier, labelling value by rank for a snake draft", async () => {
@@ -390,5 +400,28 @@ describe("c-my-draft-board", () => {
 
     const delta = cardsFor(element).find((card) => card.player.Id === "p4");
     expect(delta.valueLabel).toBe("Sold £22.00");
+  });
+
+  it("refreshes player news and both player wires when the Refresh News button is clicked", async () => {
+    const element = await createMyDraftBoard();
+
+    const refreshButton = Array.from(
+      element.shadowRoot.querySelectorAll("lightning-button")
+    ).find((button) => button.label === "Refresh News");
+    refreshButton.click();
+    await flushPromises();
+    await flushPromises();
+
+    expect(refreshAllPlayerNews).toHaveBeenCalledTimes(1);
+    expect(refreshApex).toHaveBeenCalledTimes(2);
+  });
+
+  it("refreshes the players wire when a Player_News_Updated__e message arrives", async () => {
+    await createMyDraftBoard();
+
+    playerNewsUpdatedCallback({});
+    await flushPromises();
+
+    expect(refreshApex).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,16 +1,20 @@
 import { LightningElement, wire } from "lwc";
 import { refreshApex } from "@salesforce/apex";
 import { subscribe, unsubscribe, onError } from "lightning/empApi";
+import { loadStyle } from "lightning/platformResourceLoader";
 import { showToast } from "c/toastUtility";
 import getDraftSettings from "@salesforce/apex/LeagueSetup.getDraftSettings";
 import getAllPlayers from "@salesforce/apex/ManageMyDraftBoard.getAllPlayers";
 import getMyDraftedPlayers from "@salesforce/apex/ManageMyDraftBoard.getMyDraftedPlayers";
 import updatePlayerNotes from "@salesforce/apex/ManageMyDraftBoard.updatePlayerNotes";
 import getTeams from "@salesforce/apex/MFLManageOwners.getTeams";
+import refreshAllPlayerNews from "@salesforce/apex/PlayerNewsService.refreshAllPlayerNews";
+import HIDE_DRAFT_BOARD_HEADER from "@salesforce/resourceUrl/hideDraftBoardHeader";
 
 const POSITIONS = ["QB", "RB", "WR", "TE", "Def", "PK"];
 const DRAFT_UPDATED_CHANNEL = "/event/DraftUpdated__e";
 const DRAFT_MESSAGE_CHANNEL = "/event/Draft_Message__e";
+const PLAYER_NEWS_UPDATED_CHANNEL = "/event/Player_News_Updated__e";
 
 export default class MyDraftBoard extends LightningElement {
   draftSettings;
@@ -25,11 +29,13 @@ export default class MyDraftBoard extends LightningElement {
   searchTerm = "";
   positionFilter = "ALL";
   nominatedPlayerId;
+  isRefreshingNews = false;
 
   positions = POSITIONS;
 
   draftUpdatedSubscription;
   draftMessageSubscription;
+  playerNewsUpdatedSubscription;
 
   @wire(getDraftSettings)
   wiredDraftSettings(result) {
@@ -63,6 +69,14 @@ export default class MyDraftBoard extends LightningElement {
   }
 
   connectedCallback() {
+    // The standard Lightning App Page header just duplicates this card's
+    // own "My Draft Board" title beneath it.
+    loadStyle(this, HIDE_DRAFT_BOARD_HEADER).catch((error) => {
+      console.log(
+        "Unable to load hideDraftBoardHeader style",
+        JSON.stringify(error)
+      );
+    });
     subscribe(DRAFT_UPDATED_CHANNEL, -1, this.handleDraftUpdated).then(
       (response) => {
         this.draftUpdatedSubscription = response;
@@ -73,6 +87,13 @@ export default class MyDraftBoard extends LightningElement {
         this.draftMessageSubscription = response;
       }
     );
+    subscribe(
+      PLAYER_NEWS_UPDATED_CHANNEL,
+      -1,
+      this.handlePlayerNewsUpdated
+    ).then((response) => {
+      this.playerNewsUpdatedSubscription = response;
+    });
     onError(this.handleEmpApiError);
   }
 
@@ -82,6 +103,9 @@ export default class MyDraftBoard extends LightningElement {
     }
     if (this.draftMessageSubscription) {
       unsubscribe(this.draftMessageSubscription);
+    }
+    if (this.playerNewsUpdatedSubscription) {
+      unsubscribe(this.playerNewsUpdatedSubscription);
     }
   }
 
@@ -99,6 +123,10 @@ export default class MyDraftBoard extends LightningElement {
     if (playerId) {
       this.nominatedPlayerId = playerId;
     }
+  };
+
+  handlePlayerNewsUpdated = () => {
+    refreshApex(this.allPlayersResult);
   };
 
   // eslint-disable-next-line class-methods-use-this
@@ -133,6 +161,33 @@ export default class MyDraftBoard extends LightningElement {
 
   handleCloseNomination() {
     this.nominatedPlayerId = undefined;
+  }
+
+  handleRefreshNews() {
+    this.isRefreshingNews = true;
+    refreshAllPlayerNews()
+      .then(() => {
+        return Promise.all([
+          refreshApex(this.allPlayersResult),
+          refreshApex(this.myDraftedResult),
+        ]).then(() =>
+          showToast(
+            "Injury statuses refreshed — detailed news will fill in over the next few minutes",
+            null,
+            "success"
+          )
+        );
+      })
+      .catch((error) => {
+        showToast(
+          "Unable to refresh player news",
+          error?.body?.message,
+          "error"
+        );
+      })
+      .finally(() => {
+        this.isRefreshingNews = false;
+      });
   }
 
   get isSnake() {
