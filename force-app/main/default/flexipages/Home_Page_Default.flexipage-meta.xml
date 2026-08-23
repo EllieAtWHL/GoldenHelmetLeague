@@ -3,21 +3,27 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>leagueSetup</componentName>
+                <componentName>manageRecords</componentName>
+                <identifier>c_manageRecords</identifier>
             </componentInstance>
         </itemInstances>
-        <mode>Replace</mode>
-        <name>top</name>
+        <name>header</name>
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
-        <mode>Replace</mode>
-        <name>bottomLeft</name>
-        <type>Region</type>
-    </flexiPageRegions>
-    <flexiPageRegions>
-        <mode>Replace</mode>
-        <name>bottomRight</name>
+        <itemInstances>
+            <componentInstance>
+                <componentName>leagueDetails</componentName>
+                <identifier>c_leagueDetails</identifier>
+            </componentInstance>
+        </itemInstances>
+        <itemInstances>
+            <componentInstance>
+                <componentName>draftSettings</componentName>
+                <identifier>c_draftSettings</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>main</name>
         <type>Region</type>
     </flexiPageRegions>
     <flexiPageRegions>
@@ -48,16 +54,15 @@
                     <value>5</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:recentItems</componentName>
+                <identifier>flexipage_recentItems</identifier>
             </componentInstance>
         </itemInstances>
-        <mode>Replace</mode>
         <name>sidebar</name>
         <type>Region</type>
     </flexiPageRegions>
     <masterLabel>Home Page Default</masterLabel>
-    <parentFlexiPage>home__desktopDefault</parentFlexiPage>
     <template>
-        <name>home:desktopTemplate</name>
+        <name>runtime_cdp:cdpHomeDesktopTemplate</name>
     </template>
     <type>HomePage</type>
 </FlexiPage>
