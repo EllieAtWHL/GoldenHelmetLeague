@@ -90,10 +90,25 @@ const MY_TEAM_PLAYERS = [
     Team__c: "MIA",
     Photo_URL_Formula__c: "",
     My_notes__c: "",
+    Team_Owner__c: "team1",
     Picks__r: picksOf({
       Auction_Cost__c: 22,
       Round__c: 3,
       Round_Pick_Number__c: 5,
+    }),
+  },
+  {
+    Id: "p5",
+    MFL_Name__c: "Epsilon, Ed",
+    Position__c: "RB",
+    Team__c: "NYJ",
+    Photo_URL_Formula__c: "",
+    My_notes__c: "",
+    Team_Owner__c: "team1",
+    Picks__r: picksOf({
+      Auction_Cost__c: 8,
+      Round__c: 9,
+      Round_Pick_Number__c: 2,
     }),
   },
 ];
@@ -352,12 +367,25 @@ describe("c-my-draft-board", () => {
     const chips = Array.from(
       element.shadowRoot.querySelectorAll(".spend-chip")
     ).map((chip) => chip.textContent.trim());
-    expect(chips).toEqual(["WR: £22"]);
+    expect(chips).toEqual(["RB: £8", "WR: £22"]);
   });
 
   it("hides the budget summary for a snake draft", async () => {
     const element = await createMyDraftBoard(SNAKE_SETTINGS);
 
     expect(element.shadowRoot.querySelector(".budget-summary")).toBeNull();
+  });
+
+  it("shows the sold price and a per-position roster count on the My Team tab", async () => {
+    const element = await createMyDraftBoard(AUCTION_SETTINGS);
+
+    const headings = Array.from(
+      element.shadowRoot.querySelectorAll(".position-heading")
+    ).map((heading) => heading.textContent.trim());
+    expect(headings).toContain("WR (1)");
+    expect(headings).toContain("RB (1)");
+
+    const delta = cardsFor(element).find((card) => card.player.Id === "p4");
+    expect(delta.valueLabel).toBe("Sold £22");
   });
 });

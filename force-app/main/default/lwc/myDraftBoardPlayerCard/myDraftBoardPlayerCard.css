@@ -71,5 +71,11 @@ img.photo {
   min-height: 1.2em;
   white-space: pre-wrap;
   font-size: 17px;
-  margin-bottom: 6px;
+}
+
+.actions-col {
+  flex: 0 0 auto;
+  margin-left: auto;
+  flex-direction: row;
+  justify-content: flex-end;
 }

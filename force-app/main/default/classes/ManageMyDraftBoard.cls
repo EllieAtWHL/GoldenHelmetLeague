@@ -46,6 +46,7 @@ public with sharing class ManageMyDraftBoard {
           Team__c,
           MFL_Status__c,
           My_notes__c,
+          Team_Owner__c,
           (SELECT Auction_Cost__c, Round__c, Round_Pick_Number__c FROM Picks__r)
         FROM Player__c
         WHERE Team_Owner__r.Is_My_Team__c = TRUE

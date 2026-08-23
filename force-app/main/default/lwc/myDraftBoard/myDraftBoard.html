@@ -79,12 +79,13 @@
         <template for:each={groupedMyTeam} for:item="group">
           <div key={group.position} class="position-group">
             <h2 class="slds-text-heading_small position-heading">
-              {group.position}
+              {group.position} ({group.count})
             </h2>
             <template for:each={group.players} for:item="player">
               <c-my-draft-board-player-card
                 key={player.Id}
                 player={player}
+                value-label={player.valueLabel}
                 onnotessave={handleNotesSave}
               ></c-my-draft-board-player-card>
             </template>

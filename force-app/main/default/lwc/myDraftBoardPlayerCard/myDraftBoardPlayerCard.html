@@ -28,21 +28,26 @@
             value={draftNotes}
             onchange={handleNotesChange}
           ></lightning-textarea>
-          <div class="slds-p-top_xx-small slds-grid slds-grid_align-end">
-            <lightning-button
-              label="Cancel"
-              onclick={handleCancel}
-            ></lightning-button>
-            <lightning-button
-              class="slds-p-left_x-small"
-              variant="brand"
-              label="Save"
-              onclick={handleSave}
-            ></lightning-button>
-          </div>
         </template>
         <template lwc:else>
           <span class="notes-preview">{player.My_notes__c}</span>
+        </template>
+      </div>
+
+      <div class="col actions-col">
+        <template lwc:if={isEditing}>
+          <lightning-button
+            label="Cancel"
+            onclick={handleCancel}
+          ></lightning-button>
+          <lightning-button
+            class="slds-p-left_x-small"
+            variant="brand"
+            label="Save"
+            onclick={handleSave}
+          ></lightning-button>
+        </template>
+        <template lwc:else>
           <lightning-button
             variant="neutral"
             label="Edit notes"

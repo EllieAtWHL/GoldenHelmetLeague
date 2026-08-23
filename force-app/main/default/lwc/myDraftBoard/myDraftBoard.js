@@ -300,10 +300,14 @@ export default class MyDraftBoard extends LightningElement {
     });
 
     return POSITIONS.filter((position) => byPosition.has(position)).map(
-      (position) => ({
-        position,
-        players: byPosition.get(position),
-      })
+      (position) => {
+        const players = this.withValueLabels(byPosition.get(position));
+        return {
+          position,
+          count: players.length,
+          players,
+        };
+      }
     );
   }
 
