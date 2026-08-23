@@ -21,6 +21,27 @@ export default class MyDraftBoardPlayerCard extends LightningElement {
     return this.player?.MFL_Status__c === "R";
   }
 
+  get hasInjuryStatus() {
+    return !!this.player?.Injury_Status__c;
+  }
+
+  get injuryBadgeVariant() {
+    const status = (this.player?.Injury_Status__c || "").toLowerCase();
+    const isSevere =
+      status.includes("out") ||
+      status.includes("ir") ||
+      status.includes("suspen");
+    return isSevere ? "injury-badge severe" : "injury-badge caution";
+  }
+
+  get showNewsHeadline() {
+    return !!this.player?.News_Headline__c;
+  }
+
+  get hasNotes() {
+    return !!this.player?.My_notes__c;
+  }
+
   handleEdit() {
     this.draftNotes = this.player.My_notes__c || "";
     this.isEditing = true;

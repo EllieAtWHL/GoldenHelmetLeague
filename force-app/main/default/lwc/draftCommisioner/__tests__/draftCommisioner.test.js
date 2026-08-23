@@ -7,6 +7,7 @@ import getDraft from "@salesforce/apex/ManageDraft.getDraft";
 import undoPick from "@salesforce/apex/ManageDraft.undoPick";
 import submitDraft from "@salesforce/apex/ManageDraft.submitDraft";
 import sendMessage from "@salesforce/apex/ManageDraft.publishDraftMessagePlatformEvent";
+import refreshPlayerNews from "@salesforce/apex/PlayerNewsService.refreshNewsForPlayer";
 
 const flushPromises = () => Promise.resolve().then(() => Promise.resolve());
 
@@ -63,11 +64,24 @@ function buildInProgressDraft(draftType) {
   return draft;
 }
 
+// Round 1 fully made, so the "current" pick is round 2 pick 1, with round 2
+// pick 2 still open after it - needed for handlePlayerSelected(), which
+// reads this.nextPick.pickTeam and (per the nextPick getter) only looks
+// within the current round, so a current pick that's the last one in its
+// round (as in buildInProgressDraft) leaves nextPick undefined.
+function buildInProgressDraftWithNextPick(draftType) {
+  const draft = buildInProgressDraft(draftType);
+  draft.rounds[0].picks[1].playerPickedName = "Also Already Picked";
+  draft.rounds[0].picks[1].franchiseId = "f2";
+  return draft;
+}
+
 describe("c-draft-commisioner", () => {
   beforeEach(() => {
     undoPick.mockReset().mockResolvedValue();
     submitDraft.mockReset().mockResolvedValue();
     sendMessage.mockReset().mockResolvedValue();
+    refreshPlayerNews.mockReset().mockResolvedValue();
   });
 
   afterEach(() => {
@@ -177,6 +191,48 @@ describe("c-draft-commisioner", () => {
     await flushPromises();
 
     expect(element.shadowRoot.querySelector("c-draft-select-pick")).toBeNull();
+  });
+
+  it("refreshes player news for the nominated player when one is selected", async () => {
+    const element = await createDraftCommisioner(
+      "snake",
+      buildInProgressDraftWithNextPick("snake")
+    );
+    findButtonByLabel(element, "Pick").click();
+    await flushPromises();
+
+    element.shadowRoot.querySelector("c-draft-select-pick").dispatchEvent(
+      new CustomEvent("playerselected", {
+        detail: { message: "Now nominating", class: null, playerId: "p1" },
+      })
+    );
+    await flushPromises();
+
+    expect(refreshPlayerNews).toHaveBeenCalledWith({ playerId: "p1" });
+    expect(sendMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ playerId: "p1" })
+    );
+  });
+
+  it("still sends the nomination message even if refreshing player news fails", async () => {
+    refreshPlayerNews.mockRejectedValueOnce({ body: { message: "boom" } });
+    const element = await createDraftCommisioner(
+      "snake",
+      buildInProgressDraftWithNextPick("snake")
+    );
+    findButtonByLabel(element, "Pick").click();
+    await flushPromises();
+
+    element.shadowRoot.querySelector("c-draft-select-pick").dispatchEvent(
+      new CustomEvent("playerselected", {
+        detail: { message: "Now nominating", class: null, playerId: "p1" },
+      })
+    );
+    await flushPromises();
+
+    expect(sendMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ playerId: "p1" })
+    );
   });
 
   it("advances the pick counter and publishes a wiggle-check message when a pick is made", async () => {

@@ -15,6 +15,12 @@
             label="Rookie"
             class="rookie-badge"
           ></lightning-badge>
+          <lightning-badge
+            lwc:if={hasInjuryStatus}
+            label={player.Injury_Status__c}
+            class={injuryBadgeVariant}
+            title={player.News_Headline__c}
+          ></lightning-badge>
         </div>
       </div>
 
@@ -23,6 +29,10 @@
       <div lwc:if={hasValueLabel} class="col value-label">{valueLabel}</div>
 
       <div class="col notes-col">
+        <p lwc:if={showNewsHeadline} class="news-headline">
+          <span class="field-label">News</span>
+          {player.News_Headline__c}
+        </p>
         <template lwc:if={isEditing}>
           <lightning-textarea
             label="My notes"
@@ -32,7 +42,10 @@
           ></lightning-textarea>
         </template>
         <template lwc:else>
-          <span class="notes-preview">{player.My_notes__c}</span>
+          <p class="notes-preview">
+            <span lwc:if={hasNotes} class="field-label">Notes</span>
+            {player.My_notes__c}
+          </p>
         </template>
       </div>
 
