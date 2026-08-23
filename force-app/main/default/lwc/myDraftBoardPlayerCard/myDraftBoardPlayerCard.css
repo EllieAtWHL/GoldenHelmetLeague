@@ -3,7 +3,7 @@
 .card {
   border-radius: 5px;
   color: #222222;
-  margin: 4px 0;
+  margin: 6px 0;
   font-family: "Trebuchet MS", sans-serif;
 }
 
@@ -12,33 +12,64 @@
   filter: grayscale(70%);
 }
 
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
 img.photo {
-  height: 40px;
+  height: 56px;
   width: auto;
   border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.name-col {
+  flex: 1 1 220px;
+  min-width: 180px;
 }
 
 .name {
   font-weight: bold;
+  font-size: 20px;
 }
 
 .rookie-badge {
-  margin-left: 6px;
+  margin-left: 8px;
   vertical-align: middle;
   background-color: #ffcc01;
   color: #222222;
+  font-size: 13px;
 }
 
-.meta {
-  font-size: 12px;
+.meta-col {
+  flex: 0 1 140px;
+  font-size: 17px;
 }
 
 .value-label {
+  flex: 0 1 140px;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 22px;
+}
+
+.notes-col {
+  flex: 2 1 300px;
+  min-width: 260px;
 }
 
 .notes-preview {
+  display: block;
   min-height: 1.2em;
   white-space: pre-wrap;
+  font-size: 17px;
+  margin-bottom: 6px;
 }
