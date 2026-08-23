@@ -15,6 +15,7 @@
     <tabs>Team_Owner__c</tabs>
     <tabs>Player__c</tabs>
     <tabs>Pick__c</tabs>
+    <tabs>My_Draft_Board</tabs>
     <tabs>standard-report</tabs>
     <tabs>standard-Dashboard</tabs>
     <uiType>Lightning</uiType>

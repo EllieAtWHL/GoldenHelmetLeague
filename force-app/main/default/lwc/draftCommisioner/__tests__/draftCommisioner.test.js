@@ -162,6 +162,7 @@ describe("c-draft-commisioner", () => {
     expect(sendMessage).toHaveBeenCalledWith({
       message: "THE PICK IS IN",
       cssClass: null,
+      playerId: null,
     });
   });
 

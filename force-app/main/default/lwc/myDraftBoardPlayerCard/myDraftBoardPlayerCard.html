@@ -1,0 +1,62 @@
+<template>
+  <div class={positionClass}>
+    <div class="row slds-p-around_x-small">
+      <img
+        class="photo"
+        src={player.Photo_URL_Formula__c}
+        alt={player.MFL_Name__c}
+      />
+
+      <div class="col name-col">
+        <div class="name-row">
+          <span class="name">{player.MFL_Name__c}</span>
+          <lightning-badge
+            lwc:if={isRookie}
+            label="Rookie"
+            class="rookie-badge"
+          ></lightning-badge>
+        </div>
+      </div>
+
+      <div class="col meta-col">{player.Team__c} - {player.Position__c}</div>
+
+      <div lwc:if={hasValueLabel} class="col value-label">{valueLabel}</div>
+
+      <div class="col notes-col">
+        <template lwc:if={isEditing}>
+          <lightning-textarea
+            label="My notes"
+            variant="label-hidden"
+            value={draftNotes}
+            onchange={handleNotesChange}
+          ></lightning-textarea>
+        </template>
+        <template lwc:else>
+          <span class="notes-preview">{player.My_notes__c}</span>
+        </template>
+      </div>
+
+      <div class="col actions-col">
+        <template lwc:if={isEditing}>
+          <lightning-button
+            label="Cancel"
+            onclick={handleCancel}
+          ></lightning-button>
+          <lightning-button
+            class="slds-p-left_x-small"
+            variant="brand"
+            label="Save"
+            onclick={handleSave}
+          ></lightning-button>
+        </template>
+        <template lwc:else>
+          <lightning-button
+            variant="neutral"
+            label="Edit notes"
+            onclick={handleEdit}
+          ></lightning-button>
+        </template>
+      </div>
+    </div>
+  </div>
+</template>

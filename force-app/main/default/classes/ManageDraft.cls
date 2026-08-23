@@ -307,12 +307,14 @@ public class ManageDraft {
   @AuraEnabled
   public static void publishDraftMessagePlatformEvent(
     String message,
-    String cssClass
+    String cssClass,
+    Id playerId
   ) {
     Logger.setScenario('Publishing Draft Message Platform Event');
     Draft_Message__e event = new Draft_Message__e();
     event.Display_Message__c = message;
     event.CSS_Class__c = cssClass;
+    event.Player_Id__c = playerId;
     EventBus.publish(event);
   }
 

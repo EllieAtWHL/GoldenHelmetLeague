@@ -120,6 +120,7 @@ describe("c-draft-select-pick", () => {
     const detail = playerSelectedHandler.mock.calls[0][0].detail;
     expect(detail.message).toBe("Bidding on: Reallylongname - KC");
     expect(detail.class).toBe("RB");
+    expect(detail.playerId).toBe("player2");
   });
 
   it("auto-confirms on a second click of the same player in a snake draft", async () => {
