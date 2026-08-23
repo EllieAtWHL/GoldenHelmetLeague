@@ -37,6 +37,12 @@ img.photo {
   min-width: 180px;
 }
 
+.name-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .name {
   font-weight: bold;
   font-size: 20px;

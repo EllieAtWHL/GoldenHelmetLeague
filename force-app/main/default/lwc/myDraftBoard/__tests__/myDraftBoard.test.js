@@ -215,7 +215,7 @@ describe("c-my-draft-board", () => {
     const cards = cardsFor(element);
     const alpha = cards.find((card) => card.player.Id === "p1");
 
-    expect(alpha.valueLabel).toBe("£40");
+    expect(alpha.valueLabel).toBe("£40.00");
   });
 
   it("sorts players within a tier by lowest rank first for a snake draft", async () => {
@@ -234,7 +234,10 @@ describe("c-my-draft-board", () => {
       (card) => card.player.Position__c === "QB"
     );
     expect(qbCards.map((card) => card.player.Id)).toEqual(["p1", "p2"]);
-    expect(qbCards.map((card) => card.valueLabel)).toEqual(["£40", "£25"]);
+    expect(qbCards.map((card) => card.valueLabel)).toEqual([
+      "£40.00",
+      "£25.00",
+    ]);
   });
 
   it("shows a drafted player shaded, with their actual sold price instead of a predicted value", async () => {
@@ -243,7 +246,7 @@ describe("c-my-draft-board", () => {
     const delta = cardsFor(element).find((card) => card.player.Id === "p4");
 
     expect(delta.isDrafted).toBe(true);
-    expect(delta.valueLabel).toBe("Sold £22");
+    expect(delta.valueLabel).toBe("Sold £22.00");
   });
 
   it("shows a drafted player's round/pick instead of rank for a snake draft", async () => {
@@ -274,7 +277,7 @@ describe("c-my-draft-board", () => {
 
     const delta = cardsFor(element).find((card) => card.player.Id === "p4");
 
-    expect(delta.valueLabel).toBe("Sold £22");
+    expect(delta.valueLabel).toBe("Sold £22.00");
   });
 
   it("filters the player list by search term", async () => {
@@ -367,7 +370,7 @@ describe("c-my-draft-board", () => {
     const chips = Array.from(
       element.shadowRoot.querySelectorAll(".spend-chip")
     ).map((chip) => chip.textContent.trim());
-    expect(chips).toEqual(["RB: £8", "WR: £22"]);
+    expect(chips).toEqual(["RB: £8.00", "WR: £22.00"]);
   });
 
   it("hides the budget summary for a snake draft", async () => {
@@ -386,6 +389,6 @@ describe("c-my-draft-board", () => {
     expect(headings).toContain("RB (1)");
 
     const delta = cardsFor(element).find((card) => card.player.Id === "p4");
-    expect(delta.valueLabel).toBe("Sold £22");
+    expect(delta.valueLabel).toBe("Sold £22.00");
   });
 });

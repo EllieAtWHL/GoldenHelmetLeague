@@ -259,6 +259,11 @@ export default class MyDraftBoard extends LightningElement {
     return picks?.records?.[0];
   }
 
+  // eslint-disable-next-line class-methods-use-this
+  formatCurrency(value) {
+    return `£${Number(value).toFixed(2)}`;
+  }
+
   withValueLabels(players) {
     const valueField = this.valueField;
     const isSnake = this.isSnake;
@@ -274,13 +279,15 @@ export default class MyDraftBoard extends LightningElement {
         } else {
           valueLabel =
             pick?.Auction_Cost__c != null
-              ? `Sold £${pick.Auction_Cost__c}`
+              ? `Sold ${this.formatCurrency(pick.Auction_Cost__c)}`
               : "Drafted";
         }
       } else {
         const rawValue = player[valueField];
         if (rawValue) {
-          valueLabel = isSnake ? `Rank ${rawValue}` : `£${rawValue}`;
+          valueLabel = isSnake
+            ? `Rank ${rawValue}`
+            : this.formatCurrency(rawValue);
         }
       }
       return { ...player, valueLabel, isDrafted };
@@ -354,7 +361,7 @@ export default class MyDraftBoard extends LightningElement {
       (position) => ({
         position,
         key: position,
-        spent: totals.get(position),
+        spent: this.formatCurrency(totals.get(position)),
       })
     );
   }

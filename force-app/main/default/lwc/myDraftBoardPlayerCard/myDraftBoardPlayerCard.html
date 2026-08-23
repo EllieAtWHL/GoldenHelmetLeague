@@ -8,12 +8,14 @@
       />
 
       <div class="col name-col">
-        <span class="name">{player.MFL_Name__c}</span>
-        <lightning-badge
-          lwc:if={isRookie}
-          label="Rookie"
-          class="rookie-badge"
-        ></lightning-badge>
+        <div class="name-row">
+          <span class="name">{player.MFL_Name__c}</span>
+          <lightning-badge
+            lwc:if={isRookie}
+            label="Rookie"
+            class="rookie-badge"
+          ></lightning-badge>
+        </div>
       </div>
 
       <div class="col meta-col">{player.Team__c} - {player.Position__c}</div>
