@@ -28,18 +28,17 @@ public with sharing class ESPNRetrieveData {
 
     try {
       res = http.send(req);
-      Logger.info('Calling ESPN API: GET method')
-        .setHttpRequestDetails(req)
-        .setHttpResponseDetails(res);
-      Logger.saveLog();
     } catch (Exception e) {
-      Logger.exception('Error making GET callout to ESPN', e);
+      Logger.exception('Error making GET callout to ESPN', e)
+        .setHttpRequestDetails(req);
       Logger.saveLog();
       throw new CalloutException(e.getMessage());
     }
 
     if (res.getStatusCode() != 200) {
-      Logger.warn('Error making GET callout to ESPN: ' + res.getBody());
+      Logger.warn('Error making GET callout to ESPN: ' + res.getBody())
+        .setHttpRequestDetails(req)
+        .setHttpResponseDetails(res);
       Logger.saveLog();
       throw new CalloutException(res.getBody());
     }
