@@ -21,14 +21,19 @@ export default class DraftSelectPick extends LightningElement {
   playerSelected;
   playerSelectedName;
   winnerEntered;
-  priceEntered;
+  priceEntered = 0;
   searchTerm = null;
 
   get noPlayerSelected() {
     if (this.isSnake) {
       return !this.playerSelected;
     }
-    return !this.playerSelected || !this.winnerEntered || !this.priceEntered;
+    return (
+      !this.playerSelected ||
+      !this.winnerEntered ||
+      this.priceEntered === undefined ||
+      this.priceEntered === null
+    );
   }
 
   get isAuction() {

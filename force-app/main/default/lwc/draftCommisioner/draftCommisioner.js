@@ -190,7 +190,7 @@ export default class DraftCommisioner extends LightningElement {
 
   handlePlayerSelected(event) {
     let nextMessage = this.nextPick.pickTeam;
-    let message = `${event.detail.message}</br>Next up: ${nextMessage}`;
+    let message = `${event.detail.message}</br>Next nom: ${nextMessage}`;
     sendMessage({
       message: message,
       cssClass: event.detail.class,

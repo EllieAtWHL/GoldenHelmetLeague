@@ -93,12 +93,109 @@ public with sharing class ManageDraftTest {
 
   @IsTest
   static void makePick_SnakePick() {
-    //TODO: Test a snake pick to be made
+    Player__c player = TestDataFactory.createPlayers(1)[0];
+    insert player;
+    Team_Owner__c team = TestDataFactory.createFranchises(1)[0];
+    insert team;
+
+    Pick__c pickToMake = new Pick__c(
+      Player__c = player.Id,
+      Team_Owner__c = team.Id,
+      Round_Pick_Number__c = 1,
+      Overall_Pick_Number__c = 1,
+      Round__c = 1
+    );
+
+    Test.startTest();
+    ManageDraft.makePick(pickToMake, 'Test Player');
+    Test.stopTest();
+
+    Pick__c insertedPick = [
+      SELECT Player__c, Team_Owner__c
+      FROM Pick__c
+      WHERE Overall_Pick_Number__c = 1
+    ];
+    Assert.areEqual(player.Id, insertedPick.Player__c);
+    Player__c updatedPlayer = [
+      SELECT Team_Owner__c
+      FROM Player__c
+      WHERE Id = :player.Id
+    ];
+    Assert.areEqual(team.Id, updatedPlayer.Team_Owner__c);
   }
 
   @IsTest
   static void makePick_AuctionPick() {
-    //TODO: Test an auction pick to be made
+    Draft_Settings__c settings = Draft_Settings__c.getOrgDefaults();
+    settings.Auction_Budget__c = 100;
+    update settings;
+
+    Player__c player = TestDataFactory.createPlayers(1)[0];
+    insert player;
+    Team_Owner__c team = TestDataFactory.createFranchises(1)[0];
+    insert team;
+
+    Pick__c pickToMake = new Pick__c(
+      Player__c = player.Id,
+      Team_Owner__c = team.Id,
+      Round_Pick_Number__c = 1,
+      Overall_Pick_Number__c = 1,
+      Round__c = 1,
+      Auction_Cost__c = 25
+    );
+
+    Test.startTest();
+    ManageDraft.makePick(pickToMake, 'Test Player');
+    Test.stopTest();
+
+    Pick__c insertedPick = [
+      SELECT Player__c, Auction_Cost__c
+      FROM Pick__c
+      WHERE Overall_Pick_Number__c = 1
+    ];
+    Assert.areEqual(player.Id, insertedPick.Player__c);
+    Assert.areEqual(25, insertedPick.Auction_Cost__c);
+  }
+
+  @IsTest
+  static void makePick_PlayerAlreadyPicked_ThrowsError() {
+    Player__c player = TestDataFactory.createPlayers(1)[0];
+    insert player;
+    List<Team_Owner__c> teams = TestDataFactory.createFranchises(2);
+    insert teams;
+
+    Pick__c firstPick = new Pick__c(
+      Player__c = player.Id,
+      Team_Owner__c = teams[0].Id,
+      Round_Pick_Number__c = 1,
+      Overall_Pick_Number__c = 1,
+      Round__c = 1
+    );
+    ManageDraft.makePick(firstPick, 'Test Player');
+
+    Pick__c secondPick = new Pick__c(
+      Player__c = player.Id,
+      Team_Owner__c = teams[1].Id,
+      Round_Pick_Number__c = 2,
+      Overall_Pick_Number__c = 2,
+      Round__c = 1
+    );
+
+    Test.startTest();
+    try {
+      ManageDraft.makePick(secondPick, 'Test Player');
+      Assert.fail('Expected duplicate pick exception was not thrown');
+    } catch (AuraHandledException e) {
+      Assert.isTrue(e.getMessage().contains('already been made'));
+    }
+    Test.stopTest();
+
+    Integer picksForPlayer = [
+      SELECT COUNT()
+      FROM Pick__c
+      WHERE Player__c = :player.Id
+    ];
+    Assert.areEqual(1, picksForPlayer);
   }
 
   @IsTest

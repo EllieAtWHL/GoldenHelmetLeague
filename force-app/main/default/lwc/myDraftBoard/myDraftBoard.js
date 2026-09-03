@@ -398,6 +398,22 @@ export default class MyDraftBoard extends LightningElement {
     return !this.isSnake && !!this.myTeam;
   }
 
+  get showPotentialNominations() {
+    return !this.isSnake;
+  }
+
+  get potentialNominations() {
+    if (!this.allPlayers) {
+      return [];
+    }
+    const undrafted = this.allPlayers.filter((player) => !player.Team_Owner__c);
+    const sorted = [...undrafted].sort(
+      (a, b) =>
+        (b.Predicted_Auction_Cost__c ?? 0) - (a.Predicted_Auction_Cost__c ?? 0)
+    );
+    return this.withValueLabels(sorted.slice(0, 15));
+  }
+
   get budgetRemaining() {
     return this.myTeam?.Remaining_Budget__c;
   }
