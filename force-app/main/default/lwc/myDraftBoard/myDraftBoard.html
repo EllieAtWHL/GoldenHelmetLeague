@@ -104,6 +104,25 @@
           </div>
         </template>
       </lightning-tab>
+
+      <template lwc:if={showPotentialNominations}>
+        <lightning-tab label="Potential Nominations">
+          <p class="slds-p-around_small slds-text-body_small nominations-hint">
+            Best remaining players by predicted price — nominate one early to
+            drain a rival's budget on a player you don't need.
+          </p>
+          <div class="nominations-list">
+            <template for:each={potentialNominations} for:item="player">
+              <c-my-draft-board-player-card
+                key={player.Id}
+                player={player}
+                value-label={player.valueLabel}
+                onnotessave={handleNotesSave}
+              ></c-my-draft-board-player-card>
+            </template>
+          </div>
+        </lightning-tab>
+      </template>
     </lightning-tabset>
   </lightning-card>
 

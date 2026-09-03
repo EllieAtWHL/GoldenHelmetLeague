@@ -105,10 +105,9 @@
       <lightning-layout-item key={pick.Id} class={pick.cssClass} size="12">
         <span lwc:if={isSnake}>{pick.round}.{pick.roundPickNumber}</span
         ><span lwc:else>{pick.overallPickNumber}.</span> {pick.pickTeam}
-        <span lwc:if={isSnake}>picked</span>
-        <span lwc:else>submitted</span> {pick.playerPickedName}
-        <span lwc:if={isAuction}>
-          bought by {pick.teamOwnerName} for £{pick.auctionCost}</span
+        <span lwc:if={isSnake}> picked</span>
+        <span lwc:else> submitted</span> {pick.playerPickedName}
+        <span lwc:if={isAuction}> bought by {pick.teamOwnerName} for £{pick.auctionCost}</span
         >
       </lightning-layout-item>
     </template>

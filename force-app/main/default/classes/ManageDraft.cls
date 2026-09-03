@@ -194,6 +194,20 @@ public class ManageDraft {
       pickMade.Team_Owner__c
     );
     Logger.info('All pickMade info: ' + pickMade);
+
+    List<Pick__c> existingPicksForPlayer = [
+      SELECT Id
+      FROM Pick__c
+      WHERE Player__c = :pickMade.Player__c
+      LIMIT 1
+    ];
+    if (!existingPicksForPlayer.isEmpty()) {
+      throw AuraExceptionHelper.logAndBuild(
+        'Duplicate pick detected for player: ' + pickMade.Player__c,
+        'Duplicate pick detected. This pick has already been made.'
+      );
+    }
+
     List<SObject> recordsToUpsert = new List<SObject>();
     recordsToUpsert.add(pickMade);
     Player__c playerToUpdate = new Player__c(

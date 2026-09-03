@@ -177,6 +177,14 @@ describe("c-my-draft-board", () => {
   function cardsFor(element) {
     return Array.from(
       element.shadowRoot.querySelectorAll("c-my-draft-board-player-card")
+    ).filter((card) => !card.closest(".nominations-list"));
+  }
+
+  function nominationCardsFor(element) {
+    return Array.from(
+      element.shadowRoot.querySelectorAll(
+        ".nominations-list c-my-draft-board-player-card"
+      )
     );
   }
 
@@ -387,6 +395,26 @@ describe("c-my-draft-board", () => {
     const element = await createMyDraftBoard(SNAKE_SETTINGS);
 
     expect(element.shadowRoot.querySelector(".budget-summary")).toBeNull();
+  });
+
+  it("ranks undrafted players by predicted auction cost on the Potential Nominations tab", async () => {
+    const element = await createMyDraftBoard(AUCTION_SETTINGS);
+
+    const nominationCards = nominationCardsFor(element);
+    expect(nominationCards.map((card) => card.player.Id)).toEqual([
+      "p1",
+      "p2",
+      "p3",
+    ]);
+  });
+
+  it("hides the Potential Nominations tab for a snake draft", async () => {
+    const element = await createMyDraftBoard(SNAKE_SETTINGS);
+
+    const tabLabels = Array.from(
+      element.shadowRoot.querySelectorAll("lightning-tab")
+    ).map((tab) => tab.label);
+    expect(tabLabels).not.toContain("Potential Nominations");
   });
 
   it("shows the sold price and a per-position roster count on the My Team tab", async () => {
