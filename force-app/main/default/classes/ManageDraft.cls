@@ -193,7 +193,6 @@ public class ManageDraft {
       'Team making pick: ' + pickMade.Team_Owner__c,
       pickMade.Team_Owner__c
     );
-    Logger.info('All pickMade info: ' + pickMade);
 
     List<Pick__c> existingPicksForPlayer = [
       SELECT Id
