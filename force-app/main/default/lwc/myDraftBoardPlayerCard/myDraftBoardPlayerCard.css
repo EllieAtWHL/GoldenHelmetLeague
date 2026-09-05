@@ -83,6 +83,17 @@ img.photo {
   font-size: 22px;
 }
 
+.fp-col {
+  flex: 0 1 100px;
+  font-size: 15px;
+  gap: 2px;
+}
+
+.fp-rank,
+.fp-value {
+  white-space: nowrap;
+}
+
 .notes-col {
   flex: 2 1 300px;
   min-width: 260px;

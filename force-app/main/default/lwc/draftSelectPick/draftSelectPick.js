@@ -111,11 +111,12 @@ export default class DraftSelectPick extends LightningElement {
 
     if (this.isAuction) {
       const shortenedName = this.playerSelectedName.split(",", 1)[0];
+      const fpRank = player.FantasyPros_Rank__c;
       const message = `Bidding on: ${
         this.playerSelectedName.length > 15
           ? shortenedName
           : this.playerSelectedName
-      } - ${player.Team__c}`;
+      } - ${player.Team__c}${fpRank != null ? ` (FP #${fpRank})` : ""}`;
       const detail = {
         message: message,
         class: player.Position__c,

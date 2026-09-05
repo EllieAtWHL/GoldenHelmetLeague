@@ -17,6 +17,22 @@ export default class MyDraftBoardPlayerCard extends LightningElement {
     return !!this.valueLabel;
   }
 
+  get hasFantasyProsRank() {
+    return this.player?.FantasyPros_Rank__c != null;
+  }
+
+  get hasFantasyProsAuctionValue() {
+    return this.player?.FantasyPros_Auction_Value__c != null;
+  }
+
+  get hasFantasyProsData() {
+    return this.hasFantasyProsRank || this.hasFantasyProsAuctionValue;
+  }
+
+  get formattedFantasyProsAuctionValue() {
+    return `£${Number(this.player.FantasyPros_Auction_Value__c).toFixed(2)}`;
+  }
+
   get isRookie() {
     return this.player?.MFL_Status__c === "R";
   }

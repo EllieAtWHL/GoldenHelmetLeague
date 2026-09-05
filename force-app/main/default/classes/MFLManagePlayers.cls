@@ -1206,7 +1206,7 @@ public with sharing class MFLManagePlayers {
     String query;
     if (searchTerm == null || searchTerm.length() < 2) {
       query =
-        'SELECT Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c FROM Player__c WHERE Team_Owner__c = NULL WITH USER_MODE ORDER BY ' +
+        'SELECT Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c, FantasyPros_Rank__c FROM Player__c WHERE Team_Owner__c = NULL WITH USER_MODE ORDER BY ' +
         orderField +
         ' LIMIT 8';
       return Database.query(query);
@@ -1216,7 +1216,7 @@ public with sharing class MFLManagePlayers {
         'FIND \'' +
         safeSearchTerm +
         '\' IN ALL FIELDS RETURNING Player__c ' +
-        '(Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c ' +
+        '(Id, MFL_Name__c, Photo_URL_Formula__c, Position__c, Team__c, MFL_Status__c, FantasyPros_Rank__c ' +
         'WHERE Team_Owner__c = NULL ORDER BY ' +
         orderField +
         ' LIMIT 8)';
