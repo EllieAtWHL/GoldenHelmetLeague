@@ -87,6 +87,10 @@
                 <behavior>Edit</behavior>
                 <field>Experts_Rank__c</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>FantasyPros_Rank__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsLeftToRight</style>
     </layoutSections>
