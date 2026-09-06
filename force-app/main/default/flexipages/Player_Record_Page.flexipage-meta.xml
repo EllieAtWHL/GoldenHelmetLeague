@@ -138,6 +138,15 @@
                 <fieldItem>Record.Experts_Rank__c</fieldItem>
             </fieldInstance>
         </itemInstances>
+        <itemInstances>
+            <fieldInstance>
+                <fieldInstanceProperties>
+                    <name>uiBehavior</name>
+                    <value>none</value>
+                </fieldInstanceProperties>
+                <fieldItem>Record.FantasyPros_Rank__c</fieldItem>
+            </fieldInstance>
+        </itemInstances>
         <name>Facet-b33ba090-7d89-4121-9d00-ba23f71c790c</name>
         <type>Facet</type>
     </flexiPageRegions>
