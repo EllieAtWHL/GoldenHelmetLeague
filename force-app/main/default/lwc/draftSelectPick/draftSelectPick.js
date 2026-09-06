@@ -120,6 +120,7 @@ export default class DraftSelectPick extends LightningElement {
         message: message,
         class: player.Position__c,
         playerId: player.Id,
+        fpRank: player.FantasyPros_Rank__c,
       };
       const playerSelectedEvent = new CustomEvent("playerselected", {
         detail: detail,

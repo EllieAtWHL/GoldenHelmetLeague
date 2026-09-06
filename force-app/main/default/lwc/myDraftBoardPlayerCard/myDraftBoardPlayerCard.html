@@ -26,6 +26,17 @@
 
       <div class="col meta-col">{player.Team__c} - {player.Position__c}</div>
 
+      <div lwc:if={hasFantasyProsData} class="col fp-col">
+        <span lwc:if={hasFantasyProsRank} class="fp-rank">
+          <span class="field-label">FP Rank</span>
+          {player.FantasyPros_Rank__c}
+        </span>
+        <span lwc:if={hasFantasyProsAuctionValue} class="fp-value">
+          <span class="field-label">FP Value</span>
+          {formattedFantasyProsAuctionValue}
+        </span>
+      </div>
+
       <div lwc:if={hasValueLabel} class="col value-label">{valueLabel}</div>
 
       <div class="col notes-col">

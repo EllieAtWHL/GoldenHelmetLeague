@@ -26,6 +26,8 @@ public with sharing class ManageMyDraftBoard {
           Injury_Status__c,
           News_Headline__c,
           News_Last_Updated__c,
+          FantasyPros_Rank__c,
+          FantasyPros_Auction_Value__c,
           (SELECT Auction_Cost__c, Round__c, Round_Pick_Number__c FROM Picks__r)
         FROM Player__c
         WITH USER_MODE
@@ -53,6 +55,8 @@ public with sharing class ManageMyDraftBoard {
           Injury_Status__c,
           News_Headline__c,
           News_Last_Updated__c,
+          FantasyPros_Rank__c,
+          FantasyPros_Auction_Value__c,
           (SELECT Auction_Cost__c, Round__c, Round_Pick_Number__c FROM Picks__r)
         FROM Player__c
         WHERE Team_Owner__r.Is_My_Team__c = TRUE
