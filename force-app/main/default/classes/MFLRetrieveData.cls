@@ -19,7 +19,8 @@ public with sharing class MFLRetrieveData {
     try {
       res = http.send(req);
     } catch (Exception e) {
-      Logger.exception('Error making POST callout to SF', e)
+      Logger.error('Error making POST callout to SF')
+        .setExceptionDetails(e)
         .setHttpRequestDetails(req);
       Logger.saveLog();
       throw new CalloutException(e.getMessage());
@@ -45,7 +46,8 @@ public with sharing class MFLRetrieveData {
     try {
       res = http.send(req);
     } catch (Exception e) {
-      Logger.exception('Error making GET callout to MFL', e)
+      Logger.error('Error making GET callout to MFL')
+        .setExceptionDetails(e)
         .setHttpRequestDetails(req);
       Logger.saveLog();
       throw new CalloutException(e.getMessage());
@@ -72,9 +74,7 @@ public with sharing class MFLRetrieveData {
    * the cause from a typed JSON.deserialize failing downstream.
    *
    * Deliberately does not log here - callers already catch Exception and
-   * log via AuraExceptionHelper, and logging right before a throw has been
-   * shown to sometimes swallow that throw (see AuraExceptionHelper's
-   * ApexDoc / GHL-24), so this stays a plain, un-logged throw.
+   * log via AuraExceptionHelper, so this stays a plain, un-logged throw.
    */
   private static void throwIfMFLErrorResponse(String body) {
     Object parsed;
@@ -123,7 +123,8 @@ public with sharing class MFLRetrieveData {
     try {
       res = http.send(req);
     } catch (Exception e) {
-      Logger.exception('Error making POST callout to MFL', e)
+      Logger.error('Error making POST callout to MFL')
+        .setExceptionDetails(e)
         .setHttpRequestDetails(req);
       Logger.saveLog();
       throw new CalloutException(e.getMessage());

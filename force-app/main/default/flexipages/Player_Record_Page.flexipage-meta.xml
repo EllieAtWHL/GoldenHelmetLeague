@@ -12,6 +12,7 @@
                     <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Name</fieldItem>
+                <identifier>RecordNameField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -21,6 +22,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.MFL_Name__c</fieldItem>
+                <identifier>RecordMFL_Name__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -30,6 +32,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.NFL_Team__c</fieldItem>
+                <identifier>RecordNFL_Team__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -39,6 +42,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Position__c</fieldItem>
+                <identifier>RecordPosition__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-c63083b6-f434-4032-b465-630fc59290c1</name>
@@ -52,6 +56,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.MFL_Status__c</fieldItem>
+                <identifier>RecordMFL_Status__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -61,6 +66,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.MFL_Id__c</fieldItem>
+                <identifier>RecordMFL_Id__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -70,6 +76,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Team_Owner__c</fieldItem>
+                <identifier>RecordTeam_Owner__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -79,6 +86,7 @@
                     <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Team__c</fieldItem>
+                <identifier>RecordTeam__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-ab94e95a-a018-4567-acd6-8e05e972852d</name>
@@ -92,6 +100,7 @@
                     <value>Facet-c63083b6-f434-4032-b465-630fc59290c1</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -101,6 +110,7 @@
                     <value>Facet-ab94e95a-a018-4567-acd6-8e05e972852d</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column2</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-a58da430-c15d-4541-ae8f-e677800c1637</name>
@@ -114,6 +124,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ADP_Rank__c</fieldItem>
+                <identifier>RecordADP_Rank__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -123,6 +134,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.ADP_Average__c</fieldItem>
+                <identifier>RecordADP_Average__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-23371b21-d8d5-4761-8e31-78bab320d5b3</name>
@@ -136,6 +148,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Experts_Rank__c</fieldItem>
+                <identifier>RecordExperts_Rank__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -145,6 +158,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.FantasyPros_Rank__c</fieldItem>
+                <identifier>RecordFantasyPros_Rank__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-b33ba090-7d89-4121-9d00-ba23f71c790c</name>
@@ -158,6 +172,7 @@
                     <value>Facet-23371b21-d8d5-4761-8e31-78bab320d5b3</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column3</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -167,6 +182,7 @@
                     <value>Facet-b33ba090-7d89-4121-9d00-ba23f71c790c</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column4</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-ba6426a6-a7f2-4494-8427-dd913bdbe26c</name>
@@ -180,6 +196,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.CreatedById</fieldItem>
+                <identifier>RecordCreatedByIdField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-9ed12f18-1e0c-4b0b-84b5-62f38023efbd</name>
@@ -193,6 +210,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.LastModifiedById</fieldItem>
+                <identifier>RecordLastModifiedByIdField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-4c73820b-f8f1-497b-a884-e3e81d8a5814</name>
@@ -206,6 +224,7 @@
                     <value>Facet-9ed12f18-1e0c-4b0b-84b5-62f38023efbd</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column5</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -215,6 +234,7 @@
                     <value>Facet-4c73820b-f8f1-497b-a884-e3e81d8a5814</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column6</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-ad847ea8-7939-49a6-9ac2-453b79179565</name>
@@ -236,6 +256,7 @@
                     <value>@@@SFDCInformationSFDC@@@</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSection</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -253,6 +274,7 @@
                     <value>Rankings</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSection2</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -270,11 +292,13 @@
                     <value>@@@SFDCSystem_InformationSFDC@@@</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSection3</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
             <componentInstance>
                 <componentName>force:recordDetailPanelMobile</componentName>
+                <identifier>force_recordDetailPanelMobile</identifier>
             </componentInstance>
         </itemInstances>
         <name>leftcol</name>
@@ -288,6 +312,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.MFL_Name__c</fieldItem>
+                <identifier>RecordMFL_Name__cField2</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-22c3030e-fe85-47ec-87d5-f1fa90dd35b9</name>
@@ -301,6 +326,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Position__c</fieldItem>
+                <identifier>RecordPosition__cField2</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -310,21 +336,25 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Team__c</fieldItem>
+                <identifier>RecordTeam__cField2</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldItem>Record.NFL_Team__r.Name</fieldItem>
+                <identifier>RecordNFL_Team__rNameField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldItem>Record.NFL_Team__r.Bye_Week__c</fieldItem>
+                <identifier>RecordNFL_Team__rBye_Week__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
             <fieldInstance>
                 <fieldItem>Record.Team_Owner__r.Icon__c</fieldItem>
+                <identifier>RecordTeam_Owner__rIcon__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <itemInstances>
@@ -334,6 +364,7 @@
                     <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Photo__c</fieldItem>
+                <identifier>RecordPhoto__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-77072baf-2d39-4862-a68c-e5f8bf163106</name>
@@ -347,6 +378,7 @@
                     <value>none</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Photo_URL__c</fieldItem>
+                <identifier>RecordPhoto_URL__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-c6d33311-3003-4c41-9529-1fa3f49c84f0</name>
@@ -360,6 +392,7 @@
                     <value>readonly</value>
                 </fieldInstanceProperties>
                 <fieldItem>Record.Photo_URL_Formula__c</fieldItem>
+                <identifier>RecordPhoto_URL_Formula__cField</identifier>
             </fieldInstance>
         </itemInstances>
         <name>Facet-dda0e700-eb58-4c9c-9031-18437f2b9b16</name>
@@ -373,6 +406,7 @@
                     <value>Facet-c6d33311-3003-4c41-9529-1fa3f49c84f0</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column7</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -382,6 +416,7 @@
                     <value>Facet-dda0e700-eb58-4c9c-9031-18437f2b9b16</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:column</componentName>
+                <identifier>flexipage_column8</identifier>
             </componentInstance>
         </itemInstances>
         <name>Facet-5a1fbd11-6cd9-49e3-9c14-ce43bfc2db94</name>
@@ -415,6 +450,7 @@
                 </componentInstanceProperties>
                 <componentName
         >record_flexipage:dynamicHighlights</componentName>
+                <identifier>record_flexipage_dynamicHighlights</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -432,6 +468,7 @@
                     <value>Photo</value>
                 </componentInstanceProperties>
                 <componentName>flexipage:fieldSection</componentName>
+                <identifier>flexipage_fieldSection4</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -492,6 +529,7 @@
                     <value>Default</value>
                 </componentInstanceProperties>
                 <componentName>lst:dynamicRelatedList</componentName>
+                <identifier>lst_dynamicRelatedList</identifier>
             </componentInstance>
         </itemInstances>
         <itemInstances>
@@ -517,6 +555,7 @@
                     <value>true</value>
                 </componentInstanceProperties>
                 <componentName>force:relatedListSingleContainer</componentName>
+                <identifier>force_relatedListSingleContainer</identifier>
             </componentInstance>
         </itemInstances>
         <name>rightcol</name>

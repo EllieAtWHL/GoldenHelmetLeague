@@ -13,6 +13,30 @@ The commissioner page is only available if you are logged into the community as 
 
 ## Initial Set up
 
+### Install Nebula Logger (do this first)
+
+This app uses [Nebula Logger](https://github.com/jongpie/NebulaLogger) for logging, so it must be installed in the org **before** you deploy this repo. Without it, the deploy fails with `Variable does not exist: Logger`.
+
+Install the **Unlocked Package (no namespace)** version. The managed package won't work, because this code calls `Logger` directly rather than `Nebula.Logger`.
+
+Tested version: **v4.19.5**
+
+- Production / Developer Edition: [Install v4.19.5](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tg7000000IzRdAAK)
+- Sandbox: [Install v4.19.5](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tg7000000IzRdAAK)
+- Or via the Salesforce CLI:
+
+  ```sh
+  sf package install --package 04tg7000000IzRdAAK --wait 20 --security-type AdminsOnly --target-org <your-org-alias>
+  ```
+
+Then deploy this repo (running its tests):
+
+```sh
+sf project deploy start --source-dir force-app --test-level RunLocalTests --target-org <your-org-alias>
+```
+
+The deploy grants the System Administrator profile access to the app's custom fields, so the tests can run straight away on a brand-new org. Assign the Commissioner permission set (below) to anyone else who needs access.
+
 ### Assign permission set
 
 Assign whomever needs it the Commissioner permission set, which should give accesss to everything required to set up and run the league.

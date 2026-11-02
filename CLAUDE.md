@@ -36,15 +36,21 @@ catch (Exception e) {
 }
 ```
 
-Nebula Logger's `Logger.exception()` + `Logger.saveLog()`, called directly
-before a `throw` in the same catch block, has been observed to swallow that
-throw — the raw underlying exception escapes to the client instead of the
-intended `AuraHandledException`, so the friendly message never gets shown.
-This is **not a documented Nebula Logger bug** — no external source confirms
-it, and it's characterized by a permanent test
-(`AuraExceptionHelperTest.characterizationTest_LoggerExceptionAndSaveLogBeforeThrow_CanSwallowTheThrow`)
-rather than taken on faith; re-run that test if you want to check it still
-reproduces. Separately, `AuraHandledException`'s constructor message isn't
+Nebula Logger's `Logger.exception()` is **documented to save the log and then
+rethrow the exception you pass it** (its source ends in `throw apexException;`).
+So any `throw` after it in the same catch block never runs — the raw
+underlying exception escapes to the client instead of the intended
+`AuraHandledException`, and the friendly message never gets shown. This is
+intended Nebula behaviour, not a bug (investigated in GHL-24, cause identified
+in GHL-43), and is also characterized by a permanent test
+(`AuraExceptionHelperTest.characterizationTest_LoggerExceptionAndSaveLogBeforeThrow_CanSwallowTheThrow`).
+
+`Logger.exception()` also returns `void`, so nothing can be chained onto it.
+To log an exception **without** rethrowing (e.g. to add HTTP request details
+before throwing your own exception), use
+`Logger.error(message).setExceptionDetails(e)` instead.
+
+Separately, `AuraHandledException`'s constructor message isn't
 guaranteed to be what `.getMessage()` returns later, so `AuraExceptionHelper`
 also calls `.setMessage()` explicitly as a defensive habit — this one is
 **not confirmed by Salesforce's own docs** either, just commonly recommended
