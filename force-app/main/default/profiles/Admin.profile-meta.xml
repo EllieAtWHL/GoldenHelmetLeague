@@ -116,7 +116,7 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Player__c.Photo_URL_Formula__c</field>
         <readable>true</readable>
     </fieldPermissions>
@@ -146,7 +146,7 @@
         <readable>true</readable>
     </fieldPermissions>
     <fieldPermissions>
-        <editable>false</editable>
+        <editable>true</editable>
         <field>Player__c.Team__c</field>
         <readable>true</readable>
     </fieldPermissions>
