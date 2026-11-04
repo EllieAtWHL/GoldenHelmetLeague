@@ -1,13 +1,14 @@
 .sfdx/
 config/
 hardis-report/
-.forceignore
 .DS_Store
 jsconfig.json
 .sf/config.json
 .vscode/
 node_modules/
-scripts/
+# Local helper scripts stay ignored; setup-org.sh is the documented entry point.
+scripts/*
+!scripts/setup-org.sh
 data-archive/
 .sf/
 docs/

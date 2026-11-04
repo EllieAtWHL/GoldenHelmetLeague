@@ -13,6 +13,26 @@ The commissioner page is only available if you are logged into the community as 
 
 ## Initial Set up
 
+### Quick start: one command
+
+With the [Salesforce CLI](https://developer.salesforce.com/tools/salesforcecli) installed and logged in to your org, run this from the repo root:
+
+```sh
+scripts/setup-org.sh <your-org-alias> [username ...]
+```
+
+(or `npm run setup-org -- <your-org-alias> [username ...]`)
+
+This does the next three steps for you, in order:
+
+1. Installs Nebula Logger, unless it's already installed
+2. Deploys this repo and runs its tests
+3. Assigns the Commissioner permission set to you, plus any extra usernames you list
+
+It's safe to re-run. If any step fails, it stops there. Then carry on from [Populate Custom Settings](#populate-custom-settings).
+
+To do it by hand instead, follow the three steps below.
+
 ### Install Nebula Logger (do this first)
 
 This app uses [Nebula Logger](https://github.com/jongpie/NebulaLogger) for logging, so it must be installed in the org **before** you deploy this repo. Without it, the deploy fails with `Variable does not exist: Logger`.
@@ -36,6 +56,8 @@ sf project deploy start --source-dir force-app --test-level RunLocalTests --targ
 ```
 
 The deploy grants the System Administrator profile access to the app's custom fields, so the tests can run straight away on a brand-new org. Assign the Commissioner permission set (below) to anyone else who needs access.
+
+It also installs and activates the **Golden Helmet** theme (SLDS 2, colours and logo, with dark mode allowed), so there's nothing to set up under Themes and Branding. For the dark look, each user picks **Dark** from their profile picture -> Appearance.
 
 ### Assign permission set
 
