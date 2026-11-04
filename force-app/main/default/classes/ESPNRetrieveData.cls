@@ -29,7 +29,8 @@ public with sharing class ESPNRetrieveData {
     try {
       res = http.send(req);
     } catch (Exception e) {
-      Logger.exception('Error making GET callout to ESPN', e)
+      Logger.error('Error making GET callout to ESPN')
+        .setExceptionDetails(e)
         .setHttpRequestDetails(req);
       Logger.saveLog();
       throw new CalloutException(e.getMessage());

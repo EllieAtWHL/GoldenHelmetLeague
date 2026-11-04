@@ -13,9 +13,67 @@ The commissioner page is only available if you are logged into the community as 
 
 ## Initial Set up
 
+### Quick start: one command
+
+With the [Salesforce CLI](https://developer.salesforce.com/tools/salesforcecli) installed and logged in to your org, run this from the repo root:
+
+```sh
+scripts/setup-org.sh <your-org-alias> [username ...]
+```
+
+(or `npm run setup-org -- <your-org-alias> [username ...]`)
+
+This does the next three steps for you, in order:
+
+1. Installs Nebula Logger, unless it's already installed
+2. Deploys this repo and runs its tests
+3. Assigns the Commissioner permission set to you, plus any extra usernames you list
+
+It's safe to re-run. If any step fails, it stops there. Then carry on from [Populate Custom Settings](#populate-custom-settings).
+
+To do it by hand instead, follow the three steps below.
+
+### Install Nebula Logger (do this first)
+
+This app uses [Nebula Logger](https://github.com/jongpie/NebulaLogger) for logging, so it must be installed in the org **before** you deploy this repo. Without it, the deploy fails with `Variable does not exist: Logger`.
+
+Install the **Unlocked Package (no namespace)** version. The managed package won't work, because this code calls `Logger` directly rather than `Nebula.Logger`.
+
+Tested version: **v4.19.5**
+
+- Production / Developer Edition: [Install v4.19.5](https://login.salesforce.com/packaging/installPackage.apexp?p0=04tg7000000IzRdAAK)
+- Sandbox: [Install v4.19.5](https://test.salesforce.com/packaging/installPackage.apexp?p0=04tg7000000IzRdAAK)
+- Or via the Salesforce CLI:
+
+  ```sh
+  sf package install --package 04tg7000000IzRdAAK --wait 20 --security-type AdminsOnly --target-org <your-org-alias>
+  ```
+
+Then deploy this repo (running its tests):
+
+```sh
+sf project deploy start --source-dir force-app --test-level RunLocalTests --target-org <your-org-alias>
+```
+
+The deploy grants the System Administrator profile access to the app's custom fields, so the tests can run straight away on a brand-new org. Assign the Commissioner permission set (below) to anyone else who needs access.
+
+It also installs and activates the **Golden Helmet** theme (SLDS 2, colours and logo, with dark mode allowed), so there's nothing to set up under Themes and Branding. For the dark look, each user picks **Dark** from their profile picture -> Appearance.
+
 ### Assign permission set
 
-Assign whomever needs it the Commissioner permission set, which should give accesss to everything required to set up and run the league.
+Assign whomever needs it the Commissioner permission set, which should give access to everything required to set up and run the league.
+
+To assign it to yourself (the user the CLI is logged in as):
+
+```sh
+sf org assign permset --name Commissioner --target-org <your-org-alias>
+```
+
+To assign it to other users, add `--on-behalf-of` with each user's Salesforce username:
+
+```sh
+sf org assign permset --name Commissioner --on-behalf-of <username1> --on-behalf-of <username2> --target-org <your-org-alias>
+```
 
 ### Populate Custom Settings
 

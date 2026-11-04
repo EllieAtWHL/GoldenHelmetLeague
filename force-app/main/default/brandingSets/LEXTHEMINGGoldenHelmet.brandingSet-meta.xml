@@ -5,20 +5,16 @@
         <propertyValue>#FFCC01</propertyValue>
     </brandingSetProperty>
     <brandingSetProperty>
-        <propertyName>PAGE_BACKGROUND_COLOR</propertyName>
-        <propertyValue>#222222</propertyValue>
-    </brandingSetProperty>
-    <brandingSetProperty>
         <propertyName>HEADER_BACKGROUND_COLOR</propertyName>
         <propertyValue>#222222</propertyValue>
     </brandingSetProperty>
     <brandingSetProperty>
         <propertyName>BRAND_IMAGE</propertyName>
-        <propertyValue />
+        <propertyValue>/file-asset/SFGHLLogo?v=1</propertyValue>
     </brandingSetProperty>
     <brandingSetProperty>
-        <propertyName>BANNER_IMAGE</propertyName>
-        <propertyValue />
+        <propertyName>BRAND_IMAGE_DARK_MODE</propertyName>
+        <propertyValue>/file-asset/SFGHLLogo?v=1</propertyValue>
     </brandingSetProperty>
     <brandingSetProperty>
         <propertyName>GROUPS_BANNER_IMAGE</propertyName>
@@ -37,12 +33,8 @@
         <propertyValue />
     </brandingSetProperty>
     <brandingSetProperty>
-        <propertyName>LINK_AS_BACKGROUND</propertyName>
+        <propertyName>OVERRIDE_LOADING_PAGE</propertyName>
         <propertyValue>true</propertyValue>
     </brandingSetProperty>
-    <brandingSetProperty>
-        <propertyName>OVERRIDE_LOADING_PAGE</propertyName>
-        <propertyValue>false</propertyValue>
-    </brandingSetProperty>
-    <masterLabel>GHL</masterLabel>
+    <masterLabel>Golden Helmet</masterLabel>
 </BrandingSet>

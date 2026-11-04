@@ -58,14 +58,12 @@ public class AuraExceptionHelperTest {
     Assert.isNotNull(result, 'A built exception should have been returned');
   }
 
-  // The two tests below exist purely as durable, re-runnable evidence for
-  // GHL-24. They are not a documented Nebula Logger bug - no external source
-  // for this was found; searching turned up the opposite claim (Nebula
-  // Logger is designed around platform events specifically so logging
-  // doesn't interfere with exception propagation). This is a characterization
-  // of behavior observed in this org, kept here instead of only in a
-  // deleted scratch class, so the claim in AuraExceptionHelper's ApexDoc can
-  // actually be checked rather than taken on faith.
+  // The two tests below exist as durable, re-runnable evidence for GHL-24.
+  // The cause was later identified (GHL-43): Nebula's Logger.exception() is
+  // documented to save the log and then rethrow the exception passed to it,
+  // so any throw after it in the same catch block is never reached. These
+  // tests characterize that documented behavior so the claim in
+  // AuraExceptionHelper's ApexDoc can be checked rather than taken on faith.
 
   @IsTest
   static void characterizationTest_LoggerExceptionAndSaveLogBeforeThrow_CanSwallowTheThrow() {

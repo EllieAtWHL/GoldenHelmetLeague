@@ -2,20 +2,20 @@
  * Builds an AuraHandledException that is safe to throw from any
  * `@AuraEnabled` method's catch block (see GHL-24 for the investigation):
  *
- * 1. Nebula Logger's `Logger.exception()` + `Logger.saveLog()`, called
- *    directly before a `throw` in the same catch block, can swallow that
- *    throw - the original raw exception (DmlException, NullPointerException,
- *    etc.) escapes to the client instead of the intended AuraHandledException.
- *    This is NOT a documented Nebula Logger bug - no external source for it
- *    was found, and the package's own design (platform events) suggests the
- *    opposite is intended. It is characterized by
- *    AuraExceptionHelperTest.characterizationTest_LoggerExceptionAndSaveLogBeforeThrow_CanSwallowTheThrow(),
- *    a permanent, re-runnable test that reproduces it directly against this
- *    org - treat that test, not this comment, as the source of truth; if it
- *    ever starts failing, the behavior no longer reproduces and this
- *    justification should be revisited (the isolation below is harmless to
- *    keep either way). This method isolates logging in its own try/catch so
- *    it can never prevent the exception it returns from being thrown.
+ * 1. Nebula Logger's `Logger.exception()` is documented to log at ERROR,
+ *    save the log, and then RETHROW the exception it was given (its source
+ *    ends in `throw apexException;`). So in a catch block, any `throw` that
+ *    follows `Logger.exception(...)` never runs - the original raw exception
+ *    (DmlException, NullPointerException, etc.) escapes to the client instead
+ *    of the intended AuraHandledException. This is intended Nebula behavior,
+ *    not a bug (originally investigated in GHL-24 before the cause was
+ *    known; identified in GHL-43). It is also characterized by
+ *    AuraExceptionHelperTest.characterizationTest_LoggerExceptionAndSaveLogBeforeThrow_CanSwallowTheThrow().
+ *    To log an exception WITHOUT rethrowing it, use
+ *    `Logger.error(message).setExceptionDetails(e)` instead. This method
+ *    isolates logging in its own try/catch, which catches Logger.exception()'s
+ *    rethrow so it can never prevent the exception it returns from being
+ *    thrown.
  * 2. AuraHandledException's constructor message is not guaranteed to be
  *    what `.getMessage()` returns later - calling `.setMessage()` explicitly
  *    afterward is a common defensive habit in the Salesforce developer
@@ -28,7 +28,7 @@
  *   catch (Exception e) {
  *     Logger.exception('...', e);
  *     Logger.saveLog();
- *     throw new AuraHandledException(e.getMessage());   // <- can silently not run
+ *     throw new AuraHandledException(e.getMessage());   // <- never runs
  *   }
  *
  * INSTEAD WRITE:
@@ -80,8 +80,8 @@ public class AuraExceptionHelper {
     Exception cause
   ) {
     // Logging must never be able to prevent this exception from reaching the
-    // caller - Logger.exception()/saveLog() have been observed to swallow a
-    // throw statement that follows them in the same catch block (GHL-24).
+    // caller - Logger.exception() rethrows `cause` by design, so that rethrow
+    // is caught and discarded here (GHL-24, GHL-43).
     try {
       if (cause != null) {
         Logger.exception(logMessage, cause);

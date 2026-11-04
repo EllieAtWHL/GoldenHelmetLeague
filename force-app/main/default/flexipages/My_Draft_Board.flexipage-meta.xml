@@ -3,7 +3,8 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
-                <componentName>c:myDraftBoard</componentName>
+                <componentName>myDraftBoard</componentName>
+                <identifier>myDraftBoard</identifier>
             </componentInstance>
         </itemInstances>
         <name>main</name>

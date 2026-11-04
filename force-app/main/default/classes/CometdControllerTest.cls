@@ -24,7 +24,7 @@ public with sharing class CometdControllerTest {
 
   @IsTest
   static void getSessionId_shouldReturnStoredId_WhenUsingGuestUser() {
-    User guestUser = [
+    List<User> guestUsers = [
       SELECT Id
       FROM User
       WHERE
@@ -33,8 +33,15 @@ public with sharing class CometdControllerTest {
       LIMIT 1
     ];
 
+    // The guest user only exists once the Experience site has been created,
+    // which happens after the first deploy to a new org (see README) - skip
+    // rather than fail so that first deploy can run tests (GHL-43).
+    if (guestUsers.isEmpty()) {
+      return;
+    }
+
     String obtainedSessionId;
-    System.runAs(guestUser) {
+    System.runAs(guestUsers[0]) {
       Test.startTest();
       obtainedSessionId = CometdController.getSessionId();
       Test.stopTest();

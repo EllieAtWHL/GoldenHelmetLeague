@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<LightningExperienceTheme xmlns="http://soap.sforce.com/2006/04/metadata">
+    <defaultBrandingSet>LEXTHEMINGGoldenHelmet</defaultBrandingSet>
+    <description
+  >Branding for the Golden Helmet League. For changes to branding, contact the Commissioner.</description>
+    <designSystemVersion>SLDS_v2</designSystemVersion>
+    <isDarkModeEnabled>true</isDarkModeEnabled>
+    <masterLabel>Golden Helmet</masterLabel>
+    <shouldOverrideLoadingImage>false</shouldOverrideLoadingImage>
+</LightningExperienceTheme>
