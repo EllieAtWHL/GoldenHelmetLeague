@@ -39,7 +39,19 @@ The deploy grants the System Administrator profile access to the app's custom fi
 
 ### Assign permission set
 
-Assign whomever needs it the Commissioner permission set, which should give accesss to everything required to set up and run the league.
+Assign whomever needs it the Commissioner permission set, which should give access to everything required to set up and run the league.
+
+To assign it to yourself (the user the CLI is logged in as):
+
+```sh
+sf org assign permset --name Commissioner --target-org <your-org-alias>
+```
+
+To assign it to other users, add `--on-behalf-of` with each user's Salesforce username:
+
+```sh
+sf org assign permset --name Commissioner --on-behalf-of <username1> --on-behalf-of <username2> --target-org <your-org-alias>
+```
 
 ### Populate Custom Settings
 
